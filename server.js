@@ -25,24 +25,23 @@ app.use(express.static('public', { extensions: ['html'] } ));
 // Listen to port
 app.listen(port);
 
+// Connect to database
 const { Client } = require('pg');
-
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
   }
 });
-
 client.connect();
 
-client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
+/*client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
   if (err) throw err;
   for (let row of res.rows) {
     console.log(JSON.stringify(row));
   }
   client.end();
-});
+});*/
 
 // Send 404 page if page not found, has to be last route
 app.get('*',(req,res) => {
