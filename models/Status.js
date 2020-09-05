@@ -1,8 +1,8 @@
 // Require mongoose
 const mongoose = require('mongoose');
 
-// Create PostSchema and export
-const PostSchema = mongoose.Schema({
+// Create StatusSchema and export
+const StatusSchema = mongoose.Schema({
     user: {
         type: String,
         required: true
@@ -16,4 +16,4 @@ const PostSchema = mongoose.Schema({
         default: Date.now
     },
 })
-module.exports = mongoose.model('Posts',PostSchema);
+module.exports = mongoose.model('Statuses',StatusSchema);

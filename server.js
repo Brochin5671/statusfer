@@ -28,7 +28,7 @@ if(port == process.env.PORT){
 }
 
 // Import routes
-const statusRoute = require('./routes/posts');
+const statusRoute = require('./routes/statuses');
 
 // Status post route
 app.use('/status',statusRoute);
