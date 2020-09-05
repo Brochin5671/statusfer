@@ -3,6 +3,10 @@ const express = require('express');
 var app = express();
 var port = process.env.PORT || 8000;
 
+// Use CORS
+const cors = require('cors');
+app.use(cors());
+
 // Enable body parser
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -24,9 +28,10 @@ if(port == process.env.PORT){
 }
 
 // Import routes
-const postsRoute = require('./routes/posts');
+const statusRoute = require('./routes/posts');
 
-app.use('/status',postsRoute);
+// Status post route
+app.use('/status',statusRoute);
 
 // Home page
 app.get('/',(req,res) => {
