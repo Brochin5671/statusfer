@@ -3,6 +3,10 @@ const express = require('express');
 var app = express();
 var port = process.env.PORT || 8000;
 
+// Enable body parser
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 // Enable compression
 const compression = require('compression');
 app.use(compression());
@@ -19,29 +23,27 @@ if(port == process.env.PORT){
 	});
 }
 
-// Serves static files without .html extension
-app.use(express.static('public', { extensions: ['html'] } ));
+// Import routes
+const postsRoute = require('./routes/posts');
+
+app.use('/status',postsRoute);
+
+// Home page
+app.get('/',(req,res) => {
+    res.sendFile(__dirname+'/public/index.html');
+})
+
+// Connect to DB
+const mongoose = require('mongoose');
+require('dotenv/config');
+mongoose.connect(process.env.DB_CONNECTION,
+{ useNewUrlParser: true, useUnifiedTopology: true },
+() => {
+    console.log('connected to db');
+});
 
 // Listen to port
 app.listen(port);
-
-// Connect to database
-const { Client } = require('pg');
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
-client.connect();
-
-/*client.query('SELECT table_schema,table_name FROM information_schema.tables;', (err, res) => {
-  if (err) throw err;
-  for (let row of res.rows) {
-    console.log(JSON.stringify(row));
-  }
-  client.end();
-});*/
 
 // Send 404 page if page not found, has to be last route
 app.get('*',(req,res) => {
