@@ -19,7 +19,7 @@ router.post('/', verifyToken, async (req,res) => {
 
     // Create new status object
     const status = new Status({
-        user: req.body.user,
+        user: req.user.username,
         status: req.body.status
     });
 
@@ -30,7 +30,7 @@ router.post('/', verifyToken, async (req,res) => {
     }catch(err){ // Send error
         res.json({message: err});
     }
-    
+
 });
 
 // Get a specific status
