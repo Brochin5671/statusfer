@@ -1,4 +1,4 @@
-// Require mongoose
+// Setup mongoose
 const mongoose = require('mongoose');
 
 // Create StatusSchema and export
@@ -15,5 +15,5 @@ const StatusSchema = mongoose.Schema({
         type: Date,
         default: Date.now
     },
-})
+});
 module.exports = mongoose.model('Statuses',StatusSchema);

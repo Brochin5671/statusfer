@@ -29,9 +29,11 @@ if(port == process.env.PORT){
 
 // Import routes
 const statusRoute = require('./routes/statuses');
+const userRoute = require('./routes/users');
 
-// Status post route
+// Use routes
 app.use('/status',statusRoute);
+app.use('/api/user',userRoute);
 
 // Home page
 app.get('/',(req,res) => {
