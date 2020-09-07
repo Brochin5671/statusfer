@@ -11,8 +11,6 @@ module.exports = function(req,res,next){
     // Verify token
     try{
         const verified = jwt.verify(token,process.env.TOKEN_SECRET);
-        console.log(token);
-        console.log(verified);
         req.user = verified;
         next();
     }catch(err){ // Send error
