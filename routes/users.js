@@ -48,7 +48,7 @@ router.post('/register', async (req,res) => {
 router.post('/token', async (req,res) => {
 
     // Check if refresh token exists
-    const refreshToken = req.body.token;
+    const refreshToken = req.body.refreshToken;
     if(!refreshToken) return res.sendStatus(401);
     if(!refreshTokens.includes(refreshToken)) return res.status(403).send('Forbidden token');
 
@@ -91,7 +91,7 @@ router.post('/login', async (req,res) => {
 // Logout a user
 router.delete('/logout',(req,res) => {
     // Remove refresh token and send success message
-    refreshTokens = refreshTokens.filter(token => token !== req.body.token);
+    refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken);
     res.send('Logout successful');
 });
 

@@ -14,10 +14,6 @@ const UserSchema = mongoose.Schema({
     password: {
         type: String,
         required: true
-    },
-    registerDate: {
-        type: Date,
-        default: Date.now
     }
-});
+}, {timestamps: true});
 module.exports = mongoose.model('Users',UserSchema);
