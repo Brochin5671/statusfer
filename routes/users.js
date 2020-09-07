@@ -80,7 +80,7 @@ router.post('/login', async (req,res) => {
 
     // Create and assign access and refresh token to user, then store refresh token
     const accessToken = jwt.sign({_id: user._id, username: user.username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '10m'});
-    const refreshToken = jwt.sign({_id: user._id, username: user.username},process.env.REFRESH_TOKEN_SECRET);
+    const refreshToken = jwt.sign({_id: user._id, username: user.username},process.env.REFRESH_TOKEN_SECRET,{expiresIn: '1h'});
     refreshTokens.push(refreshToken);
 
     // Send tokens

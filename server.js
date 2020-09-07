@@ -33,7 +33,7 @@ const userRoute = require('./routes/users');
 
 // Use routes
 app.use('/status',statusRoute);
-app.use('/api/user',userRoute);
+app.use('/user',userRoute);
 
 // Home page
 app.get('/',(req,res) => {
