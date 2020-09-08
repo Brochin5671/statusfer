@@ -35,10 +35,15 @@ router.post('/register', async (req,res) => {
         password: hashedPass
     });
 
-    // Save user to DB
+    // Save user to DB and generate tokens
     try{
         const savedUser = await user.save();
-        res.json(savedUser);
+        // Create and assign access and refresh token to user, then store refresh token
+        const accessToken = jwt.sign({_id: user._id, username: user.username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '10m'});
+        const refreshToken = jwt.sign({_id: user._id, username: user.username},process.env.REFRESH_TOKEN_SECRET,{expiresIn: '1h'});
+        refreshTokens.push(refreshToken);
+        // Send tokens
+        res.json({accessToken: accessToken, refreshToken: refreshToken});
     }catch(err){
         res.status(400).send(err);
     }
