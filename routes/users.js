@@ -74,20 +74,25 @@ router.post('/token', async (req,res) => {
 
 });
 
+// Login page
+router.get('/login',(req,res) => {
+    res.sendFile(path.join(__dirname,'../public','login.html'));
+});
+
 // Login a user
 router.post('/login', async (req,res) => {
 
     // Validate user and return error message if failed
     const { error } = loginValidation(req.body);
-    if(error) return res.status(400).send(error.details[0].message);
+    if(error) return res.json({message: error.details[0].message});
 
     // Check if email is correct
     const user = await User.findOne({email: req.body.email});
-    if(!user) return res.status(400).send('Email or password is wrong.');
+    if(!user) return res.json({message: 'Email or password is wrong.'});
 
     // Check if password is correct
     const validPass = await bcrypt.compare(req.body.password,user.password);
-    if(!validPass) return res.status(400).send('Email or password is wrong.');
+    if(!validPass) return res.json({message: 'Email or password is wrong.'});
 
     // Create and assign access and refresh token to user, then store refresh token
     const accessToken = jwt.sign({_id: user._id, username: user.username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '10m'});

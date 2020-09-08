@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Home · Statusfer</title>
+        <title>Log in · Statusfer</title>
         <meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1">
-		<meta name="description" content="The Statusfer home page!">
+		<meta name="description" content="The Statusfer login page!">
 		<meta name="author" content="Maxim Brochin">
         <meta name="keywords" content="Statusfer,messaging,social">
         <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
@@ -20,14 +20,26 @@
         <meta name="theme-color" content="#0dd4b6">
         <link rel="stylesheet" href="/static/style.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-        <script src="/static/index.js"></script>
+        <script src="/static/login.js" defer></script>
     </head>
-    <body onload="showStatuses()">
+    <body>
         <main>
             <div class="container">
-                <a href="/user/register"><p class="h4 text-center mb-5">Register</p></a>
-                <a href="/user/login"><p class="h4 text-center mb-5">Log In</p></a>
-                <ul class="list-unstyled shadow" id="statusList"></ul>
+                <div class="row min-vh-100 justify-content-center align-items-center">
+                    <form class="p-5 shadow" id="login">
+                        <h1 class="mb-4">Log In</h1>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" placeholder="Email" required autofocus>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Log in</button>
+                        <p class="d-none" id="log"></p>
+                    </form>
+                </div>
             </div>
         </main>
         <footer>
