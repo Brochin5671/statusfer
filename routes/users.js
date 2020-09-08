@@ -1,6 +1,7 @@
 // Setup router and UserSchema
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 
 // Setup UserSchema, validation, bcrypt, and jsonwebtoken
 const User = require('../models/User');
@@ -11,18 +12,23 @@ const jwt = require('jsonwebtoken');
 // Store refreshTokens
 let refreshTokens = [];
 
+// Register page
+router.get('/register',(req,res) => {
+    res.sendFile(path.join(__dirname,'../public','register.html'));
+});
+
 // Register a user
 router.post('/register', async (req,res) => {
 
     // Validate user and return error message if failed
     const { error } = registerValidation(req.body);
-    if(error) return res.status(400).send(error.details[0].message);
+    if(error) return res.json({message: error.details[0].message});
 
     // Check if username and email already registered
     const usernameExists = await User.findOne({username: req.body.username});
-    if(usernameExists) return res.status(400).send('Username taken.');
+    if(usernameExists) return res.json({message: 'Username taken.'});
     const emailExists = await User.findOne({email: req.body.email});
-    if(emailExists) return res.status(400).send('Email already registered');
+    if(emailExists) return res.json({message: 'Email already registered'});
     
     // Hash password
     const salt = await bcrypt.genSalt(10);
@@ -43,7 +49,7 @@ router.post('/register', async (req,res) => {
         const refreshToken = jwt.sign({_id: user._id, username: user.username},process.env.REFRESH_TOKEN_SECRET,{expiresIn: '1h'});
         refreshTokens.push(refreshToken);
         // Send tokens
-        res.json({accessToken: accessToken, refreshToken: refreshToken});
+        res.json({success: {accessToken: accessToken, refreshToken: refreshToken}});
     }catch(err){
         res.status(400).send(err);
     }
