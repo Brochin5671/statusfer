@@ -1,6 +1,6 @@
 // Get all statuses and return a list
 async function getStatuses(){
-    const res = await fetch('https://statusfer.herokuapp.com/status');
+    const res = await fetch('/status');
     const statusList = await res.json();
     return statusList;
 }
