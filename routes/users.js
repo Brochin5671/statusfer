@@ -3,11 +3,12 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 
-// Setup UserSchema, validation, bcrypt, and jsonwebtoken
+// Setup UserSchema, validation, bcrypt, jsonwebtoken, and token verification
 const User = require('../models/User');
 const { registerValidation,loginValidation } = require('../validation');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const verifyToken = require('../verifyToken');
 
 // Store refreshTokens
 let refreshTokens = [];
@@ -108,11 +109,21 @@ router.post('/login', async (req,res) => {
 
 });
 
+// Check if user logged in
+router.get('/loggedin', verifyToken, (req,res) => {
+    // Send back username
+    const username = req.user.username;
+    res.status(200).json({message: username});
+
+});
+
 // Logout a user
 router.delete('/logout',(req,res) => {
-    // Remove refresh token and send success message
-    refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken);
-    res.send('Logout successful');
+    // Remove refresh token, clear cookies, and send success message
+    refreshTokens = refreshTokens.filter(token => token !== req.cookies.refreshToken);
+    res.clearCookie('refreshToken');
+    res.clearCookie('accessToken');
+    res.json({message: 'Logout successful'});
 });
 
 // Export router

@@ -1,7 +1,7 @@
 // Setup jsonwebtoken
 const jwt = require('jsonwebtoken');
 
-// Check and verify user token
+// Check and verify user access token
 module.exports = function(req,res,next){
 
     // Check if token exists

@@ -27,3 +27,51 @@ function showStatuses(){
         }
     });
 }
+
+// Get username if logged in
+async function getLoggedIn(){
+    // Send get request
+    const options = {
+        method: 'GET',
+        credentials: 'same-origin',
+    };
+    // Check if logged in
+    try{
+        const res = await fetch('/user/loggedin',options);
+        const data = await res.json();
+        // Display loggedIn section with username
+        const loggedIn = document.getElementById('loggedIn');
+        loggedIn.className = 'container';
+        loggedIn.querySelector('p').innerHTML = 'Logged in as '+data.message;
+    }catch(err){ // Display loggedOut section
+        const loggedOut = document.getElementById('loggedOut');
+        loggedOut.className = 'container';
+    }
+}
+
+// Check if user is logged in
+function checkLoggedIn(){
+    getLoggedIn();
+}
+checkLoggedIn();
+
+// Send a delete request to logout
+async function submitLogout(event){
+    event.preventDefault();
+    // Send delete request
+    const options = {
+        method: 'DELETE',
+        credentials: 'same-origin'
+    }
+    const res = await fetch('/user/logout',options);
+    const data = await res.json();
+    if(data.message){
+        window.location = '/';
+    }else{
+        alert('Something went wrong');
+    }
+}
+
+// Listen for submit event
+const form = document.getElementById('logout');
+form.addEventListener('submit',submitLogout);

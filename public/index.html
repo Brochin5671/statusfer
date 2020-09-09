@@ -20,13 +20,21 @@
         <meta name="theme-color" content="#0dd4b6">
         <link rel="stylesheet" href="/static/style.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-        <script src="/static/index.js"></script>
+        <script src="/static/index.js" defer></script>
     </head>
     <body onload="showStatuses()">
         <main>
-            <div class="container">
+            <div class="container d-none" id="loggedOut">
                 <a href="/user/register"><p class="h4 text-center mb-5">Register</p></a>
                 <a href="/user/login"><p class="h4 text-center mb-5">Log In</p></a>
+            </div>
+            <div class="container d-none" id="loggedIn">
+                <p></p>
+                <form id="logout">
+                    <button type="submit" class="btn btn-primary">Log Out</button>
+                </form>
+            </div>
+            <div class="container">
                 <ul class="list-unstyled shadow" id="statusList"></ul>
             </div>
         </main>

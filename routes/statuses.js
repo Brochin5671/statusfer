@@ -34,6 +34,7 @@ router.post('/', verifyToken, async (req,res) => {
 
 });
 
+// Specific status page
 router.get('/:statusId',(req,res) => {
     res.sendFile(path.join(__dirname,'../public','status.html'));
 });

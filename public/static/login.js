@@ -13,8 +13,8 @@ async function submitLogin(event){
         })
     };
     const res = await fetch('/user/login',options);
-    // Log failure
     const data = await res.json();
+    // Log failure
     if(data.message){
         log.className = 'small m-0 mt-2';
         log.innerHTML = data.message;

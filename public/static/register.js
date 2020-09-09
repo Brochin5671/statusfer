@@ -14,14 +14,14 @@ async function submitRegister(event){
         })
     };
     const res = await fetch('/user/register',options);
-    // Log failure
     const data = await res.json();
+    // Log failure
     if(data.message){
         log.className = 'small m-0 mt-2';
         log.innerHTML = data.message;
     }else{ // Redirect to home on success
         log.className = 'd-none';
-        //window.location = '/';
+        window.location = '/';
     }
 }
 
