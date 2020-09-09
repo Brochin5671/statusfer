@@ -21,7 +21,7 @@ async function submitRegister(event){
         log.innerHTML = data.message;
     }else{ // Redirect to home on success
         log.className = 'd-none';
-        window.location = '/';
+        //window.location = '/';
     }
 }
 

@@ -7,11 +7,15 @@ var port = process.env.PORT || 8000;
 const cors = require('cors');
 app.use(cors());
 
-// Enable body parser
+// Use body parser
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Enable compression
+// Use cookie parser
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
+// Use compression
 const compression = require('compression');
 app.use(compression());
 

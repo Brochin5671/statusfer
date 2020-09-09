@@ -15,7 +15,7 @@ function showStatuses(){
             let statusMedia = document.createElement('li');
             statusMedia.className = 'media border-bottom';
             let statusBody = document.createElement('div');
-            statusBody.className = 'media-body mt-3 ml-3';
+            statusBody.className = 'media-body m-3';
             let user = document.createElement('h5');
             user.innerHTML = list[i].user;
             let status = document.createElement('p');

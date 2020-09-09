@@ -1,4 +1,4 @@
-// Setup router and UserSchema
+// Setup router
 const express = require('express');
 const router = express.Router();
 const path = require('path');
@@ -48,8 +48,10 @@ router.post('/register', async (req,res) => {
         const accessToken = jwt.sign({_id: user._id, username: user.username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '10m'});
         const refreshToken = jwt.sign({_id: user._id, username: user.username},process.env.REFRESH_TOKEN_SECRET,{expiresIn: '1h'});
         refreshTokens.push(refreshToken);
-        // Send tokens
-        res.json({success: {accessToken: accessToken, refreshToken: refreshToken}});
+        // Send httponly token cookies
+        res.cookie('accessToken',accessToken, {maxAge: 600000, httpOnly: true});
+        res.cookie('refreshToken',refreshToken,{maxAge: 3600000, httpOnly: true});
+        res.status(200).json({success: 'Register successful'});
     }catch(err){
         res.status(400).send(err);
     }
@@ -99,8 +101,10 @@ router.post('/login', async (req,res) => {
     const refreshToken = jwt.sign({_id: user._id, username: user.username},process.env.REFRESH_TOKEN_SECRET,{expiresIn: '1h'});
     refreshTokens.push(refreshToken);
 
-    // Send tokens
-    res.json({accessToken: accessToken, refreshToken: refreshToken});
+    // Send httponly token cookies
+    res.cookie('accessToken',accessToken, {maxAge: 600000, httpOnly: true});
+    res.cookie('refreshToken',refreshToken, {maxAge: 3600000, httpOnly: true})
+    res.status(200).json({success: 'Login successful'});
 
 });
 

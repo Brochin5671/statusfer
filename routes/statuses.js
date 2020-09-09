@@ -1,6 +1,7 @@
 // Setup router, StatusSchema, and token verification
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 const Status = require('../models/Status');
 const verifyToken = require('../verifyToken');
 
@@ -33,11 +34,15 @@ router.post('/', verifyToken, async (req,res) => {
 
 });
 
+router.get('/:statusId',(req,res) => {
+    res.sendFile(path.join(__dirname,'../public','status.html'));
+});
+
 // Get a specific status
-router.get('/:statusId', async (req,res) => {
+router.get('/get/:statusId', async (req,res) => {
     try{
         const status = await Status.findById(req.params.statusId);
-        res.send(status.user+": "+status.status);
+        res.json(status);
     }catch(err){ // Send error
         res.send('Entry not found');
     }

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>404 · Statusfer</title>
+        <title>Status · Statusfer</title>
         <meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1">
-		<meta name="description" content="404!">
+		<meta name="description" content="A user status!">
 		<meta name="author" content="Maxim Brochin">
         <meta name="keywords" content="Statusfer,messaging,social">
         <link rel="apple-touch-icon" sizes="180x180" href="/static/favicons/apple-touch-icon.png">
@@ -20,14 +20,17 @@
         <meta name="theme-color" content="#0dd4b6">
         <link rel="stylesheet" href="/static/style.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="/static/status.js" defer></script>
     </head>
-    <body>
+    <body onload="showStatus()">
         <main>
             <div class="container">
                 <div class="row min-vh-100 justify-content-center align-items-center">
-                    <div class="col shadow text-center">
-                        <h1>404 Not Found</h1>
-                        <p>The page you were looking for does not exist.</p>
+                    <div class="media">
+                        <div class="media-body m-3">
+                            <h5></h5>
+                            <p></p>
+                        </div>
                     </div>
                 </div>
             </div>
