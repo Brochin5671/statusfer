@@ -13,9 +13,9 @@ async function getStatuses(){
             const statusBody = document.createElement('div');
             statusBody.className = 'media-body m-3';
             const username = document.createElement('h5');
-            username.innerHTML = statusList[i].user;
+            username.innerText = statusList[i].user;
             const status = document.createElement('p');
-            status.innerHTML = statusList[i].status;
+            status.innerText = statusList[i].status;
             statusBody.appendChild(username);
             statusBody.appendChild(status);
             statusMedia.appendChild(statusBody);
@@ -39,7 +39,7 @@ async function getLoggedInInfo(){
         const data = await res.text();
         const loggedIn = document.getElementById('loggedIn');
         loggedIn.className = 'container';
-        loggedIn.querySelector('p').innerHTML = 'Logged in as '+data;
+        loggedIn.querySelector('p').innerText = 'Logged in as '+data;
     }else{ // Display loggedOut section if logged out
         const loggedOut = document.getElementById('loggedOut');
         loggedOut.className = 'container';

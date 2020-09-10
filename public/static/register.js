@@ -20,7 +20,7 @@ async function submitRegister(event){
     if(data.error){
         const log = document.getElementById('log');
         log.className = 'small m-0 mt-2';
-        log.innerHTML = data.message;
+        log.innerText = data.message;
     }else{ // Redirect to home on success
         window.location = '/';
     }
