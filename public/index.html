@@ -25,16 +25,39 @@
     <body onload="onLoadFunctions()">
         <main>
             <div class="container d-none" id="loggedOut">
-                <a href="/user/register"><p class="h4 text-center mb-5">Register</p></a>
-                <a href="/user/login"><p class="h4 text-center mb-5">Log In</p></a>
+                <div class="row m-3 justify-content-center">
+                    <div class="col">
+                        <a href="/user/register"><p class="h4 text-center">Register</p></a>
+                    </div>
+                    <div class="col">
+                        <a href="/user/login"><p class="h4 text-center">Log In</p></a>
+                    </div>
+                </div>
             </div>
             <div class="container d-none" id="loggedIn">
-                <p></p>
-                <form id="logout">
-                    <button type="submit" class="btn btn-primary">Log Out</button>
-                </form>
+                <div class="row m-3 justify-content-center align-items-center">
+                    <div class="col">
+                        <p class="text-center m-0"></p>
+                    </div>
+                    <div class="col text-center">
+                        <form id="logout">
+                            <button type="submit" class="btn btn-primary">Log Out</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="row shadow">
+                    <div class="col">
+                        <form id="postStatus">
+                            <div class="form-group">
+                                <label for="statusMessage">Status</label>
+                                <textarea class="form-control" id="statusMessage" rows="2"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary mb-3">Post</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="container">
+            <div class="container mt-4">
                 <ul class="list-unstyled shadow" id="statusList"></ul>
             </div>
         </main>

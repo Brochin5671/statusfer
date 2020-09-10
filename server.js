@@ -10,6 +10,7 @@ app.use(cors());
 // Use body parser
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.text( { limit: '1mb' } ));
 
 // Use cookie parser
 const cookieParser = require('cookie-parser');

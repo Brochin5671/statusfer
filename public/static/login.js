@@ -1,4 +1,4 @@
-// Sends a post request with form data
+// Sends a post request with login form data
 async function submitLogin(event){
     // Prevent refresh
     event.preventDefault();

@@ -22,7 +22,7 @@ router.get('/register',(req,res) => {
 router.post('/register', async (req,res) => {
     // Validate user and return error message if failed
     const { error } = registerValidation(req.body);
-    if(error) return res.json({message: error.details[0].message});
+    if(error) return res.json({error: '400 Bad Request', message: error.details[0].message});
     // Check if username and email already registered
     const usernameExists = await User.findOne({username: req.body.username});
     if(usernameExists) return res.json({error: '400 Bad Request', message: 'Username is taken.'});

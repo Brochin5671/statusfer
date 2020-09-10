@@ -57,7 +57,26 @@ async function submitLogout(event){
     }
     const res = await fetch('/user/logout',options);
     // Refresh page on success, else send error
-    if(res.status >= 200 && res.status <= 299) window.location = '/';
+    if(res.status >= 200 && res.status <= 299) window.location.reload(true);
+    else alert('Sorry, something went wrong.');
+}
+
+// Send a post request to post a status
+async function postStatus(event){
+    // Prevent refresh
+    event.preventDefault();
+    // Send post request with cookies and form data
+    const options = {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+			'Content-Type': 'text/plain'
+		},
+		body: document.getElementById('statusMessage').value
+    };
+    const res = await fetch('/status',options);
+    // Refresh page on success, else send error
+    if(res.status >= 200 && res.status <= 299) window.location.reload(true);
     else alert('Sorry, something went wrong.');
 }
 
@@ -68,5 +87,7 @@ function onLoadFunctions(){
 }
 
 // Listen for submitLogout event
-const form = document.getElementById('logout');
-form.addEventListener('submit',submitLogout);
+const logoutForm = document.getElementById('logout');
+const postForm = document.getElementById('postStatus');
+logoutForm.addEventListener('submit',submitLogout);
+postForm.addEventListener('submit',postStatus);

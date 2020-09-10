@@ -1,4 +1,4 @@
-// Sends a post request with form data
+// Sends a post request with register form data
 async function submitRegister(event){
     // Prevent refresh
     event.preventDefault();

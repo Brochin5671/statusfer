@@ -8,7 +8,7 @@ const verifyToken = require('../verifyToken');
 // Get all statuses
 router.get('/', async (req,res) => {
     try{
-        const statuses = await Status.find().limit(100);
+        const statuses = await Status.find().limit(100).sort({createdAt: 'descending'});
         res.json(statuses);
     }catch(err){ // Send error
         res.status(500).json(err);
@@ -20,7 +20,7 @@ router.post('/', verifyToken, async (req,res) => {
     // Create new status object
     const status = new Status({
         user: req.user.username,
-        status: req.body.status
+        status: req.body
     });
     // Save status to DB
     try{
