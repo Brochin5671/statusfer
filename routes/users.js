@@ -20,28 +20,23 @@ router.get('/register',(req,res) => {
 
 // Register a user
 router.post('/register', async (req,res) => {
-
     // Validate user and return error message if failed
     const { error } = registerValidation(req.body);
     if(error) return res.json({message: error.details[0].message});
-
     // Check if username and email already registered
     const usernameExists = await User.findOne({username: req.body.username});
-    if(usernameExists) return res.json({message: 'Username taken.'});
+    if(usernameExists) return res.json({error: '400 Bad Request', message: 'Username is taken.'});
     const emailExists = await User.findOne({email: req.body.email});
-    if(emailExists) return res.json({message: 'Email already registered'});
-    
+    if(emailExists) return res.json({error: '400 Bad Request', message: 'Email already registered.'});  
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(req.body.password,salt);
-
     // Create new user object
     const user = new User({
         username: req.body.username,
         email: req.body.email,
         password: hashedPass
     });
-
     // Save user to DB and generate tokens
     try{
         const savedUser = await user.save();
@@ -52,29 +47,26 @@ router.post('/register', async (req,res) => {
         // Send httponly token cookies
         res.cookie('accessToken',accessToken, {maxAge: 600000, httpOnly: true});
         res.cookie('refreshToken',refreshToken,{maxAge: 3600000, httpOnly: true});
-        res.status(200).json({success: 'Register successful'});
+        res.status(200).json({message: 'Register successful'});
     }catch(err){
-        res.status(400).send(err);
+        res.status(500).json(err);
     }
 });
 
 // Generate new access token from refresh token
 router.post('/token', async (req,res) => {
-
     // Check if refresh token exists
     const refreshToken = req.body.refreshToken;
     if(!refreshToken) return res.sendStatus(401);
     if(!refreshTokens.includes(refreshToken)) return res.status(403).send('Forbidden token');
-
-    // Verify refresh token and generate new access token
+    // Verify refresh token, generate new access token and send httponly token cookie
     try{
         const verified = jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET);
         const accessToken = jwt.sign({_id: verified._id, username: verified.username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '10m'});
-        res.json({accessToken: accessToken});
+        res.cookie('accessToken',accessToken, {maxAge: 600000, httpOnly: true});
     }catch(err){ // Send error
         res.status(400).send('Invalid token');
     }
-
 });
 
 // Login page
@@ -84,46 +76,37 @@ router.get('/login',(req,res) => {
 
 // Login a user
 router.post('/login', async (req,res) => {
-
     // Validate user and return error message if failed
     const { error } = loginValidation(req.body);
-    if(error) return res.json({message: error.details[0].message});
-
+    if(error) return res.json({error: '400 Bad Request', message: error.details[0].message});
     // Check if email is correct
     const user = await User.findOne({email: req.body.email});
-    if(!user) return res.json({message: 'Email or password is wrong.'});
-
+    if(!user) return res.json({error: '400 Bad Request', message: 'Email or password is wrong.'});
     // Check if password is correct
     const validPass = await bcrypt.compare(req.body.password,user.password);
-    if(!validPass) return res.json({message: 'Email or password is wrong.'});
-
+    if(!validPass) return res.json({error: '400 Bad Request', message: 'Email or password is wrong.'});
     // Create and assign access and refresh token to user, then store refresh token
     const accessToken = jwt.sign({_id: user._id, username: user.username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '10m'});
     const refreshToken = jwt.sign({_id: user._id, username: user.username},process.env.REFRESH_TOKEN_SECRET,{expiresIn: '1h'});
     refreshTokens.push(refreshToken);
-
     // Send httponly token cookies
     res.cookie('accessToken',accessToken, {maxAge: 600000, httpOnly: true});
     res.cookie('refreshToken',refreshToken, {maxAge: 3600000, httpOnly: true})
-    res.status(200).json({success: 'Login successful'});
-
+    res.status(200).json({message: 'Login successful'});
 });
 
-// Check if user logged in
+// Verify user logged in and send back username
 router.get('/loggedin', verifyToken, (req,res) => {
-    // Send back username
-    const username = req.user.username;
-    res.status(200).json({message: username});
-
+    res.status(200).send(req.user.username);
 });
 
 // Logout a user
-router.delete('/logout',(req,res) => {
-    // Remove refresh token, clear cookies, and send success message
+router.delete('/logout', (req,res) => {
+    // Remove refresh token from db, clear cookies, and send success message
     refreshTokens = refreshTokens.filter(token => token !== req.cookies.refreshToken);
     res.clearCookie('refreshToken');
     res.clearCookie('accessToken');
-    res.json({message: 'Logout successful'});
+    res.status(200).send('Logout successful');
 });
 
 // Export router

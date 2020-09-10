@@ -1,7 +1,8 @@
 // Sends a post request with form data
 async function submitRegister(event){
-    event.preventDefault(); // Overrides refresh
-    // Send post request
+    // Prevent refresh
+    event.preventDefault();
+    // Send post request with form data and save response
     const options = {
 		method: 'POST',
 		headers: {
@@ -15,17 +16,16 @@ async function submitRegister(event){
     };
     const res = await fetch('/user/register',options);
     const data = await res.json();
-    // Log failure
-    if(data.message){
+    // Display error tip if failed
+    if(data.error){
+        const log = document.getElementById('log');
         log.className = 'small m-0 mt-2';
         log.innerHTML = data.message;
     }else{ // Redirect to home on success
-        log.className = 'd-none';
         window.location = '/';
     }
 }
 
 // Listen for submit event
 const form = document.getElementById('register');
-const log = document.getElementById('log');
 form.addEventListener('submit',submitRegister);

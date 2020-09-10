@@ -1,77 +1,72 @@
-// Get all statuses and return a list
+// Get and display all statuses
 async function getStatuses(){
+    // Send get request
     const res = await fetch('/status');
-    const statusList = await res.json();
-    return statusList;
-}
-
-// Show statuses
-function showStatuses(){
-    const statusList = getStatuses();
-    statusList.then( (list) => {
-        let listElement = document.querySelector('#statusList');
-        for(let i=0;i<list.length;i++){
-            // Create media object, body, username and status, and append to list
-            let statusMedia = document.createElement('li');
+    // Save response, get and fill list with media objects
+    if(res.status >= 200 && res.status <= 299){
+        const statusList = await res.json();
+        const list = document.querySelector('#statusList');
+        // Create media objects, body, username and status, and append to list
+        for(let i=0;i<statusList.length;i++){
+            const statusMedia = document.createElement('li');
             statusMedia.className = 'media border-bottom';
-            let statusBody = document.createElement('div');
+            const statusBody = document.createElement('div');
             statusBody.className = 'media-body m-3';
-            let user = document.createElement('h5');
-            user.innerHTML = list[i].user;
-            let status = document.createElement('p');
-            status.innerHTML = list[i].status;
-            statusBody.appendChild(user);
+            const username = document.createElement('h5');
+            username.innerHTML = statusList[i].user;
+            const status = document.createElement('p');
+            status.innerHTML = statusList[i].status;
+            statusBody.appendChild(username);
             statusBody.appendChild(status);
             statusMedia.appendChild(statusBody);
-            listElement.appendChild(statusMedia);
+            list.appendChild(statusMedia);
         }
-    });
+    }else{ // Send error
+        alert('Sorry, something went wrong.');
+    }
 }
 
 // Get username if logged in
-async function getLoggedIn(){
-    // Send get request
+async function getLoggedInInfo(){
+    // Send get request with cookies
     const options = {
         method: 'GET',
         credentials: 'same-origin',
     };
-    // Check if logged in
-    try{
-        const res = await fetch('/user/loggedin',options);
-        const data = await res.json();
-        // Display loggedIn section with username
+    const res = await fetch('/user/loggedin',options);
+    // Display loggedIn section and username if logged in
+    if(res.status >= 200 && res.status <= 299){
+        const data = await res.text();
         const loggedIn = document.getElementById('loggedIn');
         loggedIn.className = 'container';
-        loggedIn.querySelector('p').innerHTML = 'Logged in as '+data.message;
-    }catch(err){ // Display loggedOut section
+        loggedIn.querySelector('p').innerHTML = 'Logged in as '+data;
+    }else{ // Display loggedOut section if logged out
         const loggedOut = document.getElementById('loggedOut');
         loggedOut.className = 'container';
     }
 }
 
-// Check if user is logged in
-function checkLoggedIn(){
-    getLoggedIn();
-}
-checkLoggedIn();
-
 // Send a delete request to logout
 async function submitLogout(event){
+    // Prevent refresh
     event.preventDefault();
-    // Send delete request
+    // Send delete request with cookies
     const options = {
         method: 'DELETE',
         credentials: 'same-origin'
     }
     const res = await fetch('/user/logout',options);
-    const data = await res.json();
-    if(data.message){
-        window.location = '/';
-    }else{
-        alert('Something went wrong');
-    }
+    // Refresh page on success, else send error
+    if(res.status >= 200 && res.status <= 299) window.location = '/';
+    else alert('Sorry, something went wrong.');
 }
 
-// Listen for submit event
+// Functions to be executed on load
+function onLoadFunctions(){
+    getStatuses();
+    getLoggedInInfo();
+}
+
+// Listen for submitLogout event
 const form = document.getElementById('logout');
 form.addEventListener('submit',submitLogout);

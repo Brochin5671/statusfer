@@ -34,10 +34,8 @@ if(port == process.env.PORT){
 // Connect to DB
 const mongoose = require('mongoose');
 require('dotenv/config');
-mongoose.connect(process.env.DB_CONNECTION,
-{ useNewUrlParser: true, useUnifiedTopology: true },
-() => {
-    console.log('connected to db');
+mongoose.connect(process.env.DB_CONNECTION,{ useNewUrlParser: true, useUnifiedTopology: true }, () => {
+    console.log('Connected to Mongodb');
 });
 
 // Serve static files
