@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const Status = require('../models/Status');
-const verifyToken = require('../verifyToken');
+const { verifyAccessToken, verifyRefreshToken } = require('../verifyToken');
 
 // Get all statuses
 router.get('/', async (req,res) => {
@@ -16,7 +16,7 @@ router.get('/', async (req,res) => {
 });
 
 // Send a status
-router.post('/', verifyToken, async (req,res) => {
+router.post('/', verifyAccessToken, async (req,res) => {
     // Create new status object
     const status = new Status({
         user: req.user.username,
@@ -47,7 +47,7 @@ router.get('/:statusId/data', async (req,res) => {
 });
 
 // Delete a specific status
-router.delete('/:statusId', verifyToken, async (req,res) => {
+router.delete('/:statusId', verifyAccessToken, async (req,res) => {
     try{
         const removedStatus = await Status.deleteOne({_id: req.params.statusId});
         res.json(removedStatus);
@@ -57,7 +57,7 @@ router.delete('/:statusId', verifyToken, async (req,res) => {
 });
 
 // Update a specific status
-router.patch('/:statusId', verifyToken, async (req,res) => {
+router.patch('/:statusId', verifyAccessToken, async (req,res) => {
     try{
         const patchedStatus = await Status.updateOne({_id: req.params.statusId},{$set: {status: req.body.status}});
         res.json(patchedStatus);

@@ -8,13 +8,13 @@ const User = require('../models/User');
 const { registerValidation,loginValidation } = require('../validation');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const verifyToken = require('../verifyToken');
+const { verifyAccessToken, verifyRefreshToken } = require('../verifyToken');
 
 // Store refreshTokens
 let refreshTokens = [];
 
 // Register page
-router.get('/register',(req,res) => {
+router.get('/register', (req,res) => {
     res.sendFile(path.join(__dirname,'../public','register.html'));
 });
 
@@ -54,19 +54,11 @@ router.post('/register', async (req,res) => {
 });
 
 // Generate new access token from refresh token
-router.post('/token', async (req,res) => {
+router.post('/token', verifyRefreshToken, async (req,res) => {
     // Check if refresh token exists
     const refreshToken = req.body.refreshToken;
     if(!refreshToken) return res.sendStatus(401);
     if(!refreshTokens.includes(refreshToken)) return res.status(403).send('Forbidden token');
-    // Verify refresh token, generate new access token and send httponly token cookie
-    try{
-        const verified = jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET);
-        const accessToken = jwt.sign({_id: verified._id, username: verified.username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '10m'});
-        res.cookie('accessToken',accessToken, {maxAge: 600000, httpOnly: true});
-    }catch(err){ // Send error
-        res.status(400).send('Invalid token');
-    }
 });
 
 // Login page
@@ -96,7 +88,7 @@ router.post('/login', async (req,res) => {
 });
 
 // Verify user logged in and send back username
-router.get('/loggedin', verifyToken, (req,res) => {
+router.get('/loggedin', verifyAccessToken, (req,res) => {
     res.status(200).send(req.user.username);
 });
 
