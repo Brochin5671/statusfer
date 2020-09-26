@@ -56,9 +56,16 @@ router.post('/register', async (req,res) => {
 // Generate new access token from refresh token
 router.post('/token', verifyRefreshToken, async (req,res) => {
     // Check if refresh token exists
-    const refreshToken = req.body.refreshToken;
-    if(!refreshToken) return res.sendStatus(401);
-    if(!refreshTokens.includes(refreshToken)) return res.status(403).send('Forbidden token');
+    const refreshToken = req.cookies.refreshToken;
+    if(!refreshToken) return res.json({error: '401 Unauthorized', message: 'Unauthorized Access'});
+    if(!refreshTokens.includes(refreshToken)) return res.json({error: '403 Forbidden', message: 'Forbidden token'});
+    // Generate new access token and httponly token cookie if access token cookie expired
+    const currentAccessToken = req.cookies.accessToken;
+    if(!currentAccessToken){
+        const accessToken = jwt.sign({_id: req.user._id, username: req.user.username},process.env.ACCESS_TOKEN_SECRET,{expiresIn: '10m'});
+        res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
+    }
+    res.status(200).json({message: req.user.username});
 });
 
 // Login page
@@ -89,7 +96,7 @@ router.post('/login', async (req,res) => {
 
 // Verify user logged in and send back username
 router.get('/loggedin', verifyAccessToken, (req,res) => {
-    res.status(200).send(req.user.username);
+    res.status(200).json({message: req.user.username});
 });
 
 // Logout a user

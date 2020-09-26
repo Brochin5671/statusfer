@@ -28,18 +28,18 @@ async function getStatuses(){
 
 // Get username if logged in
 async function getLoggedInInfo(){
-    // Send get request with cookies
+    // Send get request with cookies and save response
     const options = {
-        method: 'GET',
+        method: 'POST',
         credentials: 'same-origin',
     };
-    const res = await fetch('/user/loggedin',options);
+    const res = await fetch('/user/token',options);
+    const data = await res.json();
     // Display loggedIn section and username if logged in
-    if(res.status >= 200 && res.status <= 299){
-        const data = await res.text();
+    if(!data.error){
         const loggedIn = document.getElementById('loggedIn');
         loggedIn.className = 'container';
-        loggedIn.querySelector('p').innerText = 'Logged in as '+data;
+        loggedIn.querySelector('p').innerText = 'Logged in as '+data.message;
     }else{ // Display loggedOut section if logged out
         const loggedOut = document.getElementById('loggedOut');
         loggedOut.className = 'container';
