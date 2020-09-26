@@ -6,16 +6,20 @@ async function getStatuses(){
     if(res.status >= 200 && res.status <= 299){
         const statusList = await res.json();
         const list = document.querySelector('#statusList');
-        // Create media objects, body, username and status, and append to list
+        // Create media objects, body, link to post, username, status, and append all to list
         for(let i=0;i<statusList.length;i++){
             const statusMedia = document.createElement('li');
-            statusMedia.className = 'media border-bottom';
+            statusMedia.className = 'media position-relative border-bottom';
             const statusBody = document.createElement('div');
             statusBody.className = 'media-body m-3';
+            const statusLink = document.createElement('a');
+            statusLink.href = '/status/'+statusList[i]._id;
+            statusLink.className = 'stretched-link';
             const username = document.createElement('h5');
             username.innerText = statusList[i].user;
             const status = document.createElement('p');
             status.innerText = statusList[i].status;
+            statusBody.appendChild(statusLink);
             statusBody.appendChild(username);
             statusBody.appendChild(status);
             statusMedia.appendChild(statusBody);
