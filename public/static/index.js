@@ -11,7 +11,7 @@ async function getStatuses(){
             const statusMedia = document.createElement('li');
             statusMedia.className = 'media position-relative border-bottom';
             const statusBody = document.createElement('div');
-            statusBody.className = 'media-body m-3';
+            statusBody.className = 'media-body m-3 text-break';
             const statusLink = document.createElement('a');
             statusLink.href = '/status/'+statusList[i]._id;
             statusLink.className = 'stretched-link';
