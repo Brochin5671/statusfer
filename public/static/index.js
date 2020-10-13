@@ -24,6 +24,20 @@ async function getStatuses(){
             statusBody.appendChild(status);
             statusMedia.appendChild(statusBody);
             list.appendChild(statusMedia);
+            // If status is owned by user, add edit and delete buttons
+            const loggedIn = document.querySelector('#loggedIn p');
+            if(loggedIn != null && loggedIn.innerText.search(statusList[i].user) != -1){
+                const editBtn = document.createElement('form');
+                editBtn.innerText = 'Edit';
+                editBtn.type = 'button';
+                editBtn.className = 'btn btn-primary mr-2 edit';
+                statusBody.appendChild(editBtn);
+                const deleteBtn = document.createElement('form');
+                deleteBtn.innerText = 'Delete';
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'btn btn-primary delete';
+                statusBody.appendChild(deleteBtn);
+            }
         }
     }else{ // Send error
         alert('Sorry, something went wrong.');
@@ -84,14 +98,56 @@ async function postStatus(event){
     else alert('Sorry, something went wrong.');
 }
 
-// Functions to be executed on load
-function onLoadFunctions(){
-    getStatuses();
-    getLoggedInInfo();
+// Send a patch request to edit a status
+async function editStatus(event){
+    // Prevent refresh
+    event.preventDefault();
+    // Send patch request with cookies and form data
+    const options = {
+        method: 'PATCH',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'text/plain'
+        },
+        body: 'elo'// find way to send new message
+    };
+    //const res = await fetch('/status/statusId',options); <-- find way to add statusId
+    // Refresh page on success, else send error
+    if(res.status >= 200 && res.status <= 299) window.location.reload(true);
+    else alert('Sorry, something went wrong.');
 }
 
-// Listen for submitLogout event
+// Send a delete request to delete a status
+async function deleteStatus(event){
+    // Prevent refresh
+    event.preventDefault();
+    // Send patch request with cookies and form data
+    const options = {
+        method: 'DELETE',
+        credentials: 'same-origin',
+    };
+    //const res = await fetch('/status/statusId',options); <-- find way to add statusId
+    // Refresh page on success, else send error
+    if(res.status >= 200 && res.status <= 299) window.location.reload(true);
+    else alert('Sorry, something went wrong.');
+}
+
+// Functions to be executed on load
+function onLoadFunctions(){
+    getLoggedInInfo();
+    getStatuses();
+}
+
+// Listen for events
 const logoutForm = document.getElementById('logout');
 const postForm = document.getElementById('postStatus');
+const editForms = document.getElementsByClassName('edit')
+const deleteForms = document.getElementsByClassName('delete')
 logoutForm.addEventListener('submit',submitLogout);
 postForm.addEventListener('submit',postStatus);
+for(let i=0;i<editForms.length;i++){
+    editForms[i].addEventListener('edit',editStatus);
+}
+for(let i=0;i<deleteForms.length;i++){
+    deleteForms[i].addEventListener('delete',deleteStatus);
+}
