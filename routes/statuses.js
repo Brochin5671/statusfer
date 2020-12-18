@@ -49,6 +49,11 @@ router.get('/:statusId/data', async (req,res) => {
 // Delete a specific status
 router.delete('/:statusId', verifyAccessToken, async (req,res) => {
     try{
+        // Check if status is owned by user
+        const status = await Status.findById(req.params.statusId);
+        if(status.user != req.user.username){
+            throw new Error();
+        }
         const removedStatus = await Status.deleteOne({_id: req.params.statusId});
         res.json(removedStatus);
     }catch(err){ // Send error
@@ -59,6 +64,11 @@ router.delete('/:statusId', verifyAccessToken, async (req,res) => {
 // Update a specific status
 router.patch('/:statusId', verifyAccessToken, async (req,res) => {
     try{
+        // Check if status is owned by user
+        const status = await Status.findById(req.params.statusId);
+        if(status.user != req.user.username){
+            throw new Error();
+        }
         const patchedStatus = await Status.updateOne({_id: req.params.statusId},{$set: {status: req.body.status}});
         res.json(patchedStatus);
     }catch(err){ // Send error

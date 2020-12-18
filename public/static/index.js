@@ -8,13 +8,18 @@ async function getStatuses(){
         const list = document.querySelector('#statusList');
         // Create media objects, body, link to post, username, status, and append all to list
         for(let i=0;i<statusList.length;i++){
+            // Create media element
             const statusMedia = document.createElement('li');
             statusMedia.className = 'media position-relative border-bottom';
+            statusMedia.id = statusList[i]._id;
+            // Create body element
             const statusBody = document.createElement('div');
             statusBody.className = 'media-body m-3 text-break';
+            // Create link element
             const statusLink = document.createElement('a');
             statusLink.href = '/status/'+statusList[i]._id;
-            statusLink.className = 'stretched-link';
+            //statusLink.className = 'stretched-link'; temp disabled
+            // Create user and status text
             const username = document.createElement('h5');
             username.innerText = statusList[i].user;
             const status = document.createElement('p');
@@ -27,16 +32,21 @@ async function getStatuses(){
             // If status is owned by user, add edit and delete buttons
             const loggedIn = document.querySelector('#loggedIn p');
             if(loggedIn != null && loggedIn.innerText.search(statusList[i].user) != -1){
-                const editBtn = document.createElement('form');
+                // Create edit button
+                const editBtn = document.createElement('button');
                 editBtn.innerText = 'Edit';
-                editBtn.type = 'button';
+                editBtn.type = 'click';
                 editBtn.className = 'btn btn-primary mr-2 edit';
                 statusBody.appendChild(editBtn);
-                const deleteBtn = document.createElement('form');
+                // Create delete button
+                const deleteBtn = document.createElement('button');
                 deleteBtn.innerText = 'Delete';
-                deleteBtn.type = 'button';
+                deleteBtn.type = 'click';
                 deleteBtn.className = 'btn btn-primary delete';
                 statusBody.appendChild(deleteBtn);
+                // Add event listeners for edit and delete buttons
+                editBtn.addEventListener('click',editStatus);
+                deleteBtn.addEventListener('click',deleteStatus);
             }
         }
     }else{ // Send error
@@ -66,8 +76,6 @@ async function getLoggedInInfo(){
 
 // Send a delete request to logout
 async function submitLogout(event){
-    // Prevent refresh
-    event.preventDefault();
     // Send delete request with cookies
     const options = {
         method: 'DELETE',
@@ -100,8 +108,6 @@ async function postStatus(event){
 
 // Send a patch request to edit a status
 async function editStatus(event){
-    // Prevent refresh
-    event.preventDefault();
     // Send patch request with cookies and form data
     const options = {
         method: 'PATCH',
@@ -113,20 +119,20 @@ async function editStatus(event){
     };
     //const res = await fetch('/status/statusId',options); <-- find way to add statusId
     // Refresh page on success, else send error
-    if(res.status >= 200 && res.status <= 299) window.location.reload(true);
-    else alert('Sorry, something went wrong.');
+    /*if(res.status >= 200 && res.status <= 299) window.location.reload(true);
+    else alert('Sorry, something went wrong.');*/
 }
 
 // Send a delete request to delete a status
 async function deleteStatus(event){
-    // Prevent refresh
-    event.preventDefault();
+    // Get status id
+    const statusId = event.toElement.offsetParent.id;
     // Send patch request with cookies and form data
     const options = {
         method: 'DELETE',
         credentials: 'same-origin',
     };
-    //const res = await fetch('/status/statusId',options); <-- find way to add statusId
+    const res = await fetch('/status/'+statusId,options);
     // Refresh page on success, else send error
     if(res.status >= 200 && res.status <= 299) window.location.reload(true);
     else alert('Sorry, something went wrong.');
@@ -141,13 +147,5 @@ function onLoadFunctions(){
 // Listen for events
 const logoutForm = document.getElementById('logout');
 const postForm = document.getElementById('postStatus');
-const editForms = document.getElementsByClassName('edit')
-const deleteForms = document.getElementsByClassName('delete')
-logoutForm.addEventListener('submit',submitLogout);
+logoutForm.addEventListener('click',submitLogout);
 postForm.addEventListener('submit',postStatus);
-for(let i=0;i<editForms.length;i++){
-    editForms[i].addEventListener('edit',editStatus);
-}
-for(let i=0;i<deleteForms.length;i++){
-    deleteForms[i].addEventListener('delete',deleteStatus);
-}
