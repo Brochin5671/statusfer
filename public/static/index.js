@@ -115,9 +115,12 @@ function editStatus(event){
     const statusText = event.path[1].children[2];
     textArea.value = statusText.innerText;
     // Replace text with text area and remove edit button
-    statusText.parentNode.replaceChild(textArea, statusText);
-    textArea.focus();
+    statusText.replaceWith(textArea);
     event.path[0].remove();
+    // Focus on element if not using safari browser
+    if(!(navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") == -1)){
+        textArea.focus();
+    }
     // Add listener to trigger patchStatus()
     textArea.addEventListener('blur', patchStatus);
 }
