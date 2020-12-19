@@ -112,7 +112,7 @@ async function editStatus(event){
     const textArea = document.createElement('textarea');
     textArea.className = 'form-control mb-3';
     textArea.rows = 2;
-    const statusText = event.path[1].children[2];
+    const statusText = event.composedPath()[1].children[2];
     textArea.value = statusText.innerText;
     statusText.replaceWith(textArea);
     // Create confirm button and replace edit button
@@ -120,7 +120,7 @@ async function editStatus(event){
     confirmBtn.innerText = 'Confirm';
     confirmBtn.type = 'click';
     confirmBtn.className = 'btn btn-primary mr-2'; 
-    const editBtn = event.path[0];
+    const editBtn = event.composedPath()[0];
     editBtn.replaceWith(confirmBtn);
     // Add listener to trigger patchStatus()
     confirmBtn.addEventListener('click', patchStatus);
@@ -129,7 +129,7 @@ async function editStatus(event){
 // Send a patch request to edit a status
 async function patchStatus(event){
     // Get status id
-    const statusId = event.path[2].id;
+    const statusId = event.composedPath()[2].id;
     // Send patch request with cookies and form data
     const options = {
         method: 'PATCH',
