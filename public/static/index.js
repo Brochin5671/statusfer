@@ -31,7 +31,7 @@ async function getStatuses(){
             list.appendChild(statusMedia);
             // If status is owned by user, add edit and delete buttons
             const loggedIn = document.querySelector('#loggedIn p');
-            if(loggedIn != null && loggedIn.innerText.search(statusList[i].user) != -1){
+            if(loggedIn != null && loggedIn.innerText.indexOf(statusList[i].user) != -1){
                 // Create edit button
                 const editBtn = document.createElement('button');
                 editBtn.innerText = 'Edit';
