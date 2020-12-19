@@ -6,7 +6,7 @@ async function getStatuses(){
     if(res.status >= 200 && res.status <= 299){
         const statusList = await res.json();
         const list = document.querySelector('#statusList');
-        // Create media objects, body, link to post, username, status, and append all to list
+        // Create media objects and append all to list
         for(let i=0;i<statusList.length;i++){
             // Create media element
             const statusMedia = document.createElement('li');
@@ -24,9 +24,16 @@ async function getStatuses(){
             username.innerText = statusList[i].user;
             const status = document.createElement('p');
             status.innerText = statusList[i].status;
+            // Get the date of latest revision of the status and create date text
+            const dateObj = new Date(statusList[i].updatedAt);
+            const date = document.createElement('p');
+            date.className = 'small';
+            date.innerText = dateObj.toString().split(' (')[0];
+            // Append by linking parents
             statusBody.appendChild(statusLink);
             statusBody.appendChild(username);
             statusBody.appendChild(status);
+            statusBody.appendChild(date);
             statusMedia.appendChild(statusBody);
             list.appendChild(statusMedia);
             // If status is owned by user, add edit and delete buttons
