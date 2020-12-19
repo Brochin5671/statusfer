@@ -137,7 +137,7 @@ async function patchStatus(event){
         headers: {
             'Content-Type': 'text/plain'
         },
-        body: event.path[1].children[2].value,
+        body: event.composedPath()[1].children[2].value,
     };
     const res = await fetch('/status/'+statusId,options);
     // Refresh page on success, else send error
