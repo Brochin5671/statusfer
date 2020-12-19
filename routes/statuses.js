@@ -54,6 +54,7 @@ router.delete('/:statusId', verifyAccessToken, async (req,res) => {
         if(status.user != req.user.username){
             throw new Error();
         }
+        // Delete status
         const removedStatus = await Status.deleteOne({_id: req.params.statusId});
         res.json(removedStatus);
     }catch(err){ // Send error
@@ -69,7 +70,8 @@ router.patch('/:statusId', verifyAccessToken, async (req,res) => {
         if(status.user != req.user.username){
             throw new Error();
         }
-        const patchedStatus = await Status.updateOne({_id: req.params.statusId},{$set: {status: req.body.status}});
+        // Update status
+        const patchedStatus = await Status.updateOne({_id: req.params.statusId},{$set: {status: req.body}});
         res.json(patchedStatus);
     }catch(err){ // Send error
         res.json({error: '404 Not Found', message: 'No entry found'});

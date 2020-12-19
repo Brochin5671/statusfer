@@ -106,8 +106,26 @@ async function postStatus(event){
     else alert('Sorry, something went wrong.');
 }
 
+// Replaces text with text area and creates a blur event listener to send request
+function editStatus(event){
+    // Create text area
+    const textArea = document.createElement('textarea');
+    textArea.className = 'form-control mb-3';
+    textArea.rows = 2;
+    const statusText = event.path[1].children[2];
+    textArea.value = statusText.innerText;
+    // Replace text with text area and remove edit button
+    statusText.parentNode.replaceChild(textArea, statusText);
+    textArea.focus();
+    event.path[0].remove();
+    // Add listener to trigger patchStatus()
+    textArea.addEventListener('blur', patchStatus);
+}
+
 // Send a patch request to edit a status
-async function editStatus(event){
+async function patchStatus(event){
+    // Get status id
+    const statusId = event.path[2].id;
     // Send patch request with cookies and form data
     const options = {
         method: 'PATCH',
@@ -115,12 +133,12 @@ async function editStatus(event){
         headers: {
             'Content-Type': 'text/plain'
         },
-        body: 'elo'// find way to send new message
+        body: event.srcElement.value,
     };
-    //const res = await fetch('/status/statusId',options); <-- find way to add statusId
+    const res = await fetch('/status/'+statusId,options);
     // Refresh page on success, else send error
-    /*if(res.status >= 200 && res.status <= 299) window.location.reload(true);
-    else alert('Sorry, something went wrong.');*/
+    if(res.status >= 200 && res.status <= 299) window.location.reload(true);
+    else alert('Sorry, something went wrong.');
 }
 
 // Send a delete request to delete a status
