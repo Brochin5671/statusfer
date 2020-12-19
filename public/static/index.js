@@ -106,23 +106,24 @@ async function postStatus(event){
     else alert('Sorry, something went wrong.');
 }
 
-// Replaces text with text area and creates a blur event listener to send request
+// Replaces text with text area and creates a confirm button
 function editStatus(event){
-    // Create text area
+    // Create text area and replace text element
     const textArea = document.createElement('textarea');
     textArea.className = 'form-control mb-3';
     textArea.rows = 2;
     const statusText = event.path[1].children[2];
     textArea.value = statusText.innerText;
-    // Replace text with text area and remove edit button
     statusText.replaceWith(textArea);
-    event.path[0].remove();
-    // Focus on element if not using safari browser
-    if(!(navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") == -1)){
-        textArea.focus();
-    }
+    // Create confirm button and replace edit button
+    const confirmBtn = document.createElement('button');
+    confirmBtn.innerText = 'Confirm';
+    confirmBtn.type = 'click';
+    confirmBtn.className = 'btn btn-primary mr-2 edit'; 
+    const editBtn = event.path[0];
+    editBtn.replaceWith(confirmBtn);
     // Add listener to trigger patchStatus()
-    textArea.addEventListener('blur', patchStatus);
+    confirmBtn.addEventListener('click', patchStatus);
 }
 
 // Send a patch request to edit a status
@@ -136,7 +137,7 @@ async function patchStatus(event){
         headers: {
             'Content-Type': 'text/plain'
         },
-        body: event.srcElement.value,
+        body: event.path[1].children[2].value,
     };
     const res = await fetch('/status/'+statusId,options);
     // Refresh page on success, else send error
