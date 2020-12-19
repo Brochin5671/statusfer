@@ -107,7 +107,7 @@ async function postStatus(event){
 }
 
 // Replaces text with text area and creates a confirm button
-function editStatus(event){
+async function editStatus(event){
     // Create text area and replace text element
     const textArea = document.createElement('textarea');
     textArea.className = 'form-control mb-3';
@@ -119,7 +119,7 @@ function editStatus(event){
     const confirmBtn = document.createElement('button');
     confirmBtn.innerText = 'Confirm';
     confirmBtn.type = 'click';
-    confirmBtn.className = 'btn btn-primary mr-2 edit'; 
+    confirmBtn.className = 'btn btn-primary mr-2'; 
     const editBtn = event.path[0];
     editBtn.replaceWith(confirmBtn);
     // Add listener to trigger patchStatus()
