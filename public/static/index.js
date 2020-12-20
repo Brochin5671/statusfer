@@ -108,9 +108,10 @@ async function postStatus(event){
 		body: document.getElementById('statusMessage').value
     };
     const res = await fetch('/status',options);
-    // Refresh page on success, else send error
-    if(res.status >= 200 && res.status <= 299) window.location.reload(true);
-    else alert('Sorry, something went wrong.');
+    const data = await res.json();
+    // Display error tip if failed, else refresh page on success
+    if(data.error) alert(data.message);
+    else window.location.reload(true);
 }
 
 // Replaces text with text area and creates a confirm button
@@ -147,9 +148,10 @@ async function patchStatus(event){
         body: event.composedPath()[1].children[2].value,
     };
     const res = await fetch('/status/'+statusId,options);
-    // Refresh page on success, else send error
-    if(res.status >= 200 && res.status <= 299) window.location.reload(true);
-    else alert('Sorry, something went wrong.');
+    const data = await res.json();
+    // Display error tip if failed, else refresh page on success
+    if(data.error) alert(data.message);
+    else window.location.reload(true);
 }
 
 // Send a delete request to delete a status

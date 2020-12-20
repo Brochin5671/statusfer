@@ -4,6 +4,7 @@ const router = express.Router();
 const path = require('path');
 const Status = require('../models/Status');
 const { verifyAccessToken, verifyRefreshToken } = require('../verifyToken');
+const { statusValidation } = require('../validation');
 
 // Get all statuses
 router.get('/', async (req,res) => {
@@ -17,6 +18,10 @@ router.get('/', async (req,res) => {
 
 // Send a status
 router.post('/', verifyAccessToken, async (req,res) => {
+    // Validate status and return error message if failed
+    const statusMsg = { message: req.body };
+    const { error } = statusValidation(statusMsg);
+    if(error) return res.json({error: '400 Bad Request', message: error.details[0].message});
     // Create new status object
     const status = new Status({
         user: req.user.username,
@@ -64,6 +69,10 @@ router.delete('/:statusId', verifyAccessToken, async (req,res) => {
 
 // Update a specific status
 router.patch('/:statusId', verifyAccessToken, async (req,res) => {
+    // Validate status and return error message if failed
+    const statusMsg = { message: req.body };
+    const { error } = statusValidation(statusMsg);
+    if(error) return res.json({error: '400 Bad Request', message: error.details[0].message});
     try{
         // Check if status is owned by user
         const status = await Status.findById(req.params.statusId);

@@ -20,6 +20,15 @@ const loginValidation = user => {
     return JoiSchema.validate(user);
 }
 
+// Status validation
+const statusValidation = status => {
+    const JoiSchema = joi.object({
+        message: joi.string().required().max(255)
+    });
+    return JoiSchema.validate(status);
+}
+
 // Export validations
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
+module.exports.statusValidation = statusValidation;
