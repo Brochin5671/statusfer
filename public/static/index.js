@@ -38,7 +38,7 @@ async function getStatuses(){
             list.appendChild(statusMedia);
             // If status is owned by user, add edit and delete buttons
             const loggedIn = document.querySelector('#loggedIn p');
-            if(loggedIn != null && loggedIn.innerText.indexOf(statusList[i].user) != -1){
+            if(loggedIn != null && loggedIn.textContent == statusList[i].user){
                 // Create edit button
                 const editBtn = document.createElement('button');
                 editBtn.innerText = 'Edit';
@@ -74,7 +74,7 @@ async function getLoggedInInfo(){
     if(!data.error){
         const loggedIn = document.getElementById('loggedIn');
         loggedIn.className = 'container';
-        loggedIn.querySelector('p').innerText = 'Logged in as '+data.message;
+        loggedIn.querySelector('p').innerText = data.message;
     }else{ // Display loggedOut section if logged out
         const loggedOut = document.getElementById('loggedOut');
         loggedOut.className = 'container';
