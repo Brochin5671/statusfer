@@ -8,6 +8,9 @@ async function getStatus(){
     if(!data.error){
         username.innerHTML = data.user;
         statusText.innerHTML = data.status;
+        // Get the date of latest revision of the status
+        const dateObj = new Date(data.updatedAt);
+        statusDate.innerText = dateObj.toString().split(' (')[0];
     }else{ // Send error
         username.innerHTML = data.error;
         statusText.innerHTML = data.message;
@@ -15,5 +18,6 @@ async function getStatus(){
 }
 
 // Select username and status text
-const username = document.querySelector('h5');
-const statusText = document.querySelector('p');
+const username = document.querySelector('#username');
+const statusText = document.querySelector('#text');
+const statusDate = document.querySelector('#date');
