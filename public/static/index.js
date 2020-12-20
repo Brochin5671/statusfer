@@ -121,7 +121,7 @@ async function editStatus(event){
     const textArea = document.createElement('textarea');
     textArea.className = 'form-control mb-3';
     textArea.rows = 2;
-    const statusText = event.composedPath()[1].children[2];
+    const statusText = event.composedPath()[1].children[1];
     textArea.value = statusText.innerText;
     statusText.replaceWith(textArea);
     // Create confirm button and replace edit button
