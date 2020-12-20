@@ -17,8 +17,9 @@ async function getStatuses(){
             statusBody.className = 'media-body m-3 text-break';
             // Create link element
             const statusLink = document.createElement('a');
+            statusLink.className = 'btn btn-primary rounded align-self-center mr-3';
             statusLink.href = '/status/'+statusList[i]._id;
-            //statusLink.className = 'stretched-link'; temp disabled
+            statusLink.innerText = 'View';
             // Create user and status text
             const username = document.createElement('h5');
             username.innerText = statusList[i].user;
@@ -30,11 +31,11 @@ async function getStatuses(){
             date.className = 'small';
             date.innerText = dateObj.toString().split(' (')[0];
             // Append by linking parents
-            statusBody.appendChild(statusLink);
             statusBody.appendChild(username);
             statusBody.appendChild(status);
             statusBody.appendChild(date);
             statusMedia.appendChild(statusBody);
+            statusMedia.appendChild(statusLink);
             list.appendChild(statusMedia);
             // If status is owned by user, add edit and delete buttons
             const loggedIn = document.querySelector('#loggedIn p');
