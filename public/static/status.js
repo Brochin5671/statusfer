@@ -6,14 +6,14 @@ async function getStatus(){
     const data = await res.json();
     // Display username and status on success
     if(!data.error){
-        username.innerHTML = data.user;
-        statusText.innerHTML = data.status;
+        username.innerText = data.user;
+        statusText.innerText = data.status;
         // Get the date of latest revision of the status
         const dateObj = new Date(data.updatedAt);
         statusDate.innerText = dateObj.toString().split(' (')[0];
     }else{ // Send error
-        username.innerHTML = data.error;
-        statusText.innerHTML = data.message;
+        username.innerText = data.error;
+        statusText.innerText = data.message;
     }
 }
 
