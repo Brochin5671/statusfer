@@ -19,6 +19,7 @@ async function submitRegister(event){
     const data = await res.json();
     // Display error tip if failed
     if(data.error){
+        $('.alert').alert('close');
         const errorDiv = document.createElement('div');
         errorDiv.className = 'alert alert-warning alert-dismissible fade show';
         errorDiv.role = 'alert';

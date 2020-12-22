@@ -28,8 +28,13 @@ const registerValidation = user => {
 // Login validation
 const loginValidation = user => {
     const JoiSchema = joi.object({
-        email: joi.string().trim().required().insensitive().email(),
-        password: joi.string().required()
+        email: joi.string().trim().required().insensitive().email().messages({
+            'string.empty': 'Email is required.',
+            'string.email': 'Email must be valid.'
+        }),
+        password: joi.string().required().messages({
+            'string.empty': 'Password is required.'
+        })
     });
     return JoiSchema.validate(user);
 }
