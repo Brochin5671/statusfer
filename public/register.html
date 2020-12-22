@@ -29,25 +29,30 @@
                     <form class="p-5 shadow" id="register">
                         <h1 class="mb-4">Register</h1>
                         <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" placeholder="Username" required autofocus>
+                            <label for="username" class="text-muted">Username</label>
+                            <input id="username" type="name" class="form-control" placeholder="Enter Username" required autofocus>
                         </div>
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control" id="email" placeholder="Email" required>
+                            <label for="email" class="text-muted">Email</label>
+                            <input id="email" type="email" class="form-control" placeholder="Enter Email" required>
                         </div>
                         <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Password" aria-describedby="passwordHelp" required>
+                            <label for="password" class="text-muted">Password</label>
+                            <input id="password" type="password" class="form-control" placeholder="Enter Password" aria-describedby="passwordHelp" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword" class="text-muted">Confirm Password</label>
+                            <input id="confirmPassword" type="password" class="form-control" placeholder="Confirm Password" aria-describedby="passwordHelp" required>
                             <small id="passwordHelp" class="text-muted">Must be at least 8 characters long.</small>
                         </div>
                         <button type="submit" class="btn btn-primary">Register</button>
-                        <p class="d-none" id="log"></p>
                     </form>
                 </div>
             </div>
         </main>
         <footer>
         </footer>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     </body>
 </html>

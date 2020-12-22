@@ -12,15 +12,21 @@ async function submitRegister(event){
             'username': document.getElementById('username').value,
             'email': document.getElementById('email').value,
             'password': document.getElementById('password').value,
+            'confirmPassword': document.getElementById('confirmPassword').value
         })
     };
     const res = await fetch('/user/register',options);
     const data = await res.json();
     // Display error tip if failed
     if(data.error){
-        const log = document.getElementById('log');
-        log.className = 'small m-0 mt-2';
-        log.innerText = data.message;
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'alert alert-warning alert-dismissible fade show';
+        errorDiv.role = 'alert';
+        errorDiv.innerHTML = data.message+`
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>`;
+        form.insertBefore(errorDiv, form.firstChild);
     }else{ // Redirect to home on success
         window.location = '/';
     }

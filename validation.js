@@ -6,7 +6,8 @@ const registerValidation = user => {
     const JoiSchema = joi.object({
         username: joi.string().trim().required().max(64),
         email: joi.string().trim().required().insensitive().min(3).max(255).email(),
-        password: joi.string().required().min(8)
+        password: joi.string().required().min(8),
+        confirmPassword: joi.any().equal(joi.ref('password')).required().messages({'any.only':'Passwords do not match'})
     });
     return JoiSchema.validate(user);
 }
