@@ -17,7 +17,7 @@ async function getStatuses(){
             statusBody.className = 'media-body m-3 text-break';
             // Create link element
             const statusLink = document.createElement('a');
-            statusLink.className = 'btn btn-primary rounded align-self-center mr-3';
+            statusLink.className = 'btn btn-primary align-self-center mr-3';
             statusLink.href = '/status/'+statusList[i]._id;
             statusLink.innerText = 'View';
             // Create user and status text
