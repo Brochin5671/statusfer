@@ -10,8 +10,13 @@ async function getStatuses(){
         for(let i=0;i<statusList.length;i++){
             // Create media element
             const statusMedia = document.createElement('li');
-            statusMedia.className = 'media position-relative border-bottom';
             statusMedia.id = statusList[i]._id;
+            // Add border bottom to media element unless last element
+            if(i+1<statusList.length){
+                statusMedia.className = 'media position-relative border-bottom';
+            }else{
+                statusMedia.className = 'media position-relative';
+            }
             // Create body element
             const statusBody = document.createElement('div');
             statusBody.className = 'media-body m-3 text-break';
@@ -38,7 +43,7 @@ async function getStatuses(){
             statusMedia.appendChild(statusLink);
             list.appendChild(statusMedia);
             // If status is owned by user, add edit and delete buttons
-            const loggedIn = document.querySelector('#loggedIn p');
+            const loggedIn = document.querySelector('#loggedIn h1');
             if(loggedIn != null && loggedIn.textContent == statusList[i].user){
                 // Create edit button
                 const editBtn = document.createElement('button');
@@ -75,7 +80,7 @@ async function getLoggedInInfo(){
     if(!data.error){
         const loggedIn = document.getElementById('loggedIn');
         loggedIn.className = 'container';
-        loggedIn.querySelector('p').innerText = data.message;
+        loggedIn.querySelector('h1').innerText = data.message;
     }else{ // Display loggedOut section if logged out
         const loggedOut = document.getElementById('loggedOut');
         loggedOut.className = 'container';
@@ -91,7 +96,7 @@ async function submitLogout(event){
     }
     const res = await fetch('/user/logout',options);
     // Refresh page on success, else send error
-    if(res.status >= 200 && res.status <= 299) window.location.reload(true);
+    if(res.status >= 200 && res.status <= 299) window.location.reload();
     else alert('Sorry, something went wrong.');
 }
 
@@ -203,6 +208,6 @@ function onLoadFunctions(){
 
 // Listen for events
 const logoutForm = document.getElementById('logout');
-const postForm = document.getElementById('postStatus');
+const statusForm = document.getElementById('statusForm');
 logoutForm.addEventListener('click',submitLogout);
-postForm.addEventListener('submit',postStatus);
+statusForm.addEventListener('submit',postStatus);

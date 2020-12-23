@@ -18,36 +18,36 @@
         <meta name="msapplication-TileColor" content="#0dd4b6">
         <meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
         <meta name="theme-color" content="#0dd4b6">
-        <link rel="stylesheet" href="/static/style.css">
+        <link rel="stylesheet" href="/static/index.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
         <script src="/static/index.js" defer></script>
     </head>
     <body onload="onLoadFunctions()">
         <main>
             <div class="container d-none" id="loggedOut">
-                <div class="row m-3">
+                <div class="row m-3 text-center">
                     <div class="col">
-                        <a href="/user/register"><p class="h4 text-center">Register</p></a>
+                        <a class="btn btn-primary shadow-sm" href="/user/register">Register</a>
                     </div>
-                    <div class="col">
-                        <a href="/user/login"><p class="h4 text-center">Log In</p></a>
+                    <div class="col text-center">
+                        <a class="btn btn-primary shadow-sm" href="/user/login">Log In</a>
                     </div>
                 </div>
             </div>
             <div class="container d-none" id="loggedIn">
                 <div class="row m-3 align-items-center">
                     <div class="col">
-                        <p class="text-center m-0"></p>
+                        <h1 class="text-center text-white"></h1>
                     </div>
                     <div class="col text-center">
                         <form id="logout">
-                            <button type="submit" class="btn btn-primary">Log Out</button>
+                            <button type="submit" class="btn btn-primary shadow-sm">Log Out</button>
                         </form>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-5 p-3 mx-auto shadow">
-                        <form id="postStatus">
+                <div class="row justify-content-center">
+                    <div class="col-sm-5 p-3 rounded-lg shadow" id="statusFormDiv">
+                        <form id="statusForm">
                             <div class="form-group">
                                 <label for="statusMessage">Enter Status</label>
                                 <textarea class="form-control" id="statusMessage" rows="2"></textarea>
@@ -58,7 +58,7 @@
                 </div>
             </div>
             <div class="container mt-4">
-                <ul class="list-unstyled shadow" id="statusList"></ul>
+                <ul class="list-unstyled rounded-lg shadow" id="statusList"></ul>
             </div>
         </main>
         <footer>
