@@ -9,8 +9,8 @@ async function submitLogin(event){
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-            'email': document.getElementById('email').value,
-            'password': document.getElementById('password').value,
+            'email': form.querySelector('#email').value,
+            'password': form.querySelector('#password').value,
         })
     };
     const res = await fetch('/user/login',options);
@@ -32,5 +32,5 @@ async function submitLogin(event){
 }
 
 // Listen for submit event
-const form = document.getElementById('login');
+const form = document.getElementById('loginForm');
 form.addEventListener('submit',submitLogin);
