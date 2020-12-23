@@ -125,7 +125,7 @@ async function postStatus(event){
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>`;
-        postForm.insertBefore(errorDiv, postForm.firstChild);
+        statusForm.insertBefore(errorDiv, statusForm.firstChild);
     }else{ // Refresh on success
         window.location.reload();
     }
