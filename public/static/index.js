@@ -110,9 +110,20 @@ async function postStatus(event){
     };
     const res = await fetch('/status',options);
     const data = await res.json();
-    // Display error tip if failed, else refresh page on success
-    if(data.error) alert(data.message);
-    else window.location.reload(true);
+    // Display error tip if failed
+    if(data.error){
+        $('.alert').alert('close');
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'alert alert-warning alert-dismissible fade show';
+        errorDiv.role = 'alert';
+        errorDiv.innerHTML = data.message+`
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>`;
+        postForm.insertBefore(errorDiv, postForm.firstChild);
+    }else{ // Refresh on success
+        window.location.reload();
+    }
 }
 
 // Replaces text with text area and creates a confirm button
@@ -120,6 +131,7 @@ async function editStatus(event){
     // Create text area and replace text element
     const textArea = document.createElement('textarea');
     textArea.className = 'form-control mb-3';
+    textArea.id = 'editedText';
     textArea.rows = 2;
     const statusText = event.composedPath()[1].children[1];
     textArea.value = statusText.innerText;
@@ -137,7 +149,9 @@ async function editStatus(event){
 
 // Send a patch request to edit a status
 async function patchStatus(event){
-    // Get status id
+    // Get edit form and status id
+    console.log(event);
+    const editForm = event.composedPath()[1];
     const statusId = event.composedPath()[2].id;
     // Send patch request with cookies and form data
     const options = {
@@ -146,13 +160,24 @@ async function patchStatus(event){
         headers: {
             'Content-Type': 'text/plain'
         },
-        body: event.composedPath()[1].children[1].value,
+        body: event.composedPath()[1].querySelector('#editedText').value,
     };
     const res = await fetch('/status/'+statusId,options);
     const data = await res.json();
-    // Display error tip if failed, else refresh page on success
-    if(data.error) alert(data.message);
-    else window.location.reload(true);
+    // Display error tip if failed
+    if(data.error){
+        $('.alert').alert('close');
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'alert alert-warning alert-dismissible fade show';
+        errorDiv.role = 'alert';
+        errorDiv.innerHTML = data.message+`
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>`;
+        editForm.insertBefore(errorDiv, editForm.firstChild);
+    }else{ // Refresh on success
+        window.location.reload();
+    }
 }
 
 // Send a delete request to delete a status
@@ -166,7 +191,7 @@ async function deleteStatus(event){
     };
     const res = await fetch('/status/'+statusId,options);
     // Refresh page on success, else send error
-    if(res.status >= 200 && res.status <= 299) window.location.reload(true);
+    if(res.status >= 200 && res.status <= 299) window.location.reload();
     else alert('Sorry, something went wrong.');
 }
 

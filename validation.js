@@ -42,7 +42,10 @@ const loginValidation = user => {
 // Status validation
 const statusValidation = status => {
     const JoiSchema = joi.object({
-        message: joi.string().trim().required().max(255)
+        message: joi.string().trim().required().max(255).messages({
+            'string.empty': 'Status is empty.',
+            'string.max': 'Status exceeds maximum length of 255 characters.'
+        })
     });
     return JoiSchema.validate(status);
 }
