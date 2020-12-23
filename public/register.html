@@ -18,36 +18,40 @@
         <meta name="msapplication-TileColor" content="#0dd4b6">
         <meta name="msapplication-config" content="/static/favicons/browserconfig.xml">
         <meta name="theme-color" content="#0dd4b6">
-        <link rel="stylesheet" href="/static/style.css">
+        <link rel="stylesheet" href="/static/register.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
         <script src="/static/register.js" defer></script>
     </head>
     <body>
         <main>
             <div class="container">
-                <div class="row min-vh-100 justify-content-center align-items-center">
-                    <form class="p-5 shadow" id="register">
-                        <h1 class="mb-4">Register</h1>
-                        <div class="form-group">
-                            <label for="username" class="text-muted">Username</label>
-                            <input id="username" type="name" class="form-control" placeholder="Enter Username" required autofocus>
+                <div class="row min-vh-100 align-items-center justify-content-center">
+                    <div class="col-sm-5">
+                        <h1 class="mb-3 text-center text-white font-weight-bold">Statusfer</h1>
+                        <form class="p-4 rounded-lg shadow" id="registerForm">
+                            <h2 class="mb-5 text-center">Register</h1>
+                            <div class="form-group">
+                                <label for="username" class="text-muted">Username</label>
+                                <input type="name" class="form-control" id="username" placeholder="Enter Username" required autofocus>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="text-muted">Email</label>
+                                <input type="email" class="form-control" id="email" placeholder="Enter Email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password" class="text-muted">Password</label>
+                                <input type="password" class="form-control" id="password" placeholder="Enter Password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword" class="text-muted">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">Register</button>
+                        </form>
+                        <div class="text-center mt-4">
+                            <a class="btn btn-primary btn-lg shadow-sm" href="/">Back</a>
                         </div>
-                        <div class="form-group">
-                            <label for="email" class="text-muted">Email</label>
-                            <input id="email" type="email" class="form-control" placeholder="Enter Email" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="password" class="text-muted">Password</label>
-                            <input id="password" type="password" class="form-control" placeholder="Enter Password" aria-describedby="passwordHelp" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmPassword" class="text-muted">Confirm Password</label>
-                            <input id="confirmPassword" type="password" class="form-control" placeholder="Confirm Password" aria-describedby="passwordHelp" required>
-                            <small id="passwordHelp" class="text-muted">Must be at least 8 characters long.</small>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Register</button>
-                        <a class="btn btn-primary ml-5" href="/">Back</a>
-                    </form>
+                    </div>
                 </div>
             </div>
         </main>

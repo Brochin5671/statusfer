@@ -9,10 +9,10 @@ async function submitRegister(event){
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-            'username': document.getElementById('username').value,
-            'email': document.getElementById('email').value,
-            'password': document.getElementById('password').value,
-            'confirmPassword': document.getElementById('confirmPassword').value
+            'username': form.querySelector('#username').value,
+            'email': form.querySelector('#email').value,
+            'password': form.querySelector('#password').value,
+            'confirmPassword': form.querySelector('#confirmPassword').value
         })
     };
     const res = await fetch('/user/register',options);
@@ -34,5 +34,5 @@ async function submitRegister(event){
 }
 
 // Listen for submit event
-const form = document.getElementById('register');
+const form = document.getElementById('registerForm');
 form.addEventListener('submit',submitRegister);
