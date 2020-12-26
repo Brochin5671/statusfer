@@ -1,3 +1,11 @@
+// Listen for events
+const logoutForm = document.getElementById('logout');
+const statusForm = document.getElementById('statusForm');
+const statusArea = document.getElementById('statusArea');
+logoutForm.addEventListener('click',submitLogout);
+statusForm.addEventListener('submit',postStatus);
+statusArea.addEventListener('input',getTextAreaCharacters);
+
 // Get and display all statuses
 async function getStatuses(){
     // Send get request
@@ -6,6 +14,8 @@ async function getStatuses(){
     if(res.status >= 200 && res.status <= 299){
         const statusList = await res.json();
         const list = document.querySelector('#statusList');
+        // Delete inner html contents to refresh list
+        list.innerHTML = '';
         // Create media objects and append all to list
         for(let i=0;i<statusList.length;i++){
             // Create media element
@@ -126,8 +136,11 @@ async function postStatus(event){
                 <span aria-hidden="true">&times;</span>
             </button>`;
         statusForm.insertBefore(errorDiv, statusForm.firstChild);
-    }else{ // Refresh on success
-        window.location.reload();
+    }else{ // Reset status textarea and character counter, and update status list
+        statusArea.value = '';
+        const charCounter = document.getElementById('statusCharCounter');
+        charCounter.innerText = '0/255';
+        await getStatuses();
     }
 }
 
@@ -169,7 +182,7 @@ async function patchStatus(event){
     };
     const res = await fetch('/status/'+statusId,options);
     const data = await res.json();
-    // Display error tip if failed
+    // Display error tip if failed, update statuses on success
     if(data.error){
         $('.alert').alert('close');
         const errorDiv = document.createElement('div');
@@ -180,8 +193,8 @@ async function patchStatus(event){
                 <span aria-hidden="true">&times;</span>
             </button>`;
         editForm.insertBefore(errorDiv, editForm.firstChild);
-    }else{ // Refresh on success
-        window.location.reload();
+    }else{
+        await getStatuses();
     }
 }
 
@@ -195,8 +208,10 @@ async function deleteStatus(event){
         credentials: 'same-origin',
     };
     const res = await fetch('/status/'+statusId,options);
-    // Refresh page on success, else send error
-    if(res.status >= 200 && res.status <= 299) window.location.reload();
+    // Update statuses on success, else send error
+    if(res.status >= 200 && res.status <= 299){
+        await getStatuses();
+    }
     else alert('Sorry, something went wrong.');
 }
 
@@ -211,11 +226,3 @@ function onLoadFunctions(){
     getLoggedInInfo();
     getStatuses();
 }
-
-// Listen for events
-const logoutForm = document.getElementById('logout');
-const statusForm = document.getElementById('statusForm');
-const statusArea = document.getElementById('statusArea');
-logoutForm.addEventListener('click',submitLogout);
-statusForm.addEventListener('submit',postStatus);
-statusArea.addEventListener('input',getTextAreaCharacters);
