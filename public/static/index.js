@@ -138,7 +138,7 @@ async function postStatus(event){
         statusForm.insertBefore(errorDiv, statusForm.firstChild);
     }else{ // Reset status textarea and character counter, and update status list
         statusArea.value = '';
-        const charCounter = document.getElementById('statusCharCounter');
+        const charCounter = statusArea.nextElementSibling;
         charCounter.innerText = '0/255';
         await getStatuses();
     }
@@ -148,13 +148,19 @@ async function postStatus(event){
 async function editStatus(event){
     // Create text area and replace text element
     const textArea = document.createElement('textarea');
-    textArea.className = 'form-control mb-3';
+    textArea.className = 'form-control mb-1';
     textArea.id = 'editedText';
     textArea.rows = 2;
     textArea.maxLength = 255;
+    textArea.addEventListener('input',getTextAreaCharacters);
     const statusText = event.composedPath()[1].children[1];
     textArea.value = statusText.innerText;
     statusText.replaceWith(textArea);
+    // Create character counter
+    const charCounter = document.createElement('p');
+    charCounter.className = 'small text-muted mb-2 ml-1';
+    charCounter.innerText = textArea.value.length + '/' + textArea.maxLength;
+    textArea.insertAdjacentElement('afterend', charCounter);
     // Create confirm button and replace edit button
     const confirmBtn = document.createElement('button');
     confirmBtn.innerText = 'Confirm';
@@ -228,7 +234,7 @@ async function deleteStatus(event){
 
 // Edits the character counter of a text area
 function getTextAreaCharacters(event){
-    const charCounter = document.getElementById('statusCharCounter');
+    const charCounter = event.target.nextElementSibling;
     charCounter.innerText = event.target.value.length + '/' + event.target.maxLength;
 }
 
