@@ -168,8 +168,8 @@ async function editStatus(event){
 
 // Send a patch request to edit a status
 async function patchStatus(event){
-    // Get edit form and status id
-    const editForm = event.composedPath()[1];
+    // Get status body and status id
+    const statusBody = event.composedPath()[1];
     const statusId = event.composedPath()[2].id;
     // Send patch request with cookies and form data
     const options = {
@@ -182,7 +182,7 @@ async function patchStatus(event){
     };
     const res = await fetch('/status/'+statusId,options);
     const data = await res.json();
-    // Display error tip if failed, update statuses on success
+    // Display error tip if failed, else update statuses on success
     if(data.error){
         $('.alert').alert('close');
         const errorDiv = document.createElement('div');
@@ -192,7 +192,7 @@ async function patchStatus(event){
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>`;
-        editForm.insertBefore(errorDiv, editForm.firstChild);
+        statusBody.insertBefore(errorDiv, statusBody.firstChild);
     }else{
         await getStatuses();
     }
@@ -200,7 +200,8 @@ async function patchStatus(event){
 
 // Send a delete request to delete a status
 async function deleteStatus(event){
-    // Get status id
+    // Get status body and status id
+    const statusBody = event.composedPath()[1];
     const statusId = event.toElement.offsetParent.id;
     // Send patch request with cookies and form data
     const options = {
@@ -208,11 +209,21 @@ async function deleteStatus(event){
         credentials: 'same-origin',
     };
     const res = await fetch('/status/'+statusId,options);
-    // Update statuses on success, else send error
-    if(res.status >= 200 && res.status <= 299){
+    const data = await res.json();
+    // Display error tip if failed, else update statuses on success
+    if(data.error){
+        $('.alert').alert('close');
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'alert alert-warning alert-dismissible fade show';
+        errorDiv.role = 'alert';
+        errorDiv.innerHTML = data.message+`
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>`;
+        statusBody.insertBefore(errorDiv, statusBody.firstChild);
+    }else{
         await getStatuses();
     }
-    else alert('Sorry, something went wrong.');
 }
 
 // Edits the character counter of a text area
