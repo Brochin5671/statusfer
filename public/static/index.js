@@ -111,7 +111,7 @@ async function postStatus(event){
         headers: {
 			'Content-Type': 'text/plain'
 		},
-		body: document.getElementById('statusMessage').value
+		body: statusArea.value
     };
     const res = await fetch('/status',options);
     const data = await res.json();
@@ -138,6 +138,7 @@ async function editStatus(event){
     textArea.className = 'form-control mb-3';
     textArea.id = 'editedText';
     textArea.rows = 2;
+    textArea.maxLength = 255;
     const statusText = event.composedPath()[1].children[1];
     textArea.value = statusText.innerText;
     statusText.replaceWith(textArea);
@@ -155,7 +156,6 @@ async function editStatus(event){
 // Send a patch request to edit a status
 async function patchStatus(event){
     // Get edit form and status id
-    console.log(event);
     const editForm = event.composedPath()[1];
     const statusId = event.composedPath()[2].id;
     // Send patch request with cookies and form data
@@ -200,6 +200,12 @@ async function deleteStatus(event){
     else alert('Sorry, something went wrong.');
 }
 
+// Edits the character counter of a text area
+function getTextAreaCharacters(event){
+    const charCounter = document.getElementById('statusCharCounter');
+    charCounter.innerText = event.target.value.length + '/' + event.target.maxLength;
+}
+
 // Functions to be executed on load
 function onLoadFunctions(){
     getLoggedInInfo();
@@ -209,5 +215,7 @@ function onLoadFunctions(){
 // Listen for events
 const logoutForm = document.getElementById('logout');
 const statusForm = document.getElementById('statusForm');
+const statusArea = document.getElementById('statusArea');
 logoutForm.addEventListener('click',submitLogout);
 statusForm.addEventListener('submit',postStatus);
+statusArea.addEventListener('input',getTextAreaCharacters);
