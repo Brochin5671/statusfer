@@ -22,10 +22,12 @@ router.post('/', verifyAccessToken, async (req,res) => {
     const statusMsg = { message: req.body };
     const { error } = statusValidation(statusMsg);
     if(error) return res.json({error: '400 Bad Request', message: error.details[0].message});
+    // Sanitize status
+    const sanitizedStatus = req.body.trim();
     // Create new status object
     const status = new Status({
         user: req.user.username,
-        status: req.body
+        status: sanitizedStatus
     });
     // Save status to DB
     try{
@@ -79,8 +81,10 @@ router.patch('/:statusId', verifyAccessToken, async (req,res) => {
         if(status.user != req.user.username){
             throw new Error();
         }
+        // Sanitize status
+        const sanitizedStatus = req.body.trim();
         // Update status
-        const patchedStatus = await Status.updateOne({_id: req.params.statusId},{$set: {status: req.body}});
+        const patchedStatus = await Status.updateOne({_id: req.params.statusId},{$set: {status: sanitizedStatus}});
         res.json(patchedStatus);
     }catch(err){ // Send error
         res.json({error: '404 Not Found', message: 'No entry found'});

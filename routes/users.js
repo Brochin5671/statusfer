@@ -27,14 +27,17 @@ router.post('/register', async (req,res) => {
     const usernameExists = await User.findOne({username: req.body.username});
     if(usernameExists) return res.json({error: '400 Bad Request', message: 'Username is taken.'});
     const emailExists = await User.findOne({email: req.body.email});
-    if(emailExists) return res.json({error: '400 Bad Request', message: 'Email already registered.'});  
+    if(emailExists) return res.json({error: '400 Bad Request', message: 'Email already registered.'});
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(req.body.password,salt);
+    // Sanitize username and email
+    const sanitizedUsername = req.body.username.trim();
+    const sanitizedEmail = req.body.email.trim();
     // Create new user object
     const user = new User({
-        username: req.body.username,
-        email: req.body.email,
+        username: sanitizedUsername,
+        email: sanitizedEmail,
         password: hashedPass
     });
     // Save user to DB and generate tokens
