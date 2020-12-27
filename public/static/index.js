@@ -135,30 +135,48 @@ async function postStatus(event){
 }
 
 // Replaces text with text area and creates a confirm button
-async function editStatus(event){
-    // Create text area and replace text element
-    const textArea = document.createElement('textarea');
-    textArea.className = 'form-control mb-1';
-    textArea.id = 'editedText';
-    textArea.rows = 2;
-    textArea.maxLength = 255;
-    textArea.addEventListener('input', getTextAreaCharacters);
+function editStatus(event){
+    // Create edit textarea
+    const editArea = document.createElement('textarea');
+    editArea.className = 'form-control mb-1';
+    editArea.id = 'editedText';
+    editArea.rows = 2;
+    editArea.maxLength = 255;
     const statusText = event.composedPath()[1].children[1];
-    textArea.value = statusText.innerText;
-    statusText.replaceWith(textArea);
+    editArea.value = statusText.innerText;
+    editArea.addEventListener('input', getTextAreaCharacters);
+    statusText.insertAdjacentElement('beforeBegin', editArea);
     // Create character counter
     const charCounter = document.createElement('p');
     charCounter.className = 'small text-muted mb-2 ml-1';
-    charCounter.innerText = `${textArea.value.length}/${textArea.maxLength}`;
-    textArea.insertAdjacentElement('afterEnd', charCounter);
-    // Create confirm button and replace edit button
+    charCounter.innerText = `${editArea.value.length}/${editArea.maxLength}`;
+    editArea.insertAdjacentElement('afterEnd', charCounter);
+    // Create confirm button
     const confirmBtn = document.createElement('button');
     confirmBtn.innerText = 'Confirm';
     confirmBtn.type = 'click';
-    confirmBtn.className = 'btn btn-primary mr-2'; 
-    event.target.replaceWith(confirmBtn);
-    // Add listener to trigger patchStatus()
+    confirmBtn.className = 'btn btn-primary mr-2';
+    const editBtn = event.target;
     confirmBtn.addEventListener('click', patchStatus);
+    editBtn.insertAdjacentElement('beforeBegin', confirmBtn);
+    // Create cancel button
+    const cancelBtn = document.createElement('button');
+    cancelBtn.innerText = 'Cancel';
+    cancelBtn.type = 'click';
+    cancelBtn.className = 'btn btn-primary mr-2';
+    confirmBtn.insertAdjacentElement('afterEnd', cancelBtn);
+    // Hide non-edit elements
+    editBtn.className += ' d-none';
+    statusText.className += 'd-none';
+    // Listen for cancel button event to un-hide non-edit elements and remove edit elements
+    cancelBtn.addEventListener('click', () => {
+        editBtn.className = editBtn.className.split(' d-none')[0];
+        statusText.removeAttribute('class');
+        editArea.remove();
+        charCounter.remove();
+        confirmBtn.remove();
+        cancelBtn.remove();
+    });
 }
 
 // Send a patch request to edit a status
