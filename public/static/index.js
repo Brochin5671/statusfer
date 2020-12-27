@@ -182,13 +182,16 @@ function editStatus(event){
     cancelBtn.innerText = 'Cancel';
     cancelBtn.type = 'click';
     cancelBtn.className = 'btn btn-primary mr-2 cancel';
-    confirmBtn.insertAdjacentElement('afterEnd', cancelBtn);
+    const deleteBtn = editBtn.nextElementSibling;
+    deleteBtn.insertAdjacentElement('beforeBegin', cancelBtn);
     // Hide non-edit elements
     editBtn.className += ' d-none';
-    statusText.className += 'd-none';
+    deleteBtn.className += ' d-none';
+    statusText.className = 'd-none';
     // Listen for cancel button event to un-hide non-edit elements and remove edit elements
     cancelBtn.addEventListener('click', () => {
         editBtn.className = editBtn.className.split(' d-none')[0];
+        deleteBtn.className = deleteBtn.className.split(' d-none')[0];
         statusText.removeAttribute('class');
         editArea.remove();
         charCounter.remove();
