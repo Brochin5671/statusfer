@@ -44,10 +44,9 @@ async function getStatuses(){
             const statusText = document.createElement('p');
             statusText.innerText = listJSON[i].status;
             // Get the date of latest revision of the status and create date text element
-            const date = new Date(listJSON[i].updatedAt);
             const statusDate = document.createElement('p');
             statusDate.className = 'small';
-            statusDate.innerText = date.toString().split(' (')[0];
+            statusDate.innerText = createDateString(listJSON[i].updatedAt);
             // Append by linking parents
             statusBody.appendChild(username);
             statusBody.appendChild(statusText);
@@ -75,6 +74,20 @@ async function getStatuses(){
         }
     }else{ // Send error on failure
         alert('Sorry, something went wrong.');
+    }
+}
+
+// Returns a date string based on the time
+function createDateString(dateString){
+    const date = new Date(dateString);
+    const nowDate = new Date(Date.now());
+    // Check if date is from today or yesterday, else return a full date string
+    if(date.getFullYear() == nowDate.getFullYear() && date.getMonth() == nowDate.getMonth() && date.getDate() == nowDate.getDate()){
+        return `Today at ${date.toLocaleTimeString()}`;
+    }else if(date.getFullYear() == nowDate.getFullYear() && date.getMonth() == nowDate.getMonth() && nowDate.getDate() - date.getDate() == 1){
+        return `Yesterday at ${date.toLocaleTimeString()}`;
+    }else{
+        return date.toLocaleString();
     }
 }
 

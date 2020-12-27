@@ -14,10 +14,23 @@ async function getStatus(){
         username.innerText = data.user;
         statusText.innerText = data.status;
         // Get the date of latest revision of the status
-        const dateObj = new Date(data.updatedAt);
-        statusDate.innerText = dateObj.toString().split(' (')[0];
+        statusDate.innerText = createDateString(data.updatedAt);
     }else{ // Send error on failure
         username.innerText = data.error;
         statusText.innerText = data.message;
+    }
+}
+
+// Returns a date string based on the time
+function createDateString(dateString){
+    const date = new Date(dateString);
+    const nowDate = new Date(Date.now());
+    // Check if date is from today or yesterday, else return a full date string
+    if(date.getFullYear() == nowDate.getFullYear() && date.getMonth() == nowDate.getMonth() && date.getDate() == nowDate.getDate()){
+        return `Today at ${date.toLocaleTimeString()}`;
+    }else if(date.getFullYear() == nowDate.getFullYear() && date.getMonth() == nowDate.getMonth() && nowDate.getDate() - date.getDate() == 1){
+        return `Yesterday at ${date.toLocaleTimeString()}`;
+    }else{
+        return date.toLocaleString();
     }
 }
