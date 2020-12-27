@@ -2,32 +2,32 @@
 const jwt = require('jsonwebtoken');
 
 // Check and verify user access token
-const verifyAccessToken = function(req,res,next){
+const verifyAccessToken = (req, res, next) => {
     // Check if token exists
     const token = req.cookies.accessToken;
-    if(!token) return res.json({error: '401 Unauthroized', message: 'Access Denied'});
+    if(!token) return res.json({error: '401 Unauthroized', message: 'Login to use features.'});
     // Verify access token
     try{
-        const verified = jwt.verify(token,process.env.ACCESS_TOKEN_SECRET);
-        req.user = verified;
+        const verifiedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        req.user = verifiedToken;
         next();
-    }catch(err){ // Send error
-        res.json({error: '400 Bad Request', message: 'Invalid Token'});
+    }catch(err){ // Send error on failure
+        res.json({error: '400 Bad Request', message: 'Invalid token, try refreshing the page.'});
     }
 }
 
 // Check and verify user refresh token
-const verifyRefreshToken = function(req,res,next){
+const verifyRefreshToken = (req, res, next) => {
     // Check if token exists
     const token = req.cookies.refreshToken;
-    if(!token) return res.json({error: '401 Unauthroized', message: 'Access Denied'});
+    if(!token) return res.json({error: '401 Unauthroized', message: 'Login to use features.'});
     // Verify refresh token, generate new access token and send httponly token cookie
     try{
-        const verified = jwt.verify(token,process.env.REFRESH_TOKEN_SECRET);
-        req.user = verified;
+        const verifiedToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+        req.user = verifiedToken;
         next();
-    }catch(err){ // Send error
-        res.json({error: '400 Bad Request', message: 'Invalid Token'});
+    }catch(err){ // Send error on failure
+        res.json({error: '400 Bad Request', message: 'Invalid token, try re-logging in.'});
     }
 }
 
