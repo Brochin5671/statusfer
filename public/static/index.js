@@ -4,6 +4,7 @@ const loggedInDiv = document.getElementById('loggedIn');
 const loggedOutDiv = document.getElementById('loggedOut');
 const logoutForm = document.getElementById('logout');
 const statusForm = document.getElementById('statusForm');
+const postBtn = document.getElementById('postBtn');
 const statusArea = document.getElementById('statusArea');
 
 // Add event listeners
@@ -110,6 +111,8 @@ async function submitLogout(event){
 
 // Send a post request to post a status
 async function postStatus(event){
+    // Disable all buttons
+    disableButtons();
     // Prevent refresh
     event.preventDefault();
     // Send post request with cookies and form data
@@ -123,13 +126,15 @@ async function postStatus(event){
     };
     const res = await fetch('/status', options);
     const {error, message} = await res.json();
-    // Reset status textarea and character counter, and update status list
+    // Re-enable post button, reset status textarea and character counter, and update status list
     if(!error){
+        postBtn.disabled = false;
         statusArea.value = '';
         const charCounter = statusArea.nextElementSibling;
         charCounter.innerText = `0/${statusArea.maxLength}`;
         await getStatuses();
-    }else{ // Display error tip on failure
+    }else{ // Enable buttons and display error tip on failure
+        enableButtons();
         statusForm.firstElementChild.insertAdjacentElement('beforeBegin', createErrorTip(message));
     }
 }
@@ -155,7 +160,7 @@ function editStatus(event){
     const confirmBtn = document.createElement('button');
     confirmBtn.innerText = 'Confirm';
     confirmBtn.type = 'click';
-    confirmBtn.className = 'btn btn-primary mr-2';
+    confirmBtn.className = 'btn btn-primary mr-2 confirm';
     const editBtn = event.target;
     confirmBtn.addEventListener('click', patchStatus);
     editBtn.insertAdjacentElement('beforeBegin', confirmBtn);
@@ -163,7 +168,7 @@ function editStatus(event){
     const cancelBtn = document.createElement('button');
     cancelBtn.innerText = 'Cancel';
     cancelBtn.type = 'click';
-    cancelBtn.className = 'btn btn-primary mr-2';
+    cancelBtn.className = 'btn btn-primary mr-2 cancel';
     confirmBtn.insertAdjacentElement('afterEnd', cancelBtn);
     // Hide non-edit elements
     editBtn.className += ' d-none';
@@ -181,6 +186,8 @@ function editStatus(event){
 
 // Send a patch request to edit a status
 async function patchStatus(event){
+    // Disable all buttons
+    disableButtons();
     // Get status body and status id
     const statusBody = event.composedPath()[1];
     const statusId = event.composedPath()[2].id;
@@ -195,16 +202,20 @@ async function patchStatus(event){
     };
     const res = await fetch(`/status/${statusId}`, options);
     const {error, message} = await res.json();
-    // Update statuses on success
+    // Re-enable post button, and update statuses on success
     if(!error){
+        postBtn.disabled = false;
         await getStatuses();
-    }else{ // Display error tip on failure
+    }else{ // Enable buttons and display error tip on failure
+        enableButtons();
         statusBody.firstElementChild.insertAdjacentElement('beforeBegin', createErrorTip(message));
     }
 }
 
 // Send a delete request to delete a status
 async function deleteStatus(event){
+    // Disable all buttons
+    disableButtons();
     // Get status body and status id
     const statusBody = event.composedPath()[1];
     const statusId = event.composedPath()[2].id;
@@ -215,13 +226,32 @@ async function deleteStatus(event){
     };
     const res = await fetch(`/status/${statusId}`, options);
     const {error, message} = await res.json();
-    // Update statuses on success
+    // Re-enable post button, and update statuses on success
     if(!error){
-        event.target.disabled = true;
+        postBtn.disabled = false;
         await getStatuses();
-    }else{ // Display error tip on failure
+    }else{ // Enable buttons and display error tip on failure
+        enableButtons();
         statusBody.firstElementChild.insertAdjacentElement('beforeBegin', createErrorTip(message));
     }
+}
+
+// Disables all request buttons
+function disableButtons(){
+    $('.edit').prop('disabled', true);
+    $('.delete').prop('disabled', true);
+    $('.confirm').prop('disabled', true);
+    $('.cancel').prop('disabled', true);
+    postBtn.disabled = true;
+}
+
+// Enables all request buttons
+function enableButtons(){
+    $('.edit').prop('disabled', false);
+    $('.delete').prop('disabled', false);
+    $('.confirm').prop('disabled', false);
+    $('.cancel').prop('disabled', false);
+    postBtn.disabled = false;
 }
 
 // Creates and return error div
