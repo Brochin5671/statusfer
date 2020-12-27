@@ -1,3 +1,13 @@
+// Select reusable elements
+const form = document.getElementById('registerForm');
+const usernameInput = document.getElementById('username');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const confirmPasswordInput = document.getElementById('confirmPassword');
+
+// Listen for submit event
+form.addEventListener('submit', submitRegister);
+
 // Sends a post request with register form data
 async function submitRegister(event){
     // Prevent refresh
@@ -9,30 +19,26 @@ async function submitRegister(event){
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-            'username': form.querySelector('#username').value,
-            'email': form.querySelector('#email').value,
-            'password': form.querySelector('#password').value,
-            'confirmPassword': form.querySelector('#confirmPassword').value
+            'username': usernameInput.value,
+            'email': emailInput.value,
+            'password': passwordInput.value,
+            'confirmPassword': confirmPasswordInput.value,
         })
     };
-    const res = await fetch('/user/register',options);
-    const data = await res.json();
-    // Display error tip if failed
-    if(data.error){
+    const res = await fetch('/user/register', options);
+    const {error, message} = await res.json();
+    // Redirect to home on success
+    if(!error){
+        window.location = '/';
+    }else{ // Display error tip on failure
         $('.alert').alert('close');
         const errorDiv = document.createElement('div');
         errorDiv.className = 'alert alert-warning alert-dismissible fade show';
         errorDiv.role = 'alert';
-        errorDiv.innerHTML = data.message+`
+        errorDiv.innerHTML = `${message}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>`;
-        form.insertBefore(errorDiv, form.firstChild);
-    }else{ // Redirect to home on success
-        window.location = '/';
+        form.firstElementChild.insertAdjacentElement('beforeBegin', errorDiv);
     }
 }
-
-// Listen for submit event
-const form = document.getElementById('registerForm');
-form.addEventListener('submit',submitRegister);
