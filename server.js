@@ -1,7 +1,7 @@
 // Setup app and port
 const express = require('express');
-var app = express();
-var port = process.env.PORT || 8000;
+const app = express();
+const port = process.env.PORT || 8000;
 
 // Use CORS
 const cors = require('cors');
@@ -60,5 +60,15 @@ app.get('*', (req, res) => {
     res.status(404).sendFile(`${__dirname}/404.html`);
 });
 
+// Setup server and socket.io
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+io.on('connection', (socket) => {
+	console.log('User Connected');
+	socket.on('disconnect', () => {
+		console.log('User Disconnected');
+	});
+});
+
 // Listen to port
-app.listen(port);
+server.listen(port);
