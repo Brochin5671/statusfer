@@ -31,8 +31,11 @@ router.post('/', verifyAccessToken, async (req, res) => {
     });
     // Save status to DB
     try{
-        const savedStatus = await status.save()
+        const savedStatus = await status.save();
         res.json(savedStatus);
+        // Emit post event
+        const io = req.app.locals.io;
+        io.emit('postStatus', savedStatus);
     }catch(err){ // Send error on failure
         res.status(500).json(err);
     }
@@ -64,6 +67,9 @@ router.delete('/:statusId', verifyAccessToken, async (req, res) => {
         // Delete status
         const removedStatus = await Status.deleteOne({_id: req.params.statusId});
         res.json(removedStatus);
+        // Emit delete event
+        const io = req.app.locals.io;
+        io.emit('deleteStatus', status);
     }catch(err){ // Send error
         res.json({error: '404 Not Found', message: 'No entry found'});
     }
@@ -84,10 +90,13 @@ router.patch('/:statusId', verifyAccessToken, async (req, res) => {
         // Sanitize status
         const sanitizedStatus = req.body.trim();
         // Update status
-        const patchedStatus = await Status.updateOne({_id: req.params.statusId}, {$set: {status: sanitizedStatus}});
+        const patchedStatus = await Status.findOneAndUpdate({_id: req.params.statusId}, {status: sanitizedStatus}, {new: true});
         res.json(patchedStatus);
+        // Emit patch event
+        const io = req.app.locals.io;
+        io.emit('patchStatus', patchedStatus);
     }catch(err){ // Send error on failure
-        res.json({error: '404 Not Found', message: 'No entry found'});
+        res.json({error: '404 Not Found', message: 'No entry found.'});
     }
 });
 

@@ -32,8 +32,9 @@ if(port == process.env.PORT){
 	});
 }
 
-// Connect to DB
+// Setup and connect to DB
 const mongoose = require('mongoose');
+mongoose.set('useFindAndModify', false);
 require('dotenv/config');
 mongoose.connect(process.env.DB_CONNECTION, {useNewUrlParser: true, useUnifiedTopology: true}, () => {
     console.log('Connected to database!');
@@ -63,12 +64,7 @@ app.get('*', (req, res) => {
 // Setup server and socket.io
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-io.on('connection', (socket) => {
-	console.log('User Connected');
-	socket.on('disconnect', () => {
-		console.log('User Disconnected');
-	});
-});
+app.locals.io = io;
 
 // Listen to port
 server.listen(port);
