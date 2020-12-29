@@ -49,7 +49,11 @@ router.get('/:statusId', async (req, res) => {
 // Get a specific status
 router.get('/:statusId/data', async (req, res) => {
     try{
+        // Check if status exists
         const status = await Status.findById(req.params.statusId);
+        if(!status){
+            throw new Error();
+        }
         res.json(status);
     }catch(err){ // Send error
         res.json({error: '404 Not Found', message: 'No entry found'});
