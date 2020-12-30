@@ -29,6 +29,12 @@ const socket = io({
     transports: ['websocket'],
 });
 
+// Tries to get user info and fetches all statuses when connected
+socket.on('connect', async () => {
+    await getLoggedInOrOut();
+    await getStatuses();
+});
+
 // Add new status media object when post event is emitted
 socket.on('postStatus', statusJSON => {
     createStatusMedia(statusJSON, true);
@@ -63,7 +69,8 @@ async function getStatuses(){
     // Save response and fill status list on success
     if(res.status >= 200 && res.status <= 299){
         const listJSON = await res.json();
-        // Append all media objects to status list
+        // Refresh and append all media objects to status list
+        statusList.innerHTML = '';
         for(let i in listJSON){
             createStatusMedia(listJSON[i], false);
         }
@@ -350,10 +357,4 @@ function createErrorTip(adjElement, message){
 function getTextAreaCharacters(event){
     const charCounter = event.target.nextElementSibling;
     charCounter.innerText = `${event.target.value.length}/${event.target.maxLength}`;
-}
-
-// Functions to be executed on load
-async function onLoadFunctions(){
-    await getLoggedInOrOut();
-    await getStatuses();
 }
