@@ -6,7 +6,7 @@ const User = require('../models/User');
 const {registerValidation, loginValidation } = require('../validation');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {verifyAccessToken, verifyRefreshToken} = require('../verifyToken');
+const {verifyRefreshToken} = require('../verifyToken');
 
 // Store refreshTokens
 let refreshTokens = [];
@@ -56,9 +56,12 @@ router.post('/register', async (req, res) => {
 
 // Generate new access token from refresh token
 router.post('/token', verifyRefreshToken, async (req, res) => {
-    // Check if refresh token exists
+    // Check if refresh token exists and clear access token cookie if not
     const refreshToken = req.cookies.refreshToken;
-    if(!refreshTokens.includes(refreshToken)) return res.json({error: '403 Forbidden', message: 'This token has expired, try re-logging in.'});
+    if(!refreshTokens.includes(refreshToken)){
+        res.clearCookie('accessToken');
+        return res.json({error: '403 Forbidden', message: 'This token has expired, try re-logging in.'});
+    }
     // Generate new access token and httponly token cookie if access token cookie expired
     const currentAccessToken = req.cookies.accessToken;
     if(!currentAccessToken){
