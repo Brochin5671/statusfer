@@ -1,4 +1,4 @@
-// Select reusable elements
+// Select important elements
 const statusList = document.getElementById('statusList');
 const loggedInDiv = document.getElementById('loggedIn');
 const loggedOutDiv = document.getElementById('loggedOut');
@@ -7,23 +7,21 @@ const statusForm = document.getElementById('statusForm');
 const postBtn = document.getElementById('postBtn');
 const statusArea = document.getElementById('statusArea');
 
-// Add event listeners
+// Listen for logout event
 logoutForm.addEventListener('click', submitLogout);
+
+// Listen for post status event
 statusForm.addEventListener('submit', async (event) => {
-    // Disable all buttons
     disableButtons();
     // Prevent refresh
     event.preventDefault();
     // Try to get token if user doesn't already have one and send post request
-    const {error, message} = await getToken();
-    if(!error){
-        await postStatus(event);
-    }else{
-        statusForm.firstElementChild.insertAdjacentElement('beforeBegin', createErrorTip(message));
-    }
-    // Enable all buttons
+    await getToken();
+    await postStatus(event);
     enableButtons();
 });
+
+// Listen for status textarea input event
 statusArea.addEventListener('input', getTextAreaCharacters);
 
 // Setup client-side socket-io
@@ -204,7 +202,7 @@ async function postStatus(){
         const charCounter = statusArea.nextElementSibling;
         charCounter.innerText = `0/${statusArea.maxLength}`;
     }else{ // Display error tip on failure
-        statusForm.firstElementChild.insertAdjacentElement('beforeBegin', createErrorTip(message));
+        createErrorTip(statusForm.firstElementChild, message);
     }
 }
 
@@ -219,7 +217,7 @@ function editStatus(event){
     editArea.id = 'editedText';
     editArea.rows = 2;
     editArea.maxLength = 255;
-    const statusText = event.target.parentNode.children[1];
+    const statusText = event.target.parentNode.querySelector('.statusText');
     editArea.value = statusText.innerText;
     editArea.addEventListener('input', getTextAreaCharacters);
     statusText.insertAdjacentElement('afterEnd', editArea);
@@ -239,12 +237,8 @@ function editStatus(event){
     confirmBtn.addEventListener('click', async () => {
         // Try to get token if user doesn't already have one and send patch request
         disableButtons();
-        const {error, message} = await getToken();
-        if(!error){
-            await patchStatus(event);
-        }else{
-            statusBody.firstElementChild.insertAdjacentElement('beforeBegin', createErrorTip(message));
-        }
+        await getToken();
+        await patchStatus(event);
         enableButtons();
         // Un-hide non-edit elements and remove edit elements
         editBtn.className = editBtn.className.split(' d-none')[0];
@@ -292,7 +286,7 @@ async function patchStatus(event){
     if(!error){
         postBtn.disabled = false;
     }else{ // Display error tip on failure
-        statusBody.firstElementChild.insertAdjacentElement('beforeBegin', createErrorTip(message));
+        createErrorTip(statusBody.firstElementChild, message);
     }
     // Enable all buttons
     enableButtons();
@@ -314,7 +308,7 @@ async function deleteStatus(event){
     if(!error){
         postBtn.disabled = false;
     }else{ // Display error tip on failure
-        statusBody.firstElementChild.insertAdjacentElement('beforeBegin', createErrorTip(message));
+        createErrorTip(statusBody.firstElementChild, message);
     }
 }
 
@@ -336,8 +330,8 @@ function enableButtons(){
     postBtn.disabled = false;
 }
 
-// Creates and return error div
-function createErrorTip(message){
+// Creates and inserts error div
+function createErrorTip(adjElement, message){
     $('.alert').alert('close');
     const errorDiv = document.createElement('div');
     errorDiv.className = 'alert alert-warning alert-dismissible fade show';
@@ -346,7 +340,7 @@ function createErrorTip(message){
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>`;
-    return errorDiv;
+    adjElement.insertAdjacentElement('beforeBegin', errorDiv);
 }
 
 // Edits the character counter of a text area
