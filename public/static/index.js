@@ -159,8 +159,14 @@ async function getLoggedInOrOut(){
     if(!error){
         loggedInDiv.className = 'container';
         loggedInDiv.querySelector('h1').innerText = message;
-    }else{ // Display loggedOut section if logged out
+        loggedOutDiv.className += 'container d-none';
+    }else{ // Display loggedOut section if logged out and reset elements
         loggedOutDiv.className = 'container';
+        loggedInDiv.className = 'container d-none';
+        loggedInDiv.querySelector('h1').innerText = '';
+        statusArea.value = '';
+        const charCounter = statusArea.nextElementSibling;
+        charCounter.innerText = `0/${statusArea.maxLength}`;
     }
 }
 
