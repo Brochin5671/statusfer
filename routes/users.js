@@ -14,6 +14,10 @@ let refreshTokens = [];
 // Register page
 router.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'register.html'));
+    // Redirect if refresh cookie exists
+    if(req.cookies.refreshToken){
+        res.redirect('../');
+    }
 });
 
 // Register a user
@@ -56,9 +60,10 @@ router.post('/register', async (req, res) => {
 
 // Generate new access token from refresh token
 router.post('/token', verifyRefreshToken, async (req, res) => {
-    // Check if refresh token exists and clear access token cookie if not
+    // Check if refresh token exists and clear cookies if not
     const refreshToken = req.cookies.refreshToken;
     if(!refreshTokens.includes(refreshToken)){
+        res.clearCookie('refreshToken');
         res.clearCookie('accessToken');
         return res.json({error: '403 Forbidden', message: 'This token has expired, try re-logging in.'});
     }
@@ -74,6 +79,10 @@ router.post('/token', verifyRefreshToken, async (req, res) => {
 // Login page
 router.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'login.html'));
+    // Redirect if refresh cookie exists
+    if(req.cookies.refreshToken){
+        res.redirect('../');
+    }
 });
 
 // Login a user

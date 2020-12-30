@@ -11,25 +11,28 @@ const verifyAccessToken = (req, res, next) => {
         const verifiedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         req.user = verifiedToken;
         next();
-    }catch(err){ // Send error on failure
+    }catch(err){ // Clear access cookie and send error on failure
+        res.clearCookie('accessToken');
         res.json({error: '400 Bad Request', message: 'Invalid token, try refreshing the page.'});
     }
 }
 
 // Check and verify user refresh token
 const verifyRefreshToken = (req, res, next) => {
-    // Check if token exists and clear access token cookie if not
+    // Check if token exists and clear cookies if not
     const token = req.cookies.refreshToken;
     if(!token){
+        res.clearCookie('refreshToken');
         res.clearCookie('accessToken');
         return res.json({error: '401 Unauthroized', message: 'Login to use features.'});
     }
-    // Verify refresh token, generate new access token and send httponly token cookie
+    // Verify refresh token
     try{
         const verifiedToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
         req.user = verifiedToken;
         next();
-    }catch(err){ // Clear access token cookie and send error on failure
+    }catch(err){ // Clear cookies and send error on failure
+        res.clearCookie('refreshToken');
         res.clearCookie('accessToken');
         res.json({error: '400 Bad Request', message: 'Invalid token, try re-logging in.'});
     }
