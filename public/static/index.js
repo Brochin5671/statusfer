@@ -15,8 +15,7 @@ statusForm.addEventListener('submit', async (event) => {
     disableButtons();
     // Prevent refresh
     event.preventDefault();
-    // Try to get token if user doesn't already have one and send post request
-    await getToken();
+    // Send post request
     await postStatus(event);
     enableButtons();
 });
@@ -123,9 +122,8 @@ function createStatusMedia(statusJSON, isNew){
         deleteBtn.className = 'btn btn-primary delete';
         statusBody.appendChild(deleteBtn);
         deleteBtn.addEventListener('click', async (event) => {
-            // Try to get token if user doesn't already have one and send delete request
+            // Send delete request
             disableButtons();
-            await getToken();
             await deleteStatus(event);
             enableButtons();
         });
@@ -185,6 +183,8 @@ async function submitLogout(event){
 
 // Send a post request to post a status
 async function postStatus(){
+    // Try to get token if user doesn't already have one
+    await getToken();
     // Send post request with cookies and form data
     const options = {
         method: 'POST',
@@ -235,9 +235,8 @@ function editStatus(event){
     editBtn.insertAdjacentElement('beforeBegin', confirmBtn);
     // Listen for confirm button event to send a patch request, un-hide non-edit elements, and remove edit elements
     confirmBtn.addEventListener('click', async () => {
-        // Try to get token if user doesn't already have one and send patch request
+        // Send patch request
         disableButtons();
-        await getToken();
         await patchStatus(event);
         enableButtons();
         // Un-hide non-edit elements and remove edit elements
@@ -268,6 +267,8 @@ function editStatus(event){
 
 // Send a patch request to edit a status
 async function patchStatus(event){
+    // Try to get token if user doesn't already have one
+    await getToken();
     // Get status body and status id
     const statusBody = event.target.parentNode;
     const statusId = event.target.parentNode.parentNode.id;
@@ -294,6 +295,8 @@ async function patchStatus(event){
 
 // Send a delete request to delete a status
 async function deleteStatus(event){
+    // Try to get token if user doesn't already have one
+    await getToken();
     // Get status body and status id
     const statusBody = event.target.parentNode;
     const statusId = event.target.parentNode.parentNode.id;
