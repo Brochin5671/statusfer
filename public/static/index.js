@@ -9,7 +9,21 @@ const statusArea = document.getElementById('statusArea');
 
 // Add event listeners
 logoutForm.addEventListener('click', submitLogout);
-statusForm.addEventListener('submit', postStatus);
+statusForm.addEventListener('submit', async (event) => {
+    // Disable all buttons
+    disableButtons();
+    // Prevent refresh
+    event.preventDefault();
+    // Try to get token if user doesn't already have one and send post request
+    const {error, message} = await getToken();
+    if(!error){
+        await postStatus(event);
+    }else{
+        statusForm.firstElementChild.insertAdjacentElement('beforeBegin', createErrorTip(message));
+    }
+    // Enable all buttons
+    enableButtons();
+});
 statusArea.addEventListener('input', getTextAreaCharacters);
 
 // Setup client-side socket-io
@@ -102,15 +116,21 @@ function createStatusMedia(statusJSON, isNew){
         editBtn.innerText = 'Edit';
         editBtn.type = 'click';
         editBtn.className = 'btn btn-primary mr-2 edit';
-        editBtn.addEventListener('click', editStatus);
         statusBody.appendChild(editBtn);
+        editBtn.addEventListener('click', editStatus);
         // Create delete button
         const deleteBtn = document.createElement('button');
         deleteBtn.innerText = 'Delete';
         deleteBtn.type = 'click';
         deleteBtn.className = 'btn btn-primary delete';
-        deleteBtn.addEventListener('click', deleteStatus);
         statusBody.appendChild(deleteBtn);
+        deleteBtn.addEventListener('click', async (event) => {
+            // Try to get token if user doesn't already have one and send delete request
+            disableButtons();
+            await getToken();
+            await deleteStatus(event);
+            enableButtons();
+        });
     }
 }
 
@@ -130,13 +150,8 @@ function createDateString(dateString){
 
 // Tries to get token to see if user is logged in or out
 async function getLoggedInOrOut(){
-    // Send get request with cookies and save response
-    const options = {
-        method: 'POST',
-        credentials: 'same-origin',
-    };
-    const res = await fetch('/user/token', options);
-    const {error, message} = await res.json();
+    // Try to get new token
+    const {error, message} = await getToken();
     // Display loggedIn section and username if logged in
     if(!error){
         loggedInDiv.className = 'container';
@@ -144,6 +159,17 @@ async function getLoggedInOrOut(){
     }else{ // Display loggedOut section if logged out
         loggedOutDiv.className = 'container';
     }
+}
+
+// Tries to generate new token for user
+async function getToken(){
+    // Send post request with cookies and save response
+    const options = {
+        method: 'POST',
+        credentials: 'same-origin',
+    };
+    const res = await fetch('/user/token', options);
+    return await res.json();
 }
 
 // Send a delete request to logout
@@ -160,11 +186,7 @@ async function submitLogout(event){
 }
 
 // Send a post request to post a status
-async function postStatus(event){
-    // Disable all buttons
-    disableButtons();
-    // Prevent refresh
-    event.preventDefault();
+async function postStatus(){
     // Send post request with cookies and form data
     const options = {
         method: 'POST',
@@ -176,31 +198,28 @@ async function postStatus(event){
     };
     const res = await fetch('/status', options);
     const {error, message} = await res.json();
-    // Re-enable post button, reset status textarea and character counter, and update status list
+    // Reset status textarea and character counter, and update status list
     if(!error){
-        postBtn.disabled = false;
         statusArea.value = '';
         const charCounter = statusArea.nextElementSibling;
         charCounter.innerText = `0/${statusArea.maxLength}`;
     }else{ // Display error tip on failure
         statusForm.firstElementChild.insertAdjacentElement('beforeBegin', createErrorTip(message));
     }
-    // Enable all buttons
-    enableButtons();
 }
 
 // Hides non-edit elements, creates text area, confirm and cancel buttons
 function editStatus(event){
     // Get status body and status id
-    const statusBody = event.composedPath()[1];
-    const statusId = event.composedPath()[2].id;
+    const statusBody = event.target.parentNode;
+    const statusId = event.target.parentNode.parentNode.id;
     // Create edit textarea
     const editArea = document.createElement('textarea');
     editArea.className = `form-control mb-1 editDeletable${statusId}`;
     editArea.id = 'editedText';
     editArea.rows = 2;
     editArea.maxLength = 255;
-    const statusText = event.composedPath()[1].children[1];
+    const statusText = event.target.parentNode.children[1];
     editArea.value = statusText.innerText;
     editArea.addEventListener('input', getTextAreaCharacters);
     statusText.insertAdjacentElement('afterEnd', editArea);
@@ -218,7 +237,16 @@ function editStatus(event){
     editBtn.insertAdjacentElement('beforeBegin', confirmBtn);
     // Listen for confirm button event to send a patch request, un-hide non-edit elements, and remove edit elements
     confirmBtn.addEventListener('click', async () => {
-        await patchStatus(statusBody, statusId);
+        // Try to get token if user doesn't already have one and send patch request
+        disableButtons();
+        const {error, message} = await getToken();
+        if(!error){
+            await patchStatus(event);
+        }else{
+            statusBody.firstElementChild.insertAdjacentElement('beforeBegin', createErrorTip(message));
+        }
+        enableButtons();
+        // Un-hide non-edit elements and remove edit elements
         editBtn.className = editBtn.className.split(' d-none')[0];
         deleteBtn.className = deleteBtn.className.split(' d-none')[0];
         statusText.className = statusText.className.split(' d-none')[0];
@@ -239,15 +267,16 @@ function editStatus(event){
     cancelBtn.addEventListener('click', () => {
         editBtn.className = editBtn.className.split(' d-none')[0];
         deleteBtn.className = deleteBtn.className.split(' d-none')[0];
-        statusText.removeAttribute('class');
+        statusText.className = statusText.className.split(' d-none')[0];
         $(`.editDeletable${statusId}`).remove();
     });
 }
 
 // Send a patch request to edit a status
-async function patchStatus(statusBody, statusId){
-    // Disable all buttons
-    disableButtons();
+async function patchStatus(event){
+    // Get status body and status id
+    const statusBody = event.target.parentNode;
+    const statusId = event.target.parentNode.parentNode.id;
     // Send patch request with cookies and form data
     const options = {
         method: 'PATCH',
@@ -271,11 +300,9 @@ async function patchStatus(statusBody, statusId){
 
 // Send a delete request to delete a status
 async function deleteStatus(event){
-    // Disable all buttons
-    disableButtons();
     // Get status body and status id
-    const statusBody = event.composedPath()[1];
-    const statusId = event.composedPath()[2].id;
+    const statusBody = event.target.parentNode;
+    const statusId = event.target.parentNode.parentNode.id;
     // Send patch request with cookies and form data
     const options = {
         method: 'DELETE',
@@ -289,8 +316,6 @@ async function deleteStatus(event){
     }else{ // Display error tip on failure
         statusBody.firstElementChild.insertAdjacentElement('beforeBegin', createErrorTip(message));
     }
-    // Enable all buttons
-    enableButtons();
 }
 
 // Disables all request buttons
