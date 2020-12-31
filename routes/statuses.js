@@ -27,6 +27,7 @@ router.post('/', verifyAccessToken, async (req, res) => {
     // Create new status object
     const status = new Status({
         user: req.user.username,
+        userId: req.user._id,
         status: sanitizedStatus
     });
     // Save status to DB

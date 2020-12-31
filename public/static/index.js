@@ -94,7 +94,9 @@ function createStatusMedia(statusJSON, isNew){
     statusLink.href = `/status/${statusJSON._id}`;
     statusLink.innerText = 'View';
     // Create username element
-    const username = document.createElement('h5');
+    const username = document.createElement('a');
+    username.className = 'h5 text-reset';
+    username.href = `/user/${statusJSON.userId}`;
     username.innerText = statusJSON.user;
     // Create status text element
     const statusText = document.createElement('p');
