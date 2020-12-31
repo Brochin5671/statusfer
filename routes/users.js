@@ -25,17 +25,17 @@ router.post('/register', async (req, res) => {
     // Validate user and return error message if failed
     const {error} = registerValidation(req.body);
     if(error) return res.json({error: '400 Bad Request', message: error.details[0].message});
+    // Sanitize username and email
+    const sanitizedUsername = req.body.username.trim();
+    const sanitizedEmail = req.body.email.trim();
     // Check if username and email already registered
-    const usernameExists = await User.findOne({username: req.body.username});
+    const usernameExists = await User.findOne({username: sanitizedUsername});
     if(usernameExists) return res.json({error: '400 Bad Request', message: 'Username is taken.'});
-    const emailExists = await User.findOne({email: req.body.email});
+    const emailExists = await User.findOne({email: sanitizedEmail});
     if(emailExists) return res.json({error: '400 Bad Request', message: 'Email already registered.'});
     // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(req.body.password, salt);
-    // Sanitize username and email
-    const sanitizedUsername = req.body.username.trim();
-    const sanitizedEmail = req.body.email.trim();
     // Create new user object
     const user = new User({
         username: sanitizedUsername,
