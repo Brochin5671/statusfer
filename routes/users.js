@@ -115,5 +115,25 @@ router.delete('/logout', (req, res) => {
     res.status(200).send('Logout successful');
 });
 
+// Specific user page
+router.get('/:userId', async (req, res) => {
+    res.sendFile(path.join(__dirname, '../public', 'user.html'));
+});
+
+// Get a specific user
+router.get('/:userId/data', async (req, res) => {
+    try{
+        // Check if user exists
+        const user = await User.findById(req.params.userId);
+        if(!user){
+            throw new Error();
+        }
+        const {username, _id, createdAt} = user;
+        res.json({username, _id, createdAt});
+    }catch(err){ // Send error
+        res.json({error: '404 Not Found', message: 'No user found.'});
+    }
+});
+
 // Export router
 module.exports = router;
