@@ -57,7 +57,7 @@ router.get('/:statusId/data', async (req, res) => {
         }
         res.json(status);
     }catch(err){ // Send error
-        res.json({error: '404 Not Found', message: 'No entry found'});
+        res.json({error: '404 Not Found', message: 'No entry found.'});
     }
 });
 
@@ -76,7 +76,7 @@ router.delete('/:statusId', verifyAccessToken, async (req, res) => {
         const io = req.app.locals.io;
         io.emit('deleteStatus', status);
     }catch(err){ // Send error
-        res.json({error: '404 Not Found', message: 'No entry found'});
+        res.json({error: '404 Not Found', message: 'No entry found.'});
     }
 });
 
@@ -109,7 +109,7 @@ router.patch('/:statusId', verifyAccessToken, async (req, res) => {
 router.post('/:statusId/like', verifyAccessToken, async (req, res) => {
     try{
         // Get status and create sets from likes and dislikes arrays
-        const {likes, dislikes, _id, createdAt} = await Status.findById(req.params.statusId);
+        const {likes, dislikes, _id} = await Status.findById(req.params.statusId);
         const likeSet = new Set(likes);
         const dislikeSet = new Set(dislikes);
         // Try to add a new user to the set to determine if duplicate and remove from like set if the size doesn't change
@@ -129,7 +129,6 @@ router.post('/:statusId/like', verifyAccessToken, async (req, res) => {
         const io = req.app.locals.io;
         io.emit('likeStatus', {_id, newLikes: likeSize, newDislikes: dislikeSize});
     }catch(err){ // Send error on failure
-        console.log(err);
         res.json({error: '404 Not Found', message: 'No entry found.'});
     }
 });
