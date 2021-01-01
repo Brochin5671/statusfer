@@ -16,13 +16,11 @@ const StatusSchema = mongoose.Schema({
         required: true
     },
     likes: {
-        type: Number,
-        default: 0,
+        type: Array,
         required: true
     },
     dislikes: {
-        type: Number,
-        default: 0,
+        type: Array,
         required: true
     }
 }, {timestamps: true});
