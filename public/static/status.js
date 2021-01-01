@@ -23,14 +23,19 @@ async function getStatus(){
 
 // Returns a date string based on the time
 function createDateString(dateString){
+    // Get given date, current date, and yesterday's date
     const date = new Date(dateString);
-    const nowDate = new Date(Date.now());
+    const now = new Date(Date.now());
+    const yesterday = new Date(Date.now());
+    yesterday.setDate(now.getDate() - 1);
     // Check if date is from today or yesterday, else return a full date string
-    if(date.getFullYear() == nowDate.getFullYear() && date.getMonth() == nowDate.getMonth() && date.getDate() == nowDate.getDate()){
+    const isToday = date.getFullYear() == now.getFullYear() && date.getMonth() == now.getMonth() && date.getDate() == now.getDate();
+    const isYesterday = date.getFullYear() == yesterday.getFullYear() && date.getMonth() == yesterday.getMonth() && yesterday.getDate() == date.getDate();
+    if(isToday){
         return `Today at ${date.toLocaleTimeString()}`;
-    }else if(date.getFullYear() == nowDate.getFullYear() && date.getMonth() == nowDate.getMonth() && nowDate.getDate() - date.getDate() == 1){
+    }else if(isYesterday){
         return `Yesterday at ${date.toLocaleTimeString()}`;
     }else{
-        return date.toLocaleString();
+        return `${date.toLocaleDateString()} at ${date.toLocaleTimeString()}`;
     }
 }
