@@ -100,7 +100,7 @@ function createStatusMedia(statusJSON, isNew){
     username.innerText = statusJSON.user;
     // Create status text element
     const statusText = document.createElement('p');
-    statusText.className = 'statusText';
+    statusText.className = 'statusText mt-2';
     statusText.innerText = statusJSON.status;
     // Get the date of latest revision of the status and create date text element
     const statusDate = document.createElement('p');
