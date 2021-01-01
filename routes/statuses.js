@@ -105,5 +105,62 @@ router.patch('/:statusId', verifyAccessToken, async (req, res) => {
     }
 });
 
+// Update a specific status's likes
+router.post('/:statusId/like', verifyAccessToken, async (req, res) => {
+    try{
+        // Get status and create sets from likes and dislikes arrays
+        const {likes, dislikes, _id, createdAt} = await Status.findById(req.params.statusId);
+        const likeSet = new Set(likes);
+        const dislikeSet = new Set(dislikes);
+        // Try to add a new user to the set to determine if duplicate and remove from like set if the size doesn't change
+        let likeSize = likeSet.size;
+        likeSet.add(req.user.username);
+        if(likeSet.size == likeSize){
+            likeSet.delete(req.user.username);
+        }else{ // Try to remove user from dislike set if size changes
+            dislikeSet.delete(req.user.username);
+        }
+        likeSize = likeSet.size;
+        const dislikeSize = dislikeSet.size;
+        // Update status' likes and dislikes arrays
+        await Status.findOneAndUpdate({_id: _id}, {likes: Array.from(likeSet), dislikes: Array.from(dislikeSet)}, {timestamps: false});
+        res.json({_id, newLikes: likeSize, newDislikes: dislikeSize});
+        // Emit like event
+        const io = req.app.locals.io;
+        io.emit('likeStatus', {_id, newLikes: likeSize, newDislikes: dislikeSize});
+    }catch(err){ // Send error on failure
+        console.log(err);
+        res.json({error: '404 Not Found', message: 'No entry found.'});
+    }
+});
+
+// Update a specific status's dislikes
+router.post('/:statusId/dislike', verifyAccessToken, async (req, res) => {
+    try{
+        // Get status and create sets from likes and dislikes arrays
+        const {likes, dislikes, _id, createdAt} = await Status.findById(req.params.statusId);
+        const likeSet = new Set(likes);
+        const dislikeSet = new Set(dislikes);
+        // Try to add a new user to the set to determine if duplicate and remove from dislike set if the size doesn't change
+        let dislikeSize = dislikeSet.size;
+        dislikeSet.add(req.user.username);
+        if(dislikeSet.size == dislikeSize){
+            dislikeSet.delete(req.user.username);
+        }else{ // Try to remove user from like set if size changes
+            likeSet.delete(req.user.username);
+        }
+        dislikeSize = dislikeSet.size;
+        const likeSize = likeSet.size;
+        // Update status' likes and dislikes array
+        await Status.findOneAndUpdate({_id: _id}, {likes: Array.from(likeSet), dislikes: Array.from(dislikeSet)}, {timestamps: false});
+        res.json({_id, newLikes: likeSize, newDislikes: dislikeSize});
+        // Emit dislike event
+        const io = req.app.locals.io;
+        io.emit('dislikeStatus', {_id, newLikes: likeSize, newDislikes: dislikeSize});
+    }catch(err){ // Send error on failure
+        res.json({error: '404 Not Found', message: 'No entry found.'});
+    }
+});
+
 // Export router
 module.exports = router;

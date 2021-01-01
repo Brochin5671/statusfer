@@ -47,9 +47,23 @@ socket.on('deleteStatus', ({_id}) => {
 
 // Update specific status media object when patch event is emitted
 socket.on('patchStatus', ({_id, updatedAt, status}) => {
-    updatedStatus = document.getElementById(_id);
+    const updatedStatus = document.getElementById(_id);
     updatedStatus.querySelector('.statusText').innerText = status;
     updatedStatus.querySelector('.statusDate').innerText = createDateString(updatedAt);
+});
+
+// Update specific status' likes
+socket.on('likeStatus', ({newLikes, newDislikes, _id}) => {
+    const likedStatus = document.getElementById(_id);
+    likedStatus.querySelector('.like').innerText = `▲ ${newLikes}`;
+    likedStatus.querySelector('.dislike').innerText = `▼ ${newDislikes}`;
+});
+
+// Update specific status' dislikes
+socket.on('dislikeStatus', ({newLikes, newDislikes, _id}) => {
+    const dislikedStatus = document.getElementById(_id);
+    dislikedStatus.querySelector('.dislike').innerText = `▼ ${newDislikes}`;
+    dislikedStatus.querySelector('.like').innerText = `▲ ${newLikes}`;
 });
 
 // Alert disconnected message
@@ -106,10 +120,33 @@ function createStatusMedia(statusJSON, isNew){
     const statusDate = document.createElement('p');
     statusDate.className = 'small statusDate';
     statusDate.innerText = createDateString(statusJSON.updatedAt);
+    // Create like button
+    const likeBtn = document.createElement('button');
+    likeBtn.innerText = `▲ ${statusJSON.likes.length}`;
+    likeBtn.type = 'click';
+    likeBtn.className = 'btn btn-primary btn-sm like';
+    likeBtn.addEventListener('click', likeStatus);
+    // Create dislike button
+    const dislikeBtn = document.createElement('button');
+    dislikeBtn.innerText = `▼ ${statusJSON.dislikes.length}`;
+    dislikeBtn.type = 'click';
+    dislikeBtn.className = 'btn btn-primary btn-sm dislike';
+    dislikeBtn.addEventListener('click', dislikeStatus);
+    // Create feedback div element and add to feedback div wrap element
+    const feedBackDiv = document.createElement('div');
+    feedBackDiv.className = 'btn-group';
+    feedBackDiv.role = 'group';
+    feedBackDiv.setAttribute('aria-label', 'Feedback buttons');
+    feedBackDiv.appendChild(likeBtn);
+    feedBackDiv.appendChild(dislikeBtn);
+    const feedBackDivWrap = document.createElement('div');
+    feedBackDivWrap.className = 'mb-2';
+    feedBackDivWrap.appendChild(feedBackDiv);
     // Append by linking parents
     statusBody.appendChild(username);
     statusBody.appendChild(statusText);
     statusBody.appendChild(statusDate);
+    statusBody.appendChild(feedBackDivWrap);
     statusMedia.appendChild(statusBody);
     statusMedia.appendChild(statusLink);
     // Append to beginning of list if new element, else append to end of list
@@ -326,6 +363,46 @@ async function deleteStatus(event){
     if(!error){
         postBtn.disabled = false;
     }else{ // Display error tip on failure
+        createErrorTip(statusBody.firstElementChild, message);
+    }
+}
+
+// Send a post request to like/un-like a status
+async function likeStatus(event){
+    // Try to get token if user doesn't already have one
+    await getToken();
+    // Get status body and status id
+    const statusBody = event.target.parentNode.parentNode.parentNode;
+    const statusId = event.target.parentNode.parentNode.parentNode.parentNode.id;
+    // Send post request with cookies and save response
+    const options = {
+        method: 'POST',
+        credentials: 'same-origin',
+    };
+    const res = await fetch(`/status/${statusId}/like`, options);
+    const {error, message} = await res.json();
+    // Display error tip on failure
+    if(error){
+        createErrorTip(statusBody.firstElementChild, message);
+    }
+}
+
+// Send a post request to dislike/un-dislike a status
+async function dislikeStatus(event){
+    // Try to get token if user doesn't already have one
+    await getToken();
+    // Get status body and status id
+    const statusBody = event.target.parentNode.parentNode.parentNode;
+    const statusId = event.target.parentNode.parentNode.parentNode.parentNode.id;
+    // Send post request with cookies and save response
+    const options = {
+        method: 'POST',
+        credentials: 'same-origin',
+    };
+    const res = await fetch(`/status/${statusId}/dislike`, options);
+    const {error, message} = await res.json();
+    // Display error tip on failure
+    if(error){
         createErrorTip(statusBody.firstElementChild, message);
     }
 }
