@@ -1,15 +1,20 @@
 // Setup jsonwebtoken
 const jwt = require('jsonwebtoken');
+const User = require('./models/User');
 
 // Check and verify user access token
-const verifyAccessToken = (req, res, next) => {
+const verifyAccessToken = async (req, res, next) => {
     // Check if token exists and send error on failure
     const token = req.cookies.accessToken;
     if(!token) return res.status(401).json({error: '401 Unauthroized', message: 'Login to use features.'});
-    // Verify access token
+    // Verify access token and user, hand over control to next on success
     try{
+        // Verify access token and store in request
         const verifiedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         req.user = verifiedToken;
+        // Verify that the user exists
+        const userExists = await User.findOne({username: req.user.username});
+        if(!userExists) return res.status(404).json({error: '404 Not Found', message: 'This user no longer exists, clear your cookies to continue.'});
         next();
     }catch(err){ // Clear access cookie and send error on failure
         res.clearCookie('accessToken');
@@ -18,7 +23,7 @@ const verifyAccessToken = (req, res, next) => {
 }
 
 // Check and verify user refresh token
-const verifyRefreshToken = (req, res, next) => {
+const verifyRefreshToken = async (req, res, next) => {
     // Check if token exists, clear cookies and send error on failure
     const token = req.cookies.refreshToken;
     if(!token){
@@ -26,10 +31,14 @@ const verifyRefreshToken = (req, res, next) => {
         res.clearCookie('accessToken');
         return res.json({error: '401 Unauthroized', message: 'Login to use features.'});
     }
-    // Verify refresh token
+    // Verify refresh token and user, hand over control to next on success
     try{
+        // Verify refresh token and store in request
         const verifiedToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
         req.user = verifiedToken;
+        // Verify that the user exists
+        const userExists = await User.findOne({username: req.user.username});
+        if(!userExists) return res.status(404).json({error: '404 Not Found', message: 'This user no longer exists.'});
         next();
     }catch(err){ // Clear cookies and send error on failure
         res.clearCookie('refreshToken');
