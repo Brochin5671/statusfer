@@ -68,7 +68,7 @@ socket.on('dislikeStatus', ({newLikes, newDislikes, _id}) => {
 
 // Alert disconnected message
 socket.on('disconnect', () => {
-    alert('Lost connection! Trying to reconnect...');
+    createErrorTip(loggedOutDiv, 'Lost connection! Trying to reconnect...');
 });
 
 // When reconnecting, use polling transport, and then upgrade to websocket
@@ -88,8 +88,8 @@ async function getStatuses(){
         for(let i in listJSON){
             createStatusMedia(listJSON[i], false);
         }
-    }else{ // Send error on failure
-        alert(listJSON.message);
+    }else{ // Display error tip on failure
+        createErrorTip(loggedOutDiv, listJSON.message);
     }
 }
 
@@ -226,16 +226,17 @@ async function getToken(){
 }
 
 // Send a delete request to logout
-async function submitLogout(event){
-    // Send delete request with cookies
+async function submitLogout(){
+    // Send delete request with cookies and save response
     const options = {
         method: 'DELETE',
         credentials: 'same-origin'
     }
     const res = await fetch('/user/logout', options);
-    // Refresh page on success, else send error
-    if(res.status >= 200 && res.status <= 299) window.location.reload();
-    else alert('Sorry, something went wrong.');
+    const {error, message} = res.json();
+    // Refresh page on success, else display error tip on failure
+    if(!error) window.location.reload();
+    else createErrorTip(loggedOutDiv, message);
 }
 
 // Send a post request to post a status
