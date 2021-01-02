@@ -90,7 +90,7 @@ async function getStatuses(){
         // Refresh and append all media objects to status list
         statusList.innerHTML = '';
         for(let i in listJSON){
-            createStatusMedia(listJSON[i]);
+            createStatusMedia(listJSON[i], false);
         }
     }else{ // Display error tip on failure
         createErrorTip(title, listJSON.message);
@@ -98,7 +98,7 @@ async function getStatuses(){
 }
 
 // Creates and adds a status media element to the status list
-function createStatusMedia(statusJSON){
+function createStatusMedia(statusJSON, isNew){
     // Create media element
     const statusMedia = document.createElement('li');
     statusMedia.id = statusJSON._id;
@@ -153,7 +153,9 @@ function createStatusMedia(statusJSON){
     statusBody.appendChild(feedBackDivWrap);
     statusMedia.appendChild(statusBody);
     statusMedia.appendChild(statusLink);
-    statusList.appendChild(statusMedia);
+    // Append to beginning of list if new element, else append to end of list
+    if(isNew && statusList.firstElementChild) statusList.firstElementChild.insertAdjacentElement('beforeBegin', statusMedia);
+    else statusList.appendChild(statusMedia);
     // If status is owned by user, add edit and delete buttons
     if(usernameBtn.textContent.split(' ▼')[0] == statusJSON.user){
         // Create edit button
