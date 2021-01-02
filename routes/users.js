@@ -1,17 +1,16 @@
-// Setup router, UserSchema, validation, bcrypt, jsonwebtoken, and token verification
-const express = require('express');
-const router = express.Router();
+// Setup router, path, User model, validation, refresh token verification, bcrypt, and jsonwebtoken
+const router = require('express').Router();
 const path = require('path');
 const User = require('../models/User');
-const {registerValidation, loginValidation } = require('../validation');
+const {registerValidation, loginValidation} = require('../validation');
+const {verifyRefreshToken} = require('../verifyToken');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {verifyRefreshToken} = require('../verifyToken');
 
 // Store refreshTokens
 let refreshTokens = [];
 
-// Register page
+// Serve register page
 router.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'register.html'));
     // Redirect if refresh cookie exists
@@ -76,7 +75,7 @@ router.post('/token', verifyRefreshToken, async (req, res) => {
     res.status(200).json({message: req.user.username});
 });
 
-// Login page
+// Serve login page
 router.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'login.html'));
     // Redirect if refresh cookie exists
@@ -115,8 +114,8 @@ router.delete('/logout', (req, res) => {
     res.status(200).send('Logout successful');
 });
 
-// Specific user page
-router.get('/:userId', async (req, res) => {
+// Serve a specific user page
+router.get('/:userId', (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'user.html'));
 });
 

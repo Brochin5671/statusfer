@@ -1,4 +1,4 @@
-// Setup router, Status model, access token verification, and status validation
+// Setup router, path, Status model, access token verification, and status validation
 const router = require('express').Router();
 const path = require('path');
 const Status = require('../models/Status');
@@ -42,8 +42,8 @@ router.post('/', verifyAccessToken, async (req, res) => {
     }
 });
 
-// Specific status page
-router.get('/:statusId', async (req, res) => {
+// Serve a specific status page
+router.get('/:statusId', (req, res) => {
     res.sendFile(path.join(__dirname, '../public', 'status.html'));
 });
 
