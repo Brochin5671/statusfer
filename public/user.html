@@ -25,17 +25,35 @@
     <body onload="getUser()">
         <main>
             <div class="container">
-                <div class="row min-vh-100 justify-content-center align-items-center">
-                    <div class="col-sm-6">
-                        <div class="media position-relative rounded-lg shadow">
-                            <div class="media-body m-3 text-break">
-                                <h5 id="username"></h5>
-                                <p id="userId"></p>
-                                <p class="small" id="date"></p>
-                            </div>
-                            <a class="btn btn-primary align-self-center mr-3" href="/">Back</a>
-                        </div>
+                <div class="card text-center mt-3">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link disabled" tabindex="-1" aria-disabled="true">Settings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link disabled" tabindex="-1" aria-disabled="true">Delete Account</a>
+                            </li>
+                        </ul>
                     </div>
+                    <div class="card-body">
+                        <h5 class="card-title" id="username"></h5>
+                        <p class="card-text" id="userId"></p>
+                        <p class="card-subtitle mb-3" id="date"></p>
+                        <a class="btn btn-primary align-self-center" href="/">Back</a>
+                    </div>
+                </div>
+                <div class="container mt-4">
+                    <ul class="list-unstyled rounded-lg shadow" id="statusList">
+                        <li class="media position-relative rounded-lg shadow" id="noPosts">
+                            <div class="media-body m-3 text-break align-items-center">
+                                <h5 class="text-center m-0">This user hasn't posted any statuses.</h5>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </main>
