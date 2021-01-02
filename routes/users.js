@@ -72,7 +72,7 @@ router.post('/token', verifyRefreshToken, (req, res) => {
         const accessToken = jwt.sign({_id: req.user._id, username: req.user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'});
         res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
     }
-    res.json({message: req.user.username});
+    res.json({message: req.user.username, userId: req.user._id});
 });
 
 // Serve login page

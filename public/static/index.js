@@ -1,7 +1,9 @@
 // Select important elements
+const title = document.querySelector('h1');
 const statusList = document.getElementById('statusList');
 const loggedInDiv = document.getElementById('loggedIn');
 const usernameBtn = document.getElementById('usernameBtn');
+const profileLink = document.getElementById('profileLink');
 const loggedOutDiv = document.getElementById('loggedOut');
 const logoutBtn = document.getElementById('logout');
 const statusForm = document.getElementById('statusForm');
@@ -70,7 +72,7 @@ socket.on('dislikeStatus', ({newLikes, newDislikes, _id}) => {
 
 // Alert disconnected message
 socket.on('disconnect', () => {
-    createErrorTip(loggedOutDiv, 'Lost connection! Trying to reconnect...');
+    createErrorTip(title, 'Lost connection! Trying to reconnect...');
 });
 
 // When reconnecting, use polling transport, and then upgrade to websocket
@@ -91,7 +93,7 @@ async function getStatuses(){
             createStatusMedia(listJSON[i], false);
         }
     }else{ // Display error tip on failure
-        createErrorTip(loggedOutDiv, listJSON.message);
+        createErrorTip(title, listJSON.message);
     }
 }
 
@@ -201,11 +203,12 @@ function createDateString(createdAt, updatedAt){
 // Tries to get token to see if user is logged in or out
 async function getLoggedInOrOut(){
     // Try to get new token
-    const {error, message} = await getToken();
+    const {error, message, userId} = await getToken();
     // Display loggedIn section and username if logged in
     if(!error){
         loggedInDiv.className = 'container';
         usernameBtn.innerText = message;
+        profileLink.href = `/user/${userId}`;
         loggedOutDiv.className = 'container d-none';
         const span = document.createElement('span');
         span.className = 'small';
@@ -215,6 +218,7 @@ async function getLoggedInOrOut(){
         loggedOutDiv.className = 'container';
         loggedInDiv.className = 'container d-none';
         usernameBtn.innerText = '';
+        profileLink.href = '';
         statusArea.value = '';
         const charCounter = statusArea.nextElementSibling;
         charCounter.innerText = `0/${statusArea.maxLength}`;
@@ -243,7 +247,7 @@ async function submitLogout(){
     const {error, message} = res.json();
     // Refresh page on success, else display error tip on failure
     if(!error) window.location.reload();
-    else createErrorTip(loggedOutDiv, message);
+    else createErrorTip(title, message);
 }
 
 // Send a post request to post a status
