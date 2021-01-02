@@ -19,7 +19,7 @@ async function getUser(){
         // Fill user's status list if exists
         if(data.userStatusList.length > 0){
             for(let i in data.userStatusList){
-                createStatusMedia(data.userStatusList[i], false);
+                createStatusMedia(data.userStatusList[i]);
             }
         }else{ // Display no posts message
             // Create media element
@@ -63,7 +63,7 @@ function createDateString(dateString){
 }
 
 // Creates and adds a status media element to the status list
-function createStatusMedia(statusJSON, isNew){
+function createStatusMedia(statusJSON){
     // Create media element
     const statusMedia = document.createElement('li');
     statusMedia.id = statusJSON._id;
