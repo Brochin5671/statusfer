@@ -38,12 +38,15 @@
             <div class="container d-none" id="loggedIn">
                 <div class="row m-3 align-items-center">
                     <div class="col">
-                        <h1 class="text-center text-white"></h1>
-                    </div>
-                    <div class="col text-center">
-                        <form id="logout">
-                            <button type="submit" class="btn btn-primary shadow-sm">Log Out</button>
-                        </form>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="usernameBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="usernameBtn">
+                                <a class="dropdown-item" href="#">Profile</a>
+                                <a class="dropdown-item" type="submit" id="logout">Log Out</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row justify-content-center">

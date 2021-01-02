@@ -1,14 +1,15 @@
 // Select important elements
 const statusList = document.getElementById('statusList');
 const loggedInDiv = document.getElementById('loggedIn');
+const usernameBtn = document.getElementById('usernameBtn');
 const loggedOutDiv = document.getElementById('loggedOut');
-const logoutForm = document.getElementById('logout');
+const logoutBtn = document.getElementById('logout');
 const statusForm = document.getElementById('statusForm');
 const postBtn = document.getElementById('postBtn');
 const statusArea = document.getElementById('statusArea');
 
 // Listen for logout event
-logoutForm.addEventListener('click', submitLogout);
+logoutBtn.addEventListener('click', submitLogout);
 
 // Listen for post status event
 statusForm.addEventListener('submit', async (event) => {
@@ -154,7 +155,7 @@ function createStatusMedia(statusJSON, isNew){
     if(isNew && statusList.firstElementChild) statusList.firstElementChild.insertAdjacentElement('beforeBegin', statusMedia);
     else statusList.appendChild(statusMedia);
     // If status is owned by user, add edit and delete buttons
-    if(loggedInDiv.querySelector('h1').textContent == statusJSON.user){
+    if(usernameBtn.textContent == statusJSON.user){
         // Create edit button
         const editBtn = document.createElement('button');
         editBtn.innerText = 'Edit';
@@ -204,7 +205,7 @@ async function getLoggedInOrOut(){
     // Display loggedIn section and username if logged in
     if(!error){
         loggedInDiv.className = 'container';
-        loggedInDiv.querySelector('h1').innerText = message;
+        usernameBtn.innerText = message;
         loggedOutDiv.className += 'container d-none';
     }else{ // Display loggedOut section if logged out and reset elements
         loggedOutDiv.className = 'container';
