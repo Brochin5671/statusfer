@@ -29,8 +29,9 @@ const socket = io({
     transports: ['websocket'],
 });
 
-// Tries to get user info and fetches all statuses when connected
+// Closes any alerts and tries to get user info and fetches all statuses when connected
 socket.on('connect', async () => {
+    $('.alert').alert('close');
     await getLoggedInOrOut();
     await getStatuses();
 });
