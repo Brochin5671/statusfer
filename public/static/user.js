@@ -15,7 +15,7 @@ async function getUser(){
         username.innerText = data.username;
         userIdText.innerText = data._id;
         // Get the creation date of the user
-        userCreationDate.innerText = `Created ${createDateString(data.createdAt)}`;
+        userCreationDate.innerText = `Created ${createDateString(data.createdAt, data.createdAt)}`;
         // Fill user's status list if exists
         if(data.userStatusList.length > 0){
             for(let i in data.userStatusList){
@@ -43,10 +43,11 @@ async function getUser(){
     }
 }
 
-// Returns a date string based on the time
-function createDateString(dateString){
-    // Get given date, current date, and yesterday's date
-    const date = new Date(dateString);
+// Returns a date string based on the createdAt and updatedAt strings
+function createDateString(createdAt, updatedAt){
+    // Get given date, edit date, current date, yesterday's date
+    const date = new Date(createdAt);
+    const editDate = (createdAt === updatedAt) ? '':`\nEdited: ${createDateString(updatedAt, updatedAt)}`;
     const now = new Date(Date.now());
     const yesterday = new Date(Date.now());
     yesterday.setDate(now.getDate() - 1);
@@ -54,11 +55,11 @@ function createDateString(dateString){
     const isToday = date.getFullYear() == now.getFullYear() && date.getMonth() == now.getMonth() && date.getDate() == now.getDate();
     const isYesterday = date.getFullYear() == yesterday.getFullYear() && date.getMonth() == yesterday.getMonth() && yesterday.getDate() == date.getDate();
     if(isToday){
-        return `Today at ${date.toLocaleTimeString()}`;
+        return `Today at ${date.toLocaleTimeString()}${editDate}`;
     }else if(isYesterday){
-        return `Yesterday at ${date.toLocaleTimeString()}`;
+        return `Yesterday at ${date.toLocaleTimeString()}${editDate}`;
     }else{
-        return `${date.toLocaleDateString()} at ${date.toLocaleTimeString()}`;
+        return `${date.toLocaleDateString()} at ${date.toLocaleTimeString()}${editDate}`;
     }
 }
 
