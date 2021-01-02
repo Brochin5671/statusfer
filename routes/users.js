@@ -1,7 +1,8 @@
-// Setup router, path, User model, validation, refresh token verification, bcrypt, and jsonwebtoken
+// Setup router, path, User and Status model, validation, refresh token verification, bcrypt, and jsonwebtoken
 const router = require('express').Router();
 const path = require('path');
 const User = require('../models/User');
+const Status = require('../models/Status');
 const {registerValidation, loginValidation} = require('../validation');
 const {verifyRefreshToken} = require('../verifyToken');
 const bcrypt = require('bcryptjs');
@@ -119,13 +120,15 @@ router.get('/:userId', (req, res) => {
 
 // Get a specific user
 router.get('/:userId/data', async (req, res) => {
-    // Get and return a user on success
+    // Get and return a user and user's status list on success
     try{
         // Check if user exists
         const user = await User.findById(req.params.userId);
         if(!user) throw new Error();
         const {username, _id, createdAt} = user;
-        res.json({username, _id, createdAt});
+        // Get user's status list
+        userStatusList = await Status.find({userId: _id}).sort({createdAt: 'descending'});
+        res.json({username, _id, createdAt, userStatusList});
     }catch(err){ // Send error on failure
         res.status(404).json({error: '404 Not Found', message: 'No user found.'});
     }
