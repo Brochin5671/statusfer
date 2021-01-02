@@ -342,15 +342,18 @@ async function patchStatus(event){
         body: statusBody.querySelector('#editedText').value,
     };
     const res = await fetch(`/status/${statusId}`, options);
-    const {error, message} = await res.json();
-    // Re-enable post button, and update statuses on success
-    if(!error){
-        postBtn.disabled = false;
-    }else{ // Display error tip on failure
-        createErrorTip(statusBody.firstElementChild, message);
+    // Save response if status was updated
+    if(res.status != 304){
+        const {error, message} = await res.json();
+        // Re-enable post button, and update statuses on success
+        if(!error){
+            postBtn.disabled = false;
+        }else{ // Display error tip on failure
+            createErrorTip(statusBody.firstElementChild, message);
+        }
+        // Enable all buttons
+        enableButtons();
     }
-    // Enable all buttons
-    enableButtons();
 }
 
 // Send a delete request to delete a status

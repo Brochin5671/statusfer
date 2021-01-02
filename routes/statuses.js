@@ -91,12 +91,16 @@ router.patch('/:statusId', verifyAccessToken, async (req, res) => {
         if(status.user != req.user.username) throw new Error();
         // Sanitize status
         const sanitizedStatus = req.body.trim();
-        // Update status
-        const patchedStatus = await Status.findOneAndUpdate({_id: req.params.statusId}, {status: sanitizedStatus}, {new: true});
-        res.json({message: 'Successfully updated status.'});
-        // Emit patch event
-        const io = req.app.locals.io;
-        io.emit('patchStatus', patchedStatus);
+        // Update status if new status is different than old status
+        if(sanitizedStatus !== status.status){
+            const patchedStatus = await Status.findOneAndUpdate({_id: req.params.statusId}, {status: sanitizedStatus}, {new: true});
+            res.json({message: 'Successfully updated status.'});
+            // Emit patch event
+            const io = req.app.locals.io;
+            io.emit('patchStatus', patchedStatus);
+        }else{ // Send not-modified code if new status is the same
+            res.sendStatus(304);
+        }     
     }catch(err){ // Send error on failure
         res.status(404).json({error: '404 Not Found', message: 'No entry found.'});
     }
