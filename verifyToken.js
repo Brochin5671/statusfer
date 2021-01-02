@@ -3,9 +3,9 @@ const jwt = require('jsonwebtoken');
 
 // Check and verify user access token
 const verifyAccessToken = (req, res, next) => {
-    // Check if token exists
+    // Check if token exists and send error on failure
     const token = req.cookies.accessToken;
-    if(!token) return res.json({error: '401 Unauthroized', message: 'Login to use features.'});
+    if(!token) return res.status(401).json({error: '401 Unauthroized', message: 'Login to use features.'});
     // Verify access token
     try{
         const verifiedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
@@ -13,13 +13,13 @@ const verifyAccessToken = (req, res, next) => {
         next();
     }catch(err){ // Clear access cookie and send error on failure
         res.clearCookie('accessToken');
-        res.json({error: '400 Bad Request', message: 'Invalid token, try refreshing the page.'});
+        res.status(400).json({error: '400 Bad Request', message: 'Invalid token, try refreshing the page.'});
     }
 }
 
 // Check and verify user refresh token
 const verifyRefreshToken = (req, res, next) => {
-    // Check if token exists and clear cookies if not
+    // Check if token exists, clear cookies and send error on failure
     const token = req.cookies.refreshToken;
     if(!token){
         res.clearCookie('refreshToken');
@@ -34,7 +34,7 @@ const verifyRefreshToken = (req, res, next) => {
     }catch(err){ // Clear cookies and send error on failure
         res.clearCookie('refreshToken');
         res.clearCookie('accessToken');
-        res.json({error: '400 Bad Request', message: 'Invalid token, try re-logging in.'});
+        res.status(400).json({error: '400 Bad Request', message: 'Invalid token, try re-logging in.'});
     }
 }
 
