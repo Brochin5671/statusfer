@@ -155,7 +155,7 @@ function createStatusMedia(statusJSON, isNew){
     if(isNew && statusList.firstElementChild) statusList.firstElementChild.insertAdjacentElement('beforeBegin', statusMedia);
     else statusList.appendChild(statusMedia);
     // If status is owned by user, add edit and delete buttons
-    if(usernameBtn.textContent == statusJSON.user){
+    if(usernameBtn.textContent.split(' ▼')[0] == statusJSON.user){
         // Create edit button
         const editBtn = document.createElement('button');
         editBtn.innerText = 'Edit';
@@ -207,6 +207,10 @@ async function getLoggedInOrOut(){
         loggedInDiv.className = 'container';
         usernameBtn.innerText = message;
         loggedOutDiv.className = 'container d-none';
+        const span = document.createElement('span');
+        span.className = 'small';
+        span.innerText = ' ▼';
+        usernameBtn.appendChild(span);
     }else{ // Display loggedOut section if logged out and reset elements
         loggedOutDiv.className = 'container';
         loggedInDiv.className = 'container d-none';

@@ -25,6 +25,7 @@
     </head>
     <body>
         <main>
+            <h1 class="text-center text-white font-weight-bold mt-3">Statusfer</h1>
             <div class="container d-none" id="loggedOut">
                 <div class="row m-3 text-center">
                     <div class="col">
@@ -37,16 +38,13 @@
             </div>
             <div class="container d-none" id="loggedIn">
                 <div class="row m-3 align-items-center">
-                    <div class="col">
-                        <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle" type="button" id="usernameBtn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="usernameBtn">
-                                <a class="dropdown-item" href="#">Profile</a>
-                                <a class="dropdown-item" type="submit" id="logout">Log Out</a>
-                            </div>
-                        </div>
+                    <div class="col text-center">
+                    <a class="btn btn-primary text-center mb-2" id="usernameBtn" data-toggle="collapse" href="#accountCollapse" role="button" aria-expanded="false" aria-controls="accountCollapse">
+                    </a>
+                    <div class="collapse text-center" id="accountCollapse">
+                        <a class="btn btn-outline-dark" id="profileLink" href="">My Profile</a>
+                        <a class="btn btn-outline-dark" type="submit" id="logout">Log Out</a>
+                    </div>
                     </div>
                 </div>
                 <div class="row justify-content-center">
