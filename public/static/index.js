@@ -78,18 +78,18 @@ socket.on('reconnect_attempt', () => {
 
 // Get and display all statuses
 async function getStatuses(){
-    // Send get request
+    // Send get request and save response
     const res = await fetch('/status');
-    // Save response and fill status list on success
-    if(res.status >= 200 && res.status <= 299){
-        const listJSON = await res.json();
+    const listJSON = await res.json();
+    // Fill status list on success
+    if(!listJSON.error){
         // Refresh and append all media objects to status list
         statusList.innerHTML = '';
         for(let i in listJSON){
             createStatusMedia(listJSON[i], false);
         }
     }else{ // Send error on failure
-        alert('Sorry, something went wrong.');
+        alert(listJSON.message);
     }
 }
 
