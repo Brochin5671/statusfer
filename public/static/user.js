@@ -1,11 +1,14 @@
+// Import
+import {createDateString} from './statusFunctions.js';
+
 // Select username and userid
 const username = document.getElementById('username');
 const userIdText = document.getElementById('userId');
 const userCreationDate = document.getElementById('date');
 const statusList = document.getElementById('statusList');
 
-// Get requested user and return it
-async function getUser(){
+// Get requested user and return it when DOM is loaded
+document.addEventListener("DOMContentLoaded", async () => {
     // Get userId from URL, send get request, and save response
     const userId = window.location.href.split("/").pop();
     const res = await fetch(`/user/${userId}/data`);
@@ -41,27 +44,7 @@ async function getUser(){
         username.innerText = data.error;
         userIdText.innerText = data.message;
     }
-}
-
-// Returns a date string based on the createdAt and updatedAt strings
-function createDateString(createdAt, updatedAt){
-    // Get given date, edit date, current date, yesterday's date
-    const date = new Date(createdAt);
-    const editDate = (createdAt === updatedAt) ? '':`\nEdited: ${createDateString(updatedAt, updatedAt)}`;
-    const now = new Date(Date.now());
-    const yesterday = new Date(Date.now());
-    yesterday.setDate(now.getDate() - 1);
-    // Check if date is from today or yesterday, else return a full date string
-    const isToday = date.getFullYear() == now.getFullYear() && date.getMonth() == now.getMonth() && date.getDate() == now.getDate();
-    const isYesterday = date.getFullYear() == yesterday.getFullYear() && date.getMonth() == yesterday.getMonth() && yesterday.getDate() == date.getDate();
-    if(isToday){
-        return `Today at ${date.toLocaleTimeString()}${editDate}`;
-    }else if(isYesterday){
-        return `Yesterday at ${date.toLocaleTimeString()}${editDate}`;
-    }else{
-        return `${date.toLocaleDateString()} at ${date.toLocaleTimeString()}${editDate}`;
-    }
-}
+});
 
 // Creates and adds a status media element to the status list
 function createStatusMedia(statusJSON){
