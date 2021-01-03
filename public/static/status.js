@@ -12,11 +12,13 @@ async function getStatus(){
     // Display username and status on success
     if(!data.error){
         username.innerText = data.user;
+        username.href = `../user/${data.userId}`;
         statusText.innerText = data.status;
         // Get the date string of the status
         statusDate.innerText = createDateString(data.createdAt, data.updatedAt);
     }else{ // Send error on failure
         username.innerText = data.error;
+        username.className += ' text-decoration-none';
         statusText.innerText = data.message;
     }
 }
