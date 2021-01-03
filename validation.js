@@ -14,9 +14,10 @@ const registerValidation = user => {
             'string.max': 'Email exceeds maximum length of 255 characters.',
             'string.email': 'Email must be valid.'
         }),
-        password: joi.string().required().min(8).messages({
+        password: joi.string().required().min(8).max(64).messages({
             'string.empty': 'Password is required.',
-            'string.min': 'Password must be at least 8 characters long.'
+            'string.min': 'Password must be at least 8 characters long.',
+            'string.max': 'Password exceeds maximum length of 64 characters.'
         }),
         confirmPassword: joi.any().equal(joi.ref('password')).required().messages({
             'any.only': 'Passwords do not match.'
@@ -28,12 +29,14 @@ const registerValidation = user => {
 // Login validation
 const loginValidation = user => {
     const JoiSchema = joi.object({
-        email: joi.string().trim().required().insensitive().email().messages({
+        email: joi.string().trim().required().insensitive().max(255).email().messages({
             'string.empty': 'Email is required.',
+            'string.max': 'Email exceeds maximum length of 255 characters.',
             'string.email': 'Email must be valid.'
         }),
-        password: joi.string().required().messages({
-            'string.empty': 'Password is required.'
+        password: joi.string().required().max(64).messages({
+            'string.empty': 'Password is required.',
+            'string.max': 'Password exceeds maximum length of 64 characters.'
         })
     });
     return JoiSchema.validate(user);
