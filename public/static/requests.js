@@ -74,10 +74,8 @@ export async function patchStatus(event){
     // Save response if status was updated
     if(res.status != 304){
         const {error, message} = await res.json();
-        // Re-enable post button, and update statuses on success
-        if(!error){
-            postBtn.disabled = false;
-        }else{ // Display error tip on failure
+        // Display error tip on failure
+        if(error){
             createErrorTip(statusBody.firstElementChild, message);
         }
     }
@@ -97,10 +95,8 @@ export async function deleteStatus(event){
     };
     const res = await fetch(`/status/${statusId}`, options);
     const {error, message} = await res.json();
-    // Re-enable post button, and update statuses on success
-    if(!error){
-        postBtn.disabled = false;
-    }else{ // Display error tip on failure
+    // Display error tip on failure
+    if(error){
         createErrorTip(statusBody.firstElementChild, message);
     }
 }
