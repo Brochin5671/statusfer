@@ -1,3 +1,94 @@
+// Import requests
+import {postStatus, patchStatus, deleteStatus, likeStatus, dislikeStatus} from './requests.js';
+
+// Select important elements
+const usernameBtn = document.getElementById('usernameBtn');
+const statusList = document.getElementById('statusList');
+const postBtn = document.getElementById('postBtn');
+
+// Creates and adds a status media element to the status list
+export function createStatusMedia(statusJSON, isNew){
+    // Create media element
+    const statusMedia = document.createElement('li');
+    statusMedia.id = statusJSON._id;
+    statusMedia.className = 'media position-relative border-bottom';
+    // Create body element
+    const statusBody = document.createElement('div');
+    statusBody.className = 'media-body m-3 text-break';
+    // Create link element
+    const statusLink = document.createElement('a');
+    statusLink.className = 'btn btn-primary align-self-center mr-3';
+    statusLink.href = `/status/${statusJSON._id}`;
+    statusLink.innerText = 'View';
+    // Create username element
+    const username = document.createElement('a');
+    username.className = 'h5 text-reset';
+    username.href = `/user/${statusJSON.userId}`;
+    username.innerText = statusJSON.user;
+    // Create status text element
+    const statusText = document.createElement('p');
+    statusText.className = 'statusText mt-2';
+    statusText.innerText = statusJSON.status;
+    // Get the date string of the status and create date text element
+    const statusDate = document.createElement('p');
+    statusDate.className = 'small statusDate';
+    statusDate.innerText = createDateString(statusJSON.createdAt, statusJSON.updatedAt);
+    // Create like button
+    const likeBtn = document.createElement('button');
+    likeBtn.innerText = `▲ ${statusJSON.likes.length}`;
+    likeBtn.type = 'click';
+    likeBtn.className = 'btn btn-primary btn-sm like';
+    likeBtn.addEventListener('click', likeStatus);
+    // Create dislike button
+    const dislikeBtn = document.createElement('button');
+    dislikeBtn.innerText = `▼ ${statusJSON.dislikes.length}`;
+    dislikeBtn.type = 'click';
+    dislikeBtn.className = 'btn btn-primary btn-sm dislike';
+    dislikeBtn.addEventListener('click', dislikeStatus);
+    // Create feedback div element and add to feedback div wrap element
+    const feedBackDiv = document.createElement('div');
+    feedBackDiv.className = 'btn-group';
+    feedBackDiv.role = 'group';
+    feedBackDiv.setAttribute('aria-label', 'Feedback buttons');
+    feedBackDiv.appendChild(likeBtn);
+    feedBackDiv.appendChild(dislikeBtn);
+    const feedBackDivWrap = document.createElement('div');
+    feedBackDivWrap.className = 'mb-2';
+    feedBackDivWrap.appendChild(feedBackDiv);
+    // Append by linking parents
+    statusBody.appendChild(username);
+    statusBody.appendChild(statusText);
+    statusBody.appendChild(statusDate);
+    statusBody.appendChild(feedBackDivWrap);
+    statusMedia.appendChild(statusBody);
+    statusMedia.appendChild(statusLink);
+    // Append to beginning of list if new element, else append to end of list
+    if(isNew && statusList.firstElementChild) statusList.firstElementChild.insertAdjacentElement('beforeBegin', statusMedia);
+    else statusList.appendChild(statusMedia);
+    // If status is owned by user, add edit and delete buttons
+    if(usernameBtn.textContent.split(' ▼')[0] == statusJSON.user){
+        // Create edit button
+        const editBtn = document.createElement('button');
+        editBtn.innerText = 'Edit';
+        editBtn.type = 'click';
+        editBtn.className = 'btn btn-primary mr-2 edit';
+        statusBody.appendChild(editBtn);
+        editBtn.addEventListener('click', editStatus);
+        // Create delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.innerText = 'Delete';
+        deleteBtn.type = 'click';
+        deleteBtn.className = 'btn btn-primary delete';
+        statusBody.appendChild(deleteBtn);
+        deleteBtn.addEventListener('click', async (event) => {
+            // Send delete request
+            disableButtons();
+            await deleteStatus(event);
+            enableButtons();
+        });
+    }
+}
+
 // Returns a date string based on the createdAt and updatedAt strings
 export function createDateString(createdAt, updatedAt){
     // Get given date, edit date, current date, yesterday's date
@@ -16,4 +107,96 @@ export function createDateString(createdAt, updatedAt){
     }else{
         return `${date.toLocaleDateString()} at ${date.toLocaleTimeString()}${editDate}`;
     }
+}
+
+// Creates status to be posted
+export async function createStatus(event){
+    disableButtons();
+    // Prevent refresh
+    event.preventDefault();
+    // Send post request
+    await postStatus(event);
+    enableButtons();
+}
+
+// Hides non-edit elements, creates text area, confirm and cancel buttons
+function editStatus(event){
+    // Get status id
+    const statusId = event.target.parentNode.parentNode.id;
+    // Create edit textarea
+    const editArea = document.createElement('textarea');
+    editArea.className = `form-control mb-1 editDeletable${statusId}`;
+    editArea.id = 'editedText';
+    editArea.rows = 2;
+    editArea.maxLength = 255;
+    const statusText = event.target.parentNode.querySelector('.statusText');
+    editArea.value = statusText.innerText;
+    editArea.addEventListener('input', getTextAreaCharacters);
+    statusText.insertAdjacentElement('afterEnd', editArea);
+    // Create character counter
+    const charCounter = document.createElement('p');
+    charCounter.className = `small text-muted mb-2 ml-1 editDeletable${statusId}`;
+    charCounter.innerText = `${editArea.value.length}/${editArea.maxLength}`;
+    editArea.insertAdjacentElement('afterEnd', charCounter);
+    // Create confirm button
+    const confirmBtn = document.createElement('button');
+    confirmBtn.innerText = 'Confirm';
+    confirmBtn.type = 'click';
+    confirmBtn.className = `btn btn-primary mr-2 confirm editDeletable${statusId}`;
+    const editBtn = event.target;
+    editBtn.insertAdjacentElement('beforeBegin', confirmBtn);
+    // Listen for confirm button event to send a patch request, un-hide non-edit elements, and remove edit elements
+    confirmBtn.addEventListener('click', async () => {
+        // Send patch request
+        disableButtons();
+        await patchStatus(event);
+        enableButtons();
+        // Un-hide non-edit elements and remove edit elements
+        editBtn.className = editBtn.className.split(' d-none')[0];
+        deleteBtn.className = deleteBtn.className.split(' d-none')[0];
+        statusText.className = statusText.className.split(' d-none')[0];
+        $(`.editDeletable${statusId}`).remove();
+    });
+    // Create cancel button
+    const cancelBtn = document.createElement('button');
+    cancelBtn.innerText = 'Cancel';
+    cancelBtn.type = 'click';
+    cancelBtn.className = `btn btn-primary mr-2 cancel editDeletable${statusId}`;
+    const deleteBtn = editBtn.nextElementSibling;
+    deleteBtn.insertAdjacentElement('beforeBegin', cancelBtn);
+    // Hide non-edit elements
+    editBtn.className += ' d-none';
+    deleteBtn.className += ' d-none';
+    statusText.className += ' d-none';
+    // Listen for cancel button event to un-hide non-edit elements and remove edit elements
+    cancelBtn.addEventListener('click', () => {
+        editBtn.className = editBtn.className.split(' d-none')[0];
+        deleteBtn.className = deleteBtn.className.split(' d-none')[0];
+        statusText.className = statusText.className.split(' d-none')[0];
+        $(`.editDeletable${statusId}`).remove();
+    });
+}
+
+// Disables all request buttons
+function disableButtons(){
+    $('.edit').prop('disabled', true);
+    $('.delete').prop('disabled', true);
+    $('.confirm').prop('disabled', true);
+    $('.cancel').prop('disabled', true);
+    postBtn.disabled = true;
+}
+
+// Enables all request buttons
+function enableButtons(){
+    $('.edit').prop('disabled', false);
+    $('.delete').prop('disabled', false);
+    $('.confirm').prop('disabled', false);
+    $('.cancel').prop('disabled', false);
+    postBtn.disabled = false;
+}
+
+// Edits the character counter of a text area
+export function getTextAreaCharacters(event){
+    const charCounter = event.target.nextElementSibling;
+    charCounter.innerText = `${event.target.value.length}/${event.target.maxLength}`;
 }
