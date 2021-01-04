@@ -72,7 +72,7 @@ router.delete('/:statusId', verifyAccessToken, async (req, res) => {
         res.json({message: 'Successfully deleted status.'});
         // Emit delete event
         const io = req.app.locals.io;
-        io.emit('deleteStatus', status);
+        io.emit('deleteStatus', status._id);
     }catch(err){ // Send error on failure
         res.status(404).json({error: '404 Not Found', message: 'No entry found.'});
     }
