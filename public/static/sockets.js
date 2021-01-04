@@ -2,30 +2,37 @@
 import {createErrorTip} from './misc.js';
 import {createStatusMedia, createDateString} from './statusFunctions.js';
 
-// Select important elements
-const title = document.querySelector('h1');
-
 // Setup client-side socket-io
 export const socket = io({
     // Use websocket transport
     transports: ['websocket'],
 });
 
-// Add new status media object when post event is emitted
-socket.on('postStatus', statusJSON => {
+// Add new status media object when postStatus event is emitted
+export function socketPostStatus(statusJSON){
     createStatusMedia(statusJSON, true);
-});
+}
 
 // Delete specific status media object when delete event is emitted
-socket.on('deleteStatus', ({_id}) => {
-    document.getElementById(_id).remove();
-});
+export function socketDeleteStatus(statusId){
+    document.getElementById(statusId).remove();
+}
 
 // Update specific status media object when patch event is emitted
-socket.on('patchStatus', ({_id, createdAt, updatedAt, status}) => {
+export function socketPatchStatus({_id, createdAt, updatedAt, status}){
     const updatedStatus = document.getElementById(_id);
     updatedStatus.querySelector('.statusText').innerText = status;
     updatedStatus.querySelector('.statusDate').innerText = createDateString(createdAt, updatedAt);
+}
+
+// Alert disconnected message at top of page
+socket.on('disconnect', () => {
+    createErrorTip(document.querySelector('main').firstElementChild, 'Lost connection! Trying to reconnect...');
+});
+
+// When reconnecting, use polling transport, and then upgrade to websocket
+socket.on('reconnect_attempt', () => {
+    socket.opts.transports = ['polling', 'websocket'];
 });
 
 // Update specific status' likes
@@ -40,14 +47,4 @@ socket.on('dislikeStatus', ({newLikes, newDislikes, _id}) => {
     const dislikedStatus = document.getElementById(_id);
     dislikedStatus.querySelector('.dislike').innerText = `▼ ${newDislikes}`;
     dislikedStatus.querySelector('.like').innerText = `▲ ${newLikes}`;
-});
-
-// Alert disconnected message
-socket.on('disconnect', () => {
-    createErrorTip(title, 'Lost connection! Trying to reconnect...');
-});
-
-// When reconnecting, use polling transport, and then upgrade to websocket
-socket.on('reconnect_attempt', () => {
-    socket.opts.transports = ['polling', 'websocket'];
 });
