@@ -2,9 +2,8 @@
 import {postStatus, patchStatus, deleteStatus, likeStatus, dislikeStatus} from './requests.js';
 
 // Select important elements
-const usernameBtn = document.getElementById('usernameBtn');
+const username = document.getElementById('username');
 const statusList = document.getElementById('statusList');
-const postBtn = document.getElementById('postBtn');
 
 // Creates and adds a status media element to the status list
 export function createStatusMedia(statusJSON, isNew){
@@ -17,21 +16,21 @@ export function createStatusMedia(statusJSON, isNew){
     statusBody.className = 'media-body m-3 text-break';
     // Create link element
     const statusLink = document.createElement('a');
-    statusLink.className = 'btn btn-primary align-self-center mr-3';
+    statusLink.className = 'btn btn-primary align-self-center mr-3 view';
     statusLink.href = `/status/${statusJSON._id}`;
     statusLink.innerText = 'View';
-    // Create username element
-    const username = document.createElement('a');
-    username.className = 'h5 text-reset';
-    username.href = `/user/${statusJSON.userId}`;
-    username.innerText = statusJSON.user;
+    // Create statusUser element
+    const statusUser = document.createElement('a');
+    statusUser.className = 'statusUser h5 text-reset';
+    statusUser.href = `/user/${statusJSON.userId}`;
+    statusUser.innerText = statusJSON.user;
     // Create status text element
     const statusText = document.createElement('p');
     statusText.className = 'statusText mt-2';
     statusText.innerText = statusJSON.status;
     // Get the date string of the status and create date text element
     const statusDate = document.createElement('p');
-    statusDate.className = 'small statusDate';
+    statusDate.className = 'statusDate small';
     statusDate.innerText = createDateString(statusJSON.createdAt, statusJSON.updatedAt);
     // Create like button
     const likeBtn = document.createElement('button');
@@ -56,7 +55,7 @@ export function createStatusMedia(statusJSON, isNew){
     feedBackDivWrap.className = 'mb-2';
     feedBackDivWrap.appendChild(feedBackDiv);
     // Append by linking parents
-    statusBody.appendChild(username);
+    statusBody.appendChild(statusUser);
     statusBody.appendChild(statusText);
     statusBody.appendChild(statusDate);
     statusBody.appendChild(feedBackDivWrap);
@@ -65,8 +64,13 @@ export function createStatusMedia(statusJSON, isNew){
     // Append to beginning of list if new element, else append to end of list
     if(isNew && statusList.firstElementChild) statusList.firstElementChild.insertAdjacentElement('beforeBegin', statusMedia);
     else statusList.appendChild(statusMedia);
-    // If status is owned by user, add edit and delete buttons
-    if(usernameBtn.textContent.split(' ▼')[0] == statusJSON.user){
+    // Add edit and delete buttons if owned by user
+    createUserStatusTools(statusBody);
+}
+
+// Add edit and delete buttons to statuses owned by the user
+function createUserStatusTools(statusBody){
+    if(username.innerText.split(' ▼')[0] === statusBody.querySelector('.statusUser').innerText){
         // Create edit button
         const editBtn = document.createElement('button');
         editBtn.innerText = 'Edit';
@@ -183,7 +187,7 @@ function disableButtons(){
     $('.delete').prop('disabled', true);
     $('.confirm').prop('disabled', true);
     $('.cancel').prop('disabled', true);
-    postBtn.disabled = true;
+    $('#postBtn').prop('disabled', true);
 }
 
 // Enables all request buttons
@@ -192,7 +196,7 @@ function enableButtons(){
     $('.delete').prop('disabled', false);
     $('.confirm').prop('disabled', false);
     $('.cancel').prop('disabled', false);
-    postBtn.disabled = false;
+    $('#postBtn').prop('disabled', false);
 }
 
 // Edits the character counter of a text area
