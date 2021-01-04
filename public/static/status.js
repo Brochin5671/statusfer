@@ -1,5 +1,5 @@
 // Import
-import {getToken} from './requests.js';
+import {getToken, submitLogout} from './requests.js';
 import {createStatusMedia} from './statusFunctions.js';
 import {socket, socketPatchStatus} from './sockets.js';
 
@@ -7,7 +7,11 @@ import {socket, socketPatchStatus} from './sockets.js';
 const loggedInDiv = document.getElementById('loggedIn');
 const username = document.getElementById('username');
 const profileLink = document.getElementById('profileLink');
+const logoutBtn = document.getElementById('logout');
 const statusList = document.getElementById('statusList');
+
+// Listen for logout event
+logoutBtn.addEventListener('click', submitLogout);
 
 // Closes any alerts, gets logged in user and requested status
 socket.on('connect', async () => {
@@ -55,6 +59,11 @@ async function getStatus(){
     if(!data.error){
         statusList.innerHTML = '';
         createStatusMedia(data, false);
+        const backBtn = document.createElement('a');
+        backBtn.className = 'btn btn-primary align-self-center mr-3';
+        backBtn.href = '/';
+        backBtn.innerText = 'Back';
+        document.querySelector('.view').replaceWith(backBtn);
     }else{ // Send error on failure
         const statusUser = document.querySelector('.statusUser');
         statusUser.innerText = data.error;
@@ -62,9 +71,4 @@ async function getStatus(){
         const statusText = document.querySelector('.statusText');
         statusText.innerText = data.message;
     }
-    const backBtn = document.createElement('a');
-    backBtn.className = 'btn btn-primary align-self-center mr-3';
-    backBtn.href = '/';
-    backBtn.innerText = 'Back';
-    document.querySelector('.view').replaceWith(backBtn);
 }
