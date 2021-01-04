@@ -2,12 +2,12 @@
 import {createErrorTip} from './misc.js';
 import {getToken, submitLogout} from './requests.js';
 import {createStatus, createStatusMedia, getTextAreaCharacters} from './statusFunctions.js';
-import {socket} from './sockets.js';
+import {socket, socketPostStatus, socketDeleteStatus, socketPatchStatus} from './sockets.js';
 
 // Select important elements
 const statusList = document.getElementById('statusList');
 const loggedInDiv = document.getElementById('loggedIn');
-const usernameBtn = document.getElementById('usernameBtn');
+const username = document.getElementById('username');
 const profileLink = document.getElementById('profileLink');
 const loggedOutDiv = document.getElementById('loggedOut');
 const logoutBtn = document.getElementById('logout');
@@ -17,7 +17,7 @@ const statusArea = document.getElementById('statusArea');
 // Listen for logout event
 logoutBtn.addEventListener('click', submitLogout);
 
-// Listen for create status event
+// Listen for submit status event
 statusForm.addEventListener('submit', createStatus);
 
 // Listen for status textarea input event
@@ -29,6 +29,15 @@ socket.on('connect', async () => {
     await getUser();
     await getStatuses();
 });
+
+// Listen for socket postStatus event
+socket.on('postStatus', socketPostStatus);
+
+// Listen for socket deleteStatus event
+socket.on('deleteStatus', socketDeleteStatus);
+
+// Listen for socket patchStatus event
+socket.on('patchStatus', socketPatchStatus);
 
 // Get and display all statuses
 async function getStatuses(){
@@ -54,17 +63,17 @@ async function getUser(){
     // Display loggedIn section and username if logged in
     if(!error){
         loggedInDiv.className = 'container';
-        usernameBtn.innerText = message;
+        username.innerText = message;
         profileLink.href = `/user/${userId}`;
         loggedOutDiv.className = 'container d-none';
         const span = document.createElement('span');
         span.className = 'small';
         span.innerText = ' ▼';
-        usernameBtn.appendChild(span);
+        username.appendChild(span);
     }else{ // Display loggedOut section if logged out and reset elements
         loggedOutDiv.className = 'container';
         loggedInDiv.className = 'container d-none';
-        usernameBtn.innerText = '';
+        username.innerText = '';
         profileLink.href = '';
         statusArea.value = '';
         const charCounter = statusArea.nextElementSibling;
