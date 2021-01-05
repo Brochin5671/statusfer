@@ -1,5 +1,7 @@
 // Import
-import {createDateString} from './statusFunctions.js';
+import {getToken} from './requests.js';
+import {socket} from './sockets.js';
+import {createStatusMedia, createDateString} from './statusFunctions.js';
 
 // Select username and userid
 const username = document.getElementById('username');
@@ -7,8 +9,38 @@ const userIdText = document.getElementById('userId');
 const userCreationDate = document.getElementById('date');
 const statusList = document.getElementById('statusList');
 
+// Closes any alerts, gets logged in user and requested status
+socket.on('connect', async () => {
+    $('.alert').alert('close');
+    await getUserProfile();
+});
+
+// Listen for socket postStatus event
+socket.on('postStatus', (statusJSON) => {
+    if(username.innerText == statusJSON.user){
+        createStatusMedia(statusJSON, true);
+    }
+});
+
+// Listen for socket deleteStatus event
+socket.on('deleteStatus', (statusId) => {
+    const deletedStatus = document.getElementById(statusId).remove();
+    if(deletedStatus) document.getElementById(statusId).remove();
+});
+
+// Listen for socket patchStatus event
+socket.on('patchStatus', ({_id, createdAt, updatedAt, status}) => {
+    const updatedStatus = document.getElementById(_id);
+    if(updatedStatus){
+        updatedStatus.querySelector('.statusText').innerText = status;
+        updatedStatus.querySelector('.statusDate').innerText = createDateString(createdAt, updatedAt);
+    }
+});
+
 // Get requested user and return it when DOM is loaded
-document.addEventListener("DOMContentLoaded", async () => {
+async function getUserProfile(){
+    // Try to get new token
+    await getToken();
     // Get userId from URL, send get request, and save response
     const userId = window.location.href.split("/").pop();
     const res = await fetch(`/user/${userId}/data`);
@@ -21,6 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         userCreationDate.innerText = `Created ${createDateString(data.createdAt, data.createdAt)}`;
         // Fill user's status list if exists
         if(data.userStatusList.length > 0){
+            statusList.innerHTML = '';
             for(let i in data.userStatusList){
                 createStatusMedia(data.userStatusList[i]);
             }
@@ -44,38 +77,4 @@ document.addEventListener("DOMContentLoaded", async () => {
         username.innerText = data.error;
         userIdText.innerText = data.message;
     }
-});
-
-// Creates and adds a status media element to the status list
-function createStatusMedia(statusJSON){
-    // Create media element
-    const statusMedia = document.createElement('li');
-    statusMedia.id = statusJSON._id;
-    statusMedia.className = 'media position-relative border-bottom';
-    // Create body element
-    const statusBody = document.createElement('div');
-    statusBody.className = 'media-body m-3 text-break';
-    // Create link element
-    const statusLink = document.createElement('a');
-    statusLink.className = 'btn btn-primary align-self-center mr-3';
-    statusLink.href = `/status/${statusJSON._id}`;
-    statusLink.innerText = 'View';
-    // Create username element
-    const username = document.createElement('h5');
-    username.innerText = statusJSON.user;
-    // Create status text element
-    const statusText = document.createElement('p');
-    statusText.className = 'statusText mt-2';
-    statusText.innerText = statusJSON.status;
-    // Get the date string of the status and create date text element
-    const statusDate = document.createElement('p');
-    statusDate.className = 'small statusDate';
-    statusDate.innerText = createDateString(statusJSON.createdAt, statusJSON.updatedAt);
-    // Append by linking parents
-    statusBody.appendChild(username);
-    statusBody.appendChild(statusText);
-    statusBody.appendChild(statusDate);
-    statusMedia.appendChild(statusBody);
-    statusMedia.appendChild(statusLink);
-    statusList.appendChild(statusMedia);
 }
