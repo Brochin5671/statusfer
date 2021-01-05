@@ -9,3 +9,7 @@ body{
 .media{
     background: white;
 }
+
+#editedText{
+    resize: none;
+}
