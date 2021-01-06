@@ -13,7 +13,7 @@ export function createErrorTip(adjElement, message){
     adjElement.insertAdjacentElement('beforeBegin', errorDiv);
 }
 
-// Stores the current page url in session storage
-export function storeCurrentPage(){
-    sessionStorage.setItem('previousPage', window.location.href);
+// Stores the current page url in session storage to be used by back buttons
+export function storeBackPage(){
+    sessionStorage.setItem('backPage', window.location.href);
 }
