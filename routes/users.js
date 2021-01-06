@@ -1,9 +1,10 @@
-// Setup router, path, User and Status model, validation, refresh token verification, bcrypt, and jsonwebtoken
+// Setup router, path, User and Status model, validation, sanitize text, refresh token verification, bcrypt, and jsonwebtoken
 const router = require('express').Router();
 const path = require('path');
 const User = require('../models/User');
 const Status = require('../models/Status');
 const {registerValidation, loginValidation} = require('../validation');
+const {sanitizeText} = require('../sanitize.js');
 const {verifyRefreshToken} = require('../verifyToken');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -26,7 +27,7 @@ router.post('/register', async (req, res) => {
     const {error} = registerValidation(req.body);
     if(error) return res.status(400).json({error: '400 Bad Request', message: error.details[0].message});
     // Sanitize username and email
-    const sanitizedUsername = req.body.username.trim();
+    const sanitizedUsername = sanitizeText(req.body.username);
     const sanitizedEmail = req.body.email.trim();
     // Check if username and email already registered
     const usernameExists = await User.findOne({username: sanitizedUsername});

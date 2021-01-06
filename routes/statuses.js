@@ -1,9 +1,10 @@
-// Setup router, path, Status model, access token verification, and status validation
+// Setup router, path, Status model, access token verification, status validation, and sanitize text
 const router = require('express').Router();
 const path = require('path');
 const Status = require('../models/Status');
 const {verifyAccessToken} = require('../verifyToken');
 const {statusValidation} = require('../validation');
+const {sanitizeText} = require('../sanitize.js');
 
 // Get all statuses
 router.get('/', async (req, res) => {
@@ -23,7 +24,7 @@ router.post('/', verifyAccessToken, async (req, res) => {
     const {error} = statusValidation(statusMsg);
     if(error) return res.status(400).json({error: '400 Bad Request', message: error.details[0].message});
     // Sanitize status
-    const sanitizedStatus = req.body.trim();
+    const sanitizedStatus = sanitizeText(req.body);
     // Create new status object
     const status = new Status({
         user: req.user.username,
@@ -90,7 +91,7 @@ router.patch('/:statusId', verifyAccessToken, async (req, res) => {
         const status = await Status.findById(req.params.statusId);
         if(status.user != req.user.username) throw new Error();
         // Sanitize status
-        const sanitizedStatus = req.body.trim();
+        const sanitizedStatus = sanitizeText(req.body);
         // Update status if new status is different than old status
         if(sanitizedStatus !== status.status){
             const patchedStatus = await Status.findOneAndUpdate({_id: req.params.statusId}, {status: sanitizedStatus}, {new: true});
