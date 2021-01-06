@@ -15,14 +15,17 @@ export function socketPostStatus(statusJSON){
 
 // Delete specific status media object when delete event is emitted
 export function socketDeleteStatus(statusId){
-    document.getElementById(statusId).remove();
+    const deletedStatus = document.getElementById(statusId);
+    if(deletedStatus) document.getElementById(statusId).remove();
 }
 
 // Update specific status media object when patch event is emitted
 export function socketPatchStatus({_id, createdAt, updatedAt, status}){
     const updatedStatus = document.getElementById(_id);
-    updatedStatus.querySelector('.statusText').innerText = status;
-    updatedStatus.querySelector('.statusDate').innerText = createDateString(createdAt, updatedAt);
+    if(updatedStatus){
+        updatedStatus.querySelector('.statusText').innerText = status;
+        updatedStatus.querySelector('.statusDate').innerText = createDateString(createdAt, updatedAt);
+    }
 }
 
 // Alert disconnected message at top of page
