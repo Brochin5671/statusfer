@@ -25,7 +25,6 @@ socket.on('patchStatus', socketPatchStatus);
 
 // Listen for socket deleteStatus event
 socket.on('deleteStatus', async () => {
-    await getUser();
     await getStatus();
 });
 
