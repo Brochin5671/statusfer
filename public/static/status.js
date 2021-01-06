@@ -60,7 +60,8 @@ async function getStatus(){
         createStatusMedia(data, false);
         const backBtn = document.createElement('a');
         backBtn.className = 'btn btn-primary align-self-center mr-3';
-        backBtn.href = '/';
+        if(sessionStorage.getItem('previousPage')) backBtn.href = sessionStorage.getItem('previousPage');
+        else backBtn.href = '/';
         backBtn.innerText = 'Back';
         document.querySelector('.view').replaceWith(backBtn);
     }else{ // Send error on failure
