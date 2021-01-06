@@ -1,5 +1,5 @@
 // Import
-import {createErrorTip, storeCurrentPage} from './misc.js';
+import {createErrorTip, storeBackPage} from './misc.js';
 import {getToken, submitLogout} from './requests.js';
 import {createStatus, createStatusMedia, getTextAreaCharacters} from './statusFunctions.js';
 import {socket, socketPostStatus, socketDeleteStatus, socketPatchStatus} from './sockets.js';
@@ -26,7 +26,7 @@ statusArea.addEventListener('input', getTextAreaCharacters);
 // Closes any alerts, tries to get user info, and fetches all statuses when connected
 socket.on('connect', async () => {
     $('.alert').alert('close');
-    storeCurrentPage();
+    storeBackPage();
     await getUser();
     await getStatuses();
 });
