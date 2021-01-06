@@ -1,6 +1,6 @@
 // Import
 import {getToken} from './requests.js';
-import {socket} from './sockets.js';
+import {socket, socketDeleteStatus, socketPatchStatus} from './sockets.js';
 import {createStatusMedia, createDateString} from './statusFunctions.js';
 
 // Select username and userid
@@ -23,19 +23,10 @@ socket.on('postStatus', (statusJSON) => {
 });
 
 // Listen for socket deleteStatus event
-socket.on('deleteStatus', (statusId) => {
-    const deletedStatus = document.getElementById(statusId).remove();
-    if(deletedStatus) document.getElementById(statusId).remove();
-});
+socket.on('deleteStatus', socketDeleteStatus);
 
 // Listen for socket patchStatus event
-socket.on('patchStatus', ({_id, createdAt, updatedAt, status}) => {
-    const updatedStatus = document.getElementById(_id);
-    if(updatedStatus){
-        updatedStatus.querySelector('.statusText').innerText = status;
-        updatedStatus.querySelector('.statusDate').innerText = createDateString(createdAt, updatedAt);
-    }
-});
+socket.on('patchStatus', socketPatchStatus);
 
 // Get requested user and return it when DOM is loaded
 async function getUserProfile(){
