@@ -1,4 +1,5 @@
 // Import
+import {storeCurrentPage} from './misc.js';
 import {getToken} from './requests.js';
 import {socket, socketDeleteStatus, socketPatchStatus} from './sockets.js';
 import {createStatusMedia, createDateString} from './statusFunctions.js';
@@ -12,6 +13,7 @@ const statusList = document.getElementById('statusList');
 // Closes any alerts, gets logged in user and requested status
 socket.on('connect', async () => {
     $('.alert').alert('close');
+    storeCurrentPage();
     await getUserProfile();
 });
 
