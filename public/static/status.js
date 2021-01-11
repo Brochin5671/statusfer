@@ -60,7 +60,7 @@ async function getStatus(){
         createStatusMedia(data, false);
         const backBtn = document.createElement('a');
         backBtn.className = 'btn btn-primary align-self-center mr-3';
-        if(sessionStorage.getItem('previousPage')) backBtn.href = sessionStorage.getItem('backPage');
+        if(sessionStorage.getItem('backPage')) backBtn.href = sessionStorage.getItem('backPage');
         else backBtn.href = '/';
         backBtn.innerText = 'Back';
         document.querySelector('.view').replaceWith(backBtn);
