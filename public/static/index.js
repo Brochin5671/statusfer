@@ -72,7 +72,7 @@ async function getUser(){
         span.innerText = ' ▼';
         username.appendChild(span);
     }else{ // Display loggedOut section if logged out and reset elements
-        loggedOutDiv.className = 'container';
+        loggedOutDiv.className = 'container text-center';
         loggedInDiv.className = 'container d-none';
         username.innerText = '';
         profileLink.href = '';
