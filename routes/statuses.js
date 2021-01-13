@@ -2,9 +2,9 @@
 const router = require('express').Router();
 const path = require('path');
 const Status = require('../models/Status');
-const {verifyAccessToken} = require('../tokens');
-const {statusValidation} = require('../validation');
-const {sanitizeText} = require('../sanitize.js');
+const {verifyAccessToken} = require('../resources/tokens');
+const {statusValidation} = require('../resources/validation');
+const {sanitizeText} = require('../resources/sanitize.js');
 
 // Get all statuses
 router.get('/', async (req, res) => {

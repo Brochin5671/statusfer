@@ -9,14 +9,14 @@ const {
     usernameValidation,
     emailValidation,
     passwordValidation
-} = require('../validation');
-const {sanitizeText} = require('../sanitize.js');
+} = require('../resources/validation');
+const {sanitizeText} = require('../resources/sanitize.js');
 const {
     createAccessToken,
     createTokens,
     verifyAccessToken,
     verifyRefreshToken
-} = require('../tokens');
+} = require('../resources/tokens');
 const bcrypt = require('bcryptjs');
 
 // Store refreshTokens

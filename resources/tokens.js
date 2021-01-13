@@ -1,6 +1,6 @@
 // Setup jsonwebtoken
 const jwt = require('jsonwebtoken');
-const User = require('./models/User');
+const User = require('../models/User');
 
 // Create access and refresh tokens for user
 const createTokens = user => {
