@@ -99,8 +99,9 @@ router.post('/login', async (req, res) => {
     if(error) return res.status(400).json({error: '400 Bad Request', message: error.details[0].message});
     // Check if email and password is correct
     const user = await User.findOne({email: req.body.email});
+    if(!user) return res.status(400).json({error: '400 Bad Request', message: 'Email or password is wrong.'});
     const validPass = await bcrypt.compare(req.body.password, user.password);
-    if(!user || !validPass) return res.status(400).json({error: '400 Bad Request', message: 'Email or password is wrong.'});
+    if(!validPass) return res.status(400).json({error: '400 Bad Request', message: 'Email or password is wrong.'});
     // Create and assign access and refresh token to user, then store refresh token
     const accessToken = jwt.sign({_id: user._id, username: user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'});
     const refreshToken = jwt.sign({_id: user._id, username: user.username}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1h'});
