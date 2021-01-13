@@ -2,6 +2,23 @@
 const jwt = require('jsonwebtoken');
 const User = require('./models/User');
 
+// Create access and refresh tokens for user
+const createTokens = user => {
+    const accessToken = createAccessToken(user)
+    const refreshToken = createRefreshToken(user);
+    return {accessToken, refreshToken};
+}
+
+// Create access token for user
+function createAccessToken(user){
+    return jwt.sign({_id: user._id, username: user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'});
+}
+
+// Create refresh token for user
+function createRefreshToken(user){
+    return jwt.sign({_id: user._id, username: user.username}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1h'});
+}
+
 // Check and verify user access token
 const verifyAccessToken = async (req, res, next) => {
     // Check if token exists and send error on failure
@@ -47,6 +64,9 @@ const verifyRefreshToken = async (req, res, next) => {
     }
 }
 
-// Export verification functions
+// Export token functions
+module.exports.createTokens = createTokens;
+module.exports.createAccessToken = createAccessToken;
+module.exports.createRefreshToken = createRefreshToken;
 module.exports.verifyAccessToken = verifyAccessToken;
 module.exports.verifyRefreshToken = verifyRefreshToken;
