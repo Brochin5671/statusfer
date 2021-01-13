@@ -197,5 +197,14 @@ router.patch('/password', verifyAccessToken, async (req, res) => {
     res.json({message: 'Successfully updated password.'});
 });
 
+// Delete a user's account
+router.delete('/deactivate', verifyAccessToken, async (req, res) => {
+    // Remove user and clear cookies
+    await User.deleteOne({_id: req.user._id});
+    res.clearCookie('refreshToken');
+    res.clearCookie('accessToken');
+    res.json({message: 'Successfully deleted user.'});
+});
+
 // Export router
 module.exports = router;
