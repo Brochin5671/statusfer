@@ -3,9 +3,15 @@ const router = require('express').Router();
 const path = require('path');
 const User = require('../models/User');
 const Status = require('../models/Status');
-const {registerValidation, loginValidation} = require('../validation');
+const {
+    registerValidation,
+    loginValidation,
+    usernameValidation,
+    emailValidation,
+    passwordValidation
+} = require('../validation');
 const {sanitizeText} = require('../sanitize.js');
-const {verifyRefreshToken} = require('../verifyToken');
+const {verifyAccessToken, verifyRefreshToken} = require('../tokens');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 

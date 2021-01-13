@@ -2,7 +2,7 @@
 const router = require('express').Router();
 const path = require('path');
 const Status = require('../models/Status');
-const {verifyAccessToken} = require('../verifyToken');
+const {verifyAccessToken} = require('../tokens');
 const {statusValidation} = require('../validation');
 const {sanitizeText} = require('../sanitize.js');
 
