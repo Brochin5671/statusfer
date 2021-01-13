@@ -1,4 +1,4 @@
-// Setup router, path, User and Status model, validation, sanitize text, refresh token verification, bcrypt, and jsonwebtoken
+// Setup router, path, User and Status model, validation, sanitize text, token functions, and bcrypt
 const router = require('express').Router();
 const path = require('path');
 const User = require('../models/User');
@@ -11,9 +11,13 @@ const {
     passwordValidation
 } = require('../validation');
 const {sanitizeText} = require('../sanitize.js');
-const {verifyAccessToken, verifyRefreshToken} = require('../tokens');
+const {
+    createAccessToken,
+    createTokens,
+    verifyAccessToken,
+    verifyRefreshToken
+} = require('../tokens');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
 // Store refreshTokens
 let refreshTokens = [];
@@ -52,9 +56,8 @@ router.post('/register', async (req, res) => {
     // Save user to DB and generate tokens on success
     try{
         await user.save();
-        // Create and assign access and refresh token to user, then store refresh token
-        const accessToken = jwt.sign({_id: user._id, username: user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'});
-        const refreshToken = jwt.sign({_id: user._id, username: user.username}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1h'});
+        // Create tokens and store refresh token
+        const {accessToken, refreshToken} = createTokens(user);
         refreshTokens.push(refreshToken);
         // Send httponly token cookies
         res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
@@ -77,7 +80,7 @@ router.post('/token', verifyRefreshToken, (req, res) => {
     // Generate new access token and httponly token cookie if access token cookie expired
     const currentAccessToken = req.cookies.accessToken;
     if(!currentAccessToken){
-        const accessToken = jwt.sign({_id: req.user._id, username: req.user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'});
+        const accessToken = createAccessToken(req.user);
         res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
     }
     res.json({message: req.user.username, userId: req.user._id});
@@ -102,13 +105,12 @@ router.post('/login', async (req, res) => {
     if(!user) return res.status(400).json({error: '400 Bad Request', message: 'Email or password is wrong.'});
     const validPass = await bcrypt.compare(req.body.password, user.password);
     if(!validPass) return res.status(400).json({error: '400 Bad Request', message: 'Email or password is wrong.'});
-    // Create and assign access and refresh token to user, then store refresh token
-    const accessToken = jwt.sign({_id: user._id, username: user.username}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'});
-    const refreshToken = jwt.sign({_id: user._id, username: user.username}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1h'});
+    // Create tokens and store refresh token
+    const {accessToken, refreshToken} = createTokens(user);
     refreshTokens.push(refreshToken);
     // Send httponly token cookies
     res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
-    res.cookie('refreshToken', refreshToken, {maxAge: 3600000, httpOnly: true})
+    res.cookie('refreshToken', refreshToken, {maxAge: 3600000, httpOnly: true});
     res.json({message: 'Successfully logged in user.'});
 });
 
@@ -140,6 +142,59 @@ router.get('/:userId/data', async (req, res) => {
     }catch(err){ // Send error on failure
         res.status(404).json({error: '404 Not Found', message: 'No user found.'});
     }
+});
+
+// Change a user's username
+router.patch('/username', verifyAccessToken, async (req, res) => {
+    // Validate username and return error message if failed
+    const {error} = usernameValidation(req.body);
+    if(error) return res.status(400).json({error: '400 Bad Request', message: error.details[0].message});
+    // Update user's username
+    const newUsername = sanitizeText(req.body.username);
+    const patchedUser = await User.findOneAndUpdate({_id: req.user._id}, {username: newUsername}, {new: true});
+    // Create tokens and store refresh token
+    const {accessToken, refreshToken} = createTokens(patchedUser);
+    refreshTokens.push(refreshToken);
+    // Send httponly token cookies
+    res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
+    res.cookie('refreshToken', refreshToken, {maxAge: 3600000, httpOnly: true});
+    res.json({message: 'Successfully updated username.'});
+});
+
+// Change a user's email
+router.patch('/email', verifyAccessToken, async (req, res) => {
+    // Validate email and return error message if failed
+    const {error} = emailValidation(req.body);
+    if(error) return res.status(400).json({error: '400 Bad Request', message: error.details[0].message});
+    // Update user's email
+    const newEmail = sanitizeText(req.body.email);
+    const patchedUser = await User.findOneAndUpdate({_id: req.user._id}, {email: newEmail}, {new: true});
+    // Create tokens and store refresh token
+    const {accessToken, refreshToken} = createTokens(patchedUser);
+    refreshTokens.push(refreshToken);
+    // Send httponly token cookies
+    res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
+    res.cookie('refreshToken', refreshToken, {maxAge: 3600000, httpOnly: true});
+    res.json({message: 'Successfully updated email.'});
+});
+
+// Change a user's password
+router.patch('/password', verifyAccessToken, async (req, res) => {
+    // Validate password and return error message if failed
+    const {error} = passwordValidation(req.body.password);
+    if(error) return res.status(400).json({error: '400 Bad Request', message: error.details[0].message});
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPass = await bcrypt.hash(req.body, salt);
+    // Update user's password
+    const patchedUser = await User.findOneAndUpdate({_id: req.user._id}, {password: hashedPass}, {new: true});
+    // Create tokens and store refresh token
+    const {accessToken, refreshToken} = createTokens(patchedUser);
+    refreshTokens.push(refreshToken);
+    // Send httponly token cookies
+    res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
+    res.cookie('refreshToken', refreshToken, {maxAge: 3600000, httpOnly: true});
+    res.json({message: 'Successfully updated password.'});
 });
 
 // Export router
