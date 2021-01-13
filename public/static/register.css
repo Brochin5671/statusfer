@@ -2,10 +2,6 @@ html, main{
     background: #0dd4b6;
 }
 
-body{
-    font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
-}
-
 #registerForm{
     background: white;
 }
