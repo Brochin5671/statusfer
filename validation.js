@@ -53,7 +53,45 @@ const statusValidation = status => {
     return JoiSchema.validate(status);
 }
 
+// Username validation
+const usernameValidation = user => {
+    const JoiSchema = joi.object({
+        username: joi.string().trim().required().max(64).messages({
+            'string.empty': 'Username cannot be empty.',
+            'string.max': 'Username exceeds maximum length of 64 characters.'
+        })
+    });
+    return JoiSchema.validate(user);
+}
+
+// Email validation
+const emailValidation = user => {
+    const JoiSchema = joi.object({
+        email: joi.string().trim().required().insensitive().max(255).email().messages({
+            'string.empty': 'Email cannot be empty.',
+            'string.max': 'Email exceeds maximum length of 255 characters.',
+            'string.email': 'Email must be valid.'
+        })
+    });
+    return JoiSchema.validate(user);
+}
+
+// Password validation
+const passwordValidation = user => {
+    const JoiSchema = joi.object({
+        password: joi.string().required().min(8).max(64).messages({
+            'string.empty': 'Password is required.',
+            'string.min': 'Password must be at least 8 characters long.',
+            'string.max': 'Password exceeds maximum length of 64 characters.'
+        })
+    });
+    return JoiSchema.validate(user);
+}
+
 // Export validations
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
 module.exports.statusValidation = statusValidation;
+module.exports.usernameValidation = usernameValidation;
+module.exports.emailValidation = emailValidation;
+module.exports.passwordValidation = passwordValidation;
