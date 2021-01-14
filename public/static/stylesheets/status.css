@@ -2,7 +2,7 @@ html, main{
     background: #0dd4b6;
 }
 
-.media:last-child{
+.media{
     border-bottom: none !important;
 }
 
