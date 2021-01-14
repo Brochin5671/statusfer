@@ -2,6 +2,10 @@ html, main{
     background: #0dd4b6;
 }
 
+.media:last-child{
+    border-bottom: none !important;
+}
+
 #statusFormDiv, #statusList{
     background: white;
 }
