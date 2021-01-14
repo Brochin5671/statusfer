@@ -1,0 +1,15 @@
+html, main{
+    background: #0dd4b6;
+}
+
+.media:last-child{
+    border-bottom: none !important;
+}
+
+#statusList{
+    background: white;
+}
+
+#editedText{
+    resize: none;
+}
