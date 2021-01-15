@@ -2,7 +2,6 @@
 import {postStatus, patchStatus, deleteStatus, likeStatus, dislikeStatus} from './requests.js';
 
 // Select important elements
-const username = document.getElementById('username');
 const statusList = document.getElementById('statusList');
 
 // Creates and adds a status media element to the status list
@@ -65,32 +64,33 @@ export function createStatusMedia(statusJSON, isNew){
     if(isNew && statusList.firstElementChild) statusList.firstElementChild.insertAdjacentElement('beforeBegin', statusMedia);
     else statusList.appendChild(statusMedia);
     // Add edit and delete buttons if owned by user
-    createUserStatusTools(statusBody);
+    const userInfo = localStorage.getItem('userInfo').split(',');
+    if(userInfo[1] === statusJSON.userId){
+        createUserStatusTools(statusBody);
+    }
 }
 
 // Add edit and delete buttons to statuses owned by the user
 function createUserStatusTools(statusBody){
-    if(username.innerText.split(' ▼')[0] === statusBody.querySelector('.statusUser').innerText){
-        // Create edit button
-        const editBtn = document.createElement('button');
-        editBtn.innerText = 'Edit';
-        editBtn.type = 'click';
-        editBtn.className = 'btn btn-primary mr-2 edit';
-        statusBody.appendChild(editBtn);
-        editBtn.addEventListener('click', editStatus);
-        // Create delete button
-        const deleteBtn = document.createElement('button');
-        deleteBtn.innerText = 'Delete';
-        deleteBtn.type = 'click';
-        deleteBtn.className = 'btn btn-primary delete';
-        statusBody.appendChild(deleteBtn);
-        deleteBtn.addEventListener('click', async (event) => {
-            // Send delete request
-            disableButtons();
-            await deleteStatus(event);
-            enableButtons();
-        });
-    }
+    // Create edit button
+    const editBtn = document.createElement('button');
+    editBtn.innerText = 'Edit';
+    editBtn.type = 'click';
+    editBtn.className = 'btn btn-primary mr-2 edit';
+    statusBody.appendChild(editBtn);
+    editBtn.addEventListener('click', editStatus);
+    // Create delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.innerText = 'Delete';
+    deleteBtn.type = 'click';
+    deleteBtn.className = 'btn btn-primary delete';
+    statusBody.appendChild(deleteBtn);
+    deleteBtn.addEventListener('click', async (event) => {
+        // Send delete request
+        disableButtons();
+        await deleteStatus(event);
+        enableButtons();
+    });
 }
 
 // Returns a date string based on the createdAt and updatedAt strings
@@ -115,9 +115,9 @@ export function createDateString(createdAt, updatedAt){
 
 // Creates status to be posted
 export async function createStatus(event){
-    disableButtons();
     // Prevent refresh
     event.preventDefault();
+    disableButtons();
     // Send post request
     await postStatus(event);
     enableButtons();
