@@ -1,3 +1,6 @@
+// Import error tip
+import {createErrorTip} from './misc.js';
+
 // Select reusable elements
 const form = document.getElementById('loginForm');
 const emailInput = document.getElementById('email');
@@ -27,14 +30,6 @@ async function submitLogin(event){
     if(!error){
         window.location = '/';
     }else{ // Display error tip on failure
-        $('.alert').alert('close');
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'alert alert-warning alert-dismissible fade show';
-        errorDiv.role = 'alert';
-        errorDiv.innerHTML = `${message}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>`;
-        form.firstElementChild.insertAdjacentElement('beforeBegin', errorDiv);
+        createErrorTip(form.firstElementChild, message);
     }
 }
