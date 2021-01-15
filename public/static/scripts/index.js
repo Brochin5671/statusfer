@@ -6,11 +6,9 @@ import {socket, socketPostStatus, socketDeleteStatus, socketPatchStatus} from '.
 
 // Select important elements
 const statusList = document.getElementById('statusList');
-const loggedInDiv = document.getElementById('loggedIn');
-const username = document.getElementById('username');
+const userNav = document.getElementById('userNav');
 const profileLink = document.getElementById('profileLink');
-const loggedOutDiv = document.getElementById('loggedOut');
-const logoutBtn = document.getElementById('logout');
+const logoutBtn = document.getElementById('logoutBtn');
 const statusForm = document.getElementById('statusForm');
 const statusArea = document.getElementById('statusArea');
 
@@ -53,7 +51,7 @@ async function getStatuses(){
             createStatusMedia(listJSON[i], false);
         }
     }else{ // Display error tip on failure
-        createErrorTip(title, listJSON.message);
+        createErrorTip(document.querySelector('main').firstElementChild, listJSON.message);
     }
 }
 
@@ -62,20 +60,16 @@ async function getUser(){
     // Try to get new token and user info
     await getToken();
     const userInfo = localStorage.getItem('userInfo').split(',');
-    // Display loggedIn section and username if logged in
+    // Display loggedIn section if logged in
     if(userInfo[0] !== 'undefined'){
-        loggedInDiv.className = 'container';
-        username.innerText = userInfo[0];
+        $('#loggedIn').removeClass('d-none');
+        $('#loggedOut').addClass('d-none');
+        userNav.innerText = `${userInfo[0]} ▼`;
         profileLink.href = `/user/${userInfo[1]}`;
-        loggedOutDiv.className = 'container d-none';
-        const span = document.createElement('span');
-        span.className = 'small';
-        span.innerText = ' ▼';
-        username.appendChild(span);
     }else{ // Display loggedOut section if logged out and reset elements
-        loggedOutDiv.className = 'container text-center';
-        loggedInDiv.className = 'container d-none';
-        username.innerText = '';
+        $('#loggedIn').addClass('d-none');
+        $('#loggedOut').removeClass('d-none');
+        userNav.innerText = '';
         profileLink.href = '';
         statusArea.value = '';
         const charCounter = statusArea.nextElementSibling;
