@@ -59,13 +59,14 @@ async function getStatuses(){
 
 // Tries to get token to see if user is logged in or out
 async function getUser(){
-    // Try to get new token
-    const {error, message, userId} = await getToken();
+    // Try to get new token and user info
+    await getToken();
+    const userInfo = localStorage.getItem('userInfo').split(',');
     // Display loggedIn section and username if logged in
-    if(!error){
+    if(userInfo[0] !== 'undefined'){
         loggedInDiv.className = 'container';
-        username.innerText = message;
-        profileLink.href = `/user/${userId}`;
+        username.innerText = userInfo[0];
+        profileLink.href = `/user/${userInfo[1]}`;
         loggedOutDiv.className = 'container d-none';
         const span = document.createElement('span');
         span.className = 'small';
