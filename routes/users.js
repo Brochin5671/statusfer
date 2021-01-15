@@ -83,7 +83,7 @@ router.post('/token', verifyRefreshToken, (req, res) => {
         const accessToken = createAccessToken(req.user);
         res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
     }
-    res.json({message: req.user.username, userId: req.user._id});
+    res.json({username: req.user.username, _id: req.user._id});
 });
 
 // Serve login page
