@@ -69,6 +69,13 @@ async function getUserProfile(){
             statusMedia.appendChild(statusBody);
             statusList.appendChild(statusMedia);
         }
+        // Display settings if profile owned by user
+        const userInfo = localStorage.getItem('userInfo').split(',');
+        if(userInfo[0] === data.username){
+            $('.user').removeClass('d-none');
+        }else{
+            $('.user').addClass('d-none');
+        }
     }else{ // Send error on failure
         username.innerText = data.error;
         userIdText.innerText = data.message;
