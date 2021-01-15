@@ -2,14 +2,14 @@
 import {createErrorTip} from './misc.js';
 
 // Select reusable elements
-const form = document.getElementById('registerForm');
+const registerForm = document.getElementById('registerForm');
 const usernameInput = document.getElementById('username');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const confirmPasswordInput = document.getElementById('confirmPassword');
 
 // Listen for submit event
-form.addEventListener('submit', submitRegister);
+registerForm.addEventListener('submit', submitRegister);
 
 // Sends a post request with register form data
 async function submitRegister(event){
@@ -34,6 +34,6 @@ async function submitRegister(event){
     if(!error){
         window.location = '/';
     }else{ // Display error tip on failure
-        createErrorTip(form.firstElementChild, message);
+        createErrorTip(registerForm.firstElementChild, message);
     }
 }

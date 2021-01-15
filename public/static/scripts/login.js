@@ -2,12 +2,12 @@
 import {createErrorTip} from './misc.js';
 
 // Select reusable elements
-const form = document.getElementById('loginForm');
+const loginForm = document.getElementById('loginForm');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 
 // Listen for submit event
-form.addEventListener('submit', submitLogin);
+loginForm.addEventListener('submit', submitLogin);
 
 // Sends a post request with login form data
 async function submitLogin(event){
@@ -30,6 +30,6 @@ async function submitLogin(event){
     if(!error){
         window.location = '/';
     }else{ // Display error tip on failure
-        createErrorTip(form.firstElementChild, message);
+        createErrorTip(loginForm.firstElementChild, message);
     }
 }
