@@ -1,14 +1,14 @@
-// Import
+// Import important functions
 import {getToken, submitLogout} from './requests.js';
 import {createStatusMedia} from './statusFunctions.js';
 import {socket, socketPatchStatus} from './sockets.js';
 
-// Select username and status text
-const loggedInDiv = document.getElementById('loggedIn');
-const username = document.getElementById('username');
+// Select important elements
+const userNav = document.getElementById('userNav');
 const profileLink = document.getElementById('profileLink');
-const logoutBtn = document.getElementById('logout');
+const logoutBtn = document.getElementById('logoutBtn');
 const statusList = document.getElementById('statusList');
+const backBtn = document.getElementById('backBtn');
 
 // Listen for logout event
 logoutBtn.addEventListener('click', submitLogout);
@@ -33,18 +33,14 @@ async function getUser(){
     // Try to get new token
     await getToken();
     const userInfo = localStorage.getItem('userInfo').split(',');
-    // Display loggedIn section and username if logged in
+    // Display loggedIn section if logged in
     if(userInfo[0] !== 'undefined'){
-        loggedInDiv.className = 'container';
-        username.innerText = userInfo[0];
+        $('#loggedIn').removeClass('d-none');
+        userNav.innerText = `${userInfo[0]} ▼`;
         profileLink.href = `/user/${userInfo[1]}`;
-        const span = document.createElement('span');
-        span.className = 'small';
-        span.innerText = ' ▼';
-        username.appendChild(span);
     }else{ // Hide loggedIn section if logged out and reset elements
-        loggedInDiv.className = 'container d-none';
-        username.innerText = '';
+        $('#loggedIn').addClass('d-none');
+        userNav.innerText = '';
         profileLink.href = '';
     }
 }
@@ -55,21 +51,21 @@ async function getStatus(){
     const statusId = window.location.href.split("/").pop();
     const res = await fetch(`/status/${statusId}/data`);
     const data = await res.json();
-    // Display username and status on success
+    // Display status media on success
     if(!data.error){
+        // Refresh list and create status media
         statusList.innerHTML = '';
         createStatusMedia(data, false);
-        const backBtn = document.createElement('a');
-        backBtn.className = 'btn btn-primary align-self-center mr-3';
-        if(sessionStorage.getItem('backPage')) backBtn.href = sessionStorage.getItem('backPage');
-        else backBtn.href = '/';
-        backBtn.innerText = 'Back';
+        // Replace view button with back button
         document.querySelector('.view').replaceWith(backBtn);
-    }else{ // Send error on failure
+    }else{ // Display error on failure
         const statusUser = document.querySelector('.statusUser');
         statusUser.innerText = data.error;
         statusUser.className += ' text-decoration-none';
         const statusText = document.querySelector('.statusText');
         statusText.innerText = data.message;
     }
+    // Store backPage link in back button
+    if(sessionStorage.getItem('backPage')) backBtn.href = sessionStorage.getItem('backPage');
+    else backBtn.href = '/';
 }
