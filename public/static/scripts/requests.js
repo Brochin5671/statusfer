@@ -6,13 +6,15 @@ const statusArea = document.getElementById('statusArea');
 
 // Tries to generate new token for user
 export async function getToken(){
-    // Send post request with cookies and save response
+    // Send post request with cookies
     const options = {
         method: 'POST',
         credentials: 'same-origin',
     };
     const res = await fetch('/user/token', options);
-    return await res.json();
+    // Save response to a local storage item
+    const data = await res.json();
+    localStorage.setItem('userInfo', `${data.username},${data._id}`);
 }
 
 // Send a delete request to logout
