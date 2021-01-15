@@ -19,7 +19,9 @@ socket.on('connect', async () => {
 
 // Listen for socket postStatus event
 socket.on('postStatus', (statusJSON) => {
+    // If user matches data from event, clear noPosts element and add status
     if(username.innerText == statusJSON.user){
+        $('.noPosts').remove();
         createStatusMedia(statusJSON, true);
     }
 });
@@ -44,16 +46,17 @@ async function getUserProfile(){
         userIdText.innerText = data._id;
         // Get the creation date of the user
         userCreationDate.innerText = `Created ${createDateString(data.createdAt, data.createdAt)}`;
-        // Fill user's status list if exists
+        // Refresh and fill user's status list if exists
+        statusList.innerHTML = '';
         if(data.userStatusList.length > 0){
-            statusList.innerHTML = '';
+            $('.noPosts').remove();
             for(let i in data.userStatusList){
-                createStatusMedia(data.userStatusList[i]);
+                createStatusMedia(data.userStatusList[i], false);
             }
         }else{ // Display no posts message
             // Create media element
             const statusMedia = document.createElement('li');
-            statusMedia.className = 'media position-relative border-bottom';
+            statusMedia.className = 'media position-relative border-bottom noPosts';
             // Create body element
             const statusBody = document.createElement('div');
             statusBody.className = 'media-body m-3 text-break align-items-center';
