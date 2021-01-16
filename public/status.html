@@ -25,18 +25,34 @@
     </head>
     <body>
         <main>
+            <div class="container-fluid navbar navbar-expand-sm fixed-top navbar-dark py-sm-1 shadow" id="userNav">
+                <a class="navbar-brand font-weight-bold user-select-none" href="/" id="userTitle">Statusfer</a>
+                <button class="navbar-toggler" data-toggle="collapse" data-target="#target_collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="target_collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item user-select-none loggedOut d-none">
+                            <a class="nav-link" href="/user/register">Register</a>
+                        </li>
+                        <li class="nav-item user-select-none loggedOut d-none">
+                            <a class="nav-link" href="/user/login">Login</a>
+                        </li>
+                        <li class="nav-item user-select-none loggedIn d-none">
+                            <a class="nav-link" id="profileLink" href="">Profile</a>
+                        </li>
+                        <li class="nav-item user-select-none loggedIn d-none">
+                            <a class="nav-link" href="/user/settings">Settings</a>
+                        </li>
+                        <li class="nav-item user-select-none loggedIn d-none">
+                            <a class="nav-link" id="logoutBtn" href="">Log Out</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
             <div class="container">
                 <div class="row min-vh-100 justify-content-center align-items-center">
                     <div class="col-lg-6 col-md-8 col-sm-10">
-                        <div class="container d-none" id="loggedIn">
-                            <div class="col text-center">
-                                <a class="btn btn-primary text-center mb-2" id="userNav" data-toggle="collapse" href="#accountCollapse" role="button" aria-expanded="false" aria-controls="accountCollapse"></a>
-                                <div class="collapse text-center" id="accountCollapse">
-                                    <a class="btn btn-outline-dark" id="profileLink" href="">My Profile</a>
-                                    <a class="btn btn-outline-dark" id="logoutBtn">Log Out</a>
-                                </div>
-                            </div>
-                        </div>
                         <div class="container mt-4">
                             <ul class="list-unstyled rounded-lg shadow" id="statusList">
                                 <li class="media position-relative">
