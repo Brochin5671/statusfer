@@ -1,5 +1,9 @@
-html, main{
+html, main, #userNav{
     background: #0dd4b6;
+}
+
+#addSpace{
+    height: 30px;
 }
 
 .media:last-child{
