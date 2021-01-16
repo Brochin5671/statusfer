@@ -30,6 +30,7 @@ export function socketPatchStatus({_id, createdAt, updatedAt, status}){
 
 // Alert disconnected message at top of page
 socket.on('disconnect', () => {
+    $('#userNav').addClass('d-none');
     createErrorTip(document.querySelector('main').firstElementChild, 'Lost connection! Trying to reconnect...');
 });
 
