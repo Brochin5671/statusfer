@@ -1,6 +1,6 @@
 // Import
 import {storeBackPage} from './misc.js';
-import {getToken} from './requests.js';
+import {getToken, submitLogout} from './requests.js';
 import {socket, socketDeleteStatus, socketPatchStatus} from './sockets.js';
 import {createStatusMedia, createDateString} from './statusFunctions.js';
 
@@ -9,6 +9,10 @@ const username = document.getElementById('username');
 const userIdText = document.getElementById('userId');
 const userCreationDate = document.getElementById('date');
 const statusList = document.getElementById('statusList');
+const logoutBtn = document.getElementById('logoutTab');
+
+// Listen for logout event
+logoutBtn.addEventListener('click', submitLogout);
 
 // Closes any alerts, gets logged in user and requested status
 socket.on('connect', async () => {
