@@ -4,7 +4,7 @@ import {createStatusMedia} from './statusFunctions.js';
 import {socket, socketPatchStatus} from './sockets.js';
 
 // Select important elements
-const userNav = document.getElementById('userNav');
+const userTitle = document.getElementById('userTitle');
 const profileLink = document.getElementById('profileLink');
 const logoutBtn = document.getElementById('logoutBtn');
 const statusList = document.getElementById('statusList');
@@ -16,6 +16,7 @@ logoutBtn.addEventListener('click', submitLogout);
 // Closes any alerts, gets logged in user and requested status
 socket.on('connect', async () => {
     $('.alert').alert('close');
+    $('#userNav').removeClass('d-none');
     await getUser();
     await getStatus();
 });
@@ -35,12 +36,14 @@ async function getUser(){
     const userInfo = localStorage.getItem('userInfo').split(',');
     // Display loggedIn section if logged in
     if(userInfo[0] !== 'undefined'){
-        $('#loggedIn').removeClass('d-none');
-        userNav.innerText = `${userInfo[0]} ▼`;
+        $('.loggedIn').removeClass('d-none');
+        $('.loggedOut').addClass('d-none');
+        userTitle.innerText = userInfo[0];
         profileLink.href = `/user/${userInfo[1]}`;
     }else{ // Hide loggedIn section if logged out and reset elements
-        $('#loggedIn').addClass('d-none');
-        userNav.innerText = '';
+        $('.loggedIn').addClass('d-none');
+        $('.loggedOut').removeClass('d-none');
+        userTitle.innerText = 'Statusfer';
         profileLink.href = '';
     }
 }

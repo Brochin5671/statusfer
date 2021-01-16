@@ -6,7 +6,7 @@ import {socket, socketPostStatus, socketDeleteStatus, socketPatchStatus} from '.
 
 // Select important elements
 const statusList = document.getElementById('statusList');
-const userNav = document.getElementById('userNav');
+const userTitle = document.getElementById('userTitle');
 const profileLink = document.getElementById('profileLink');
 const logoutBtn = document.getElementById('logoutBtn');
 const statusForm = document.getElementById('statusForm');
@@ -24,6 +24,7 @@ statusArea.addEventListener('input', getTextAreaCharacters);
 // Closes any alerts, tries to get user info, and fetches all statuses when connected
 socket.on('connect', async () => {
     $('.alert').alert('close');
+    $('#userNav').removeClass('d-none');
     storeBackPage();
     await getUser();
     await getStatuses();
@@ -62,14 +63,14 @@ async function getUser(){
     const userInfo = localStorage.getItem('userInfo').split(',');
     // Display loggedIn section if logged in
     if(userInfo[0] !== 'undefined'){
-        $('#loggedIn').removeClass('d-none');
-        $('#loggedOut').addClass('d-none');
-        userNav.innerText = `${userInfo[0]} ▼`;
+        $('.loggedIn').removeClass('d-none');
+        $('.loggedOut').addClass('d-none');
+        userTitle.innerText = `${userInfo[0]}`;
         profileLink.href = `/user/${userInfo[1]}`;
     }else{ // Display loggedOut section if logged out and reset elements
-        $('#loggedIn').addClass('d-none');
-        $('#loggedOut').removeClass('d-none');
-        userNav.innerText = '';
+        $('.loggedIn').addClass('d-none');
+        $('.loggedOut').removeClass('d-none');
+        userTitle.innerText = 'Statusfer';
         profileLink.href = '';
         statusArea.value = '';
         const charCounter = statusArea.nextElementSibling;
