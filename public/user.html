@@ -28,15 +28,15 @@
             <div class="container">
                 <div class="card text-center mt-3">
                     <div class="card-header">
-                        <ul class="nav nav-tabs card-header-tabs">
+                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active">Profile</a>
+                                <a class="nav-link active" id="profileTab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true">Profile</a>
                             </li>
                             <li class="nav-item user d-none">
-                                <a class="nav-link disabled" tabindex="-1" aria-disabled="true">Settings</a>
+                                <a class="nav-link" id="settingsTab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Settings</a>
                             </li>
                             <li class="nav-item user d-none">
-                                <a class="nav-link disabled" tabindex="-1" aria-disabled="true">Log Out</a>
+                                <a class="nav-link" id="logoutTab" data-toggle="tab" href="#logout" role="tab" aria-controls="logout" aria-selected="false">Log Out</a>
                             </li>
                         </ul>
                     </div>
@@ -47,8 +47,15 @@
                         <a class="btn btn-primary align-self-center" href="/">Back</a>
                     </div>
                 </div>
-                <div class="container mt-4">
-                    <ul class="list-unstyled rounded-lg shadow" id="statusList"></ul>
+            </div>
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profileTab">
+                    <div class="container mt-4">
+                        <ul class="list-unstyled rounded-lg shadow" id="statusList"></ul>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settingsTab">
+                    <p>hi</p>
                 </div>
             </div>
         </main>
