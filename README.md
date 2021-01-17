@@ -11,7 +11,8 @@ A public chatting webapp where you can post and see other people's statuses in r
 * Like or dislike statuses with the feedback buttons
 * View a status by clicking the View button
 * View a user's profile by clicking on their username
-* View your profile or choose to logout by clicking on your name above the thread
+* View your profile or choose to logout by clicking on Profile
+* When on profile, click Settings if you want to change your username, email, password, or delete your account
 * When logged out, go to Login to access your account again
 
 ## How It Works
@@ -29,7 +30,7 @@ A public chatting webapp where you can post and see other people's statuses in r
 * Filters profanity using bad-words
 
 ## Upcoming Features
-* Change user details such as profile captions, usernames, emails, and passwords
+* Change profile captions
 * Sort and filter statuses
 * Implement Nodemailer and reCaptcha
 * Store refresh tokens in database separately
