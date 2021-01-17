@@ -33,6 +33,7 @@ logoutBtn.addEventListener('click', submitLogout);
 // Closes any alerts, gets logged in user and requested status
 socket.on('connect', async () => {
     $('.alert').alert('close');
+    $('#profileTab').tab('show');
     storeBackPage();
     await getUserProfile();
 });
