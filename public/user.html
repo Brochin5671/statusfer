@@ -30,13 +30,13 @@
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" id="profileTab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true">Profile</a>
+                                <a class="nav-link text-dark active" id="profileTab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="true">Profile</a>
                             </li>
                             <li class="nav-item user d-none">
-                                <a class="nav-link" id="settingsTab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Settings</a>
+                                <a class="nav-link text-dark" id="settingsTab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Settings</a>
                             </li>
                             <li class="nav-item user d-none">
-                                <a class="nav-link" id="logoutTab" data-toggle="tab" href="#logout" role="tab" aria-controls="logout" aria-selected="false">Log Out</a>
+                                <a class="nav-link text-dark" id="logoutTab" data-toggle="tab" href="#logout" role="tab" aria-controls="logout" aria-selected="false">Log Out</a>
                             </li>
                         </ul>
                     </div>
@@ -56,13 +56,68 @@
                 </div>
                 <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settingsTab">
                     <div class="container mt-4">
-                        <div class="card mt-3">
+                        <div class="card mt-3 rounded-lg">
                             <div class="card-body">
-                                <h2 class="card-title">Settings</h5>
-                                <p class="card-text">Change Username</p>
-                                <p class="card-text">Change Email</p>
-                                <p class="card-text">Change Password</p>
-                                <p class="card-text">Delete Account</p>
+                                <h1 class="card-title">Settings</h1>
+                                <button class="navbar-toggler p-0 mb-3" data-toggle="collapse" data-target="#usernameCollapse">
+                                    <span class="small">Change Username &#8964;</span>
+                                </button>
+                                <div class="collapse" id="usernameCollapse">
+                                    <form id="usernameForm">
+                                        <div class="form-group">
+                                            <label for="newUsername" class="text-muted">New Username</label>
+                                            <input type="name" class="form-control" id="newUsername" placeholder="Enter New Username" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Confirm</button>
+                                    </form>
+                                </div>
+                                <br>
+                                <button class="navbar-toggler p-0 mb-3" data-toggle="collapse" data-target="#emailCollapse">
+                                    <span class="small">Change Email &#8964;</span>
+                                </button>
+                                <div class="collapse" id="emailCollapse">
+                                    <form id="emailForm">
+                                        <div class="form-group">
+                                            <label for="newEmail" class="text-muted">New Email</label>
+                                            <input type="email" class="form-control" id="newEmail" placeholder="Enter New Email" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mb-3">Confirm</button>
+                                    </form>
+                                </div>
+                                <br>
+                                <button class="navbar-toggler p-0 mb-3" data-toggle="collapse" data-target="#passwordCollapse">
+                                    <span class="small">Change Password &#8964;</span>
+                                </button>
+                                <div class="collapse" id="passwordCollapse">
+                                    <form id="passwordForm">
+                                        <div class="form-group">
+                                            <label for="currentPassword" class="text-muted">Current Password</label>
+                                            <input type="password" class="form-control" id="currentPassword" placeholder="Enter Current Password" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="newPassword" class="text-muted">New Password</label>
+                                            <input type="password" class="form-control" id="newPassword" placeholder="Enter New Password" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="confirmNewPassword" class="text-muted">Confirm New Password</label>
+                                            <input type="password" class="form-control" id="confirmNewPassword" placeholder="Confirm New Password" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mb-3">Confirm</button>
+                                    </form>
+                                </div>
+                                <br>
+                                <button class="navbar-toggler p-0 mb-3" data-toggle="collapse" data-target="#deleteAccountCollapse">
+                                    <span class="small">Delete Account &#8964;</span>
+                                </button>
+                                <div class="collapse" id="deleteAccountCollapse">
+                                    <form id="deleteAccountForm">
+                                        <div class="form-group">
+                                            <label for="deleteAccountPassword" class="text-muted">Password</label>
+                                            <input type="password" class="form-control" id="deleteAccountPassword" placeholder="Enter Password" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Confirm</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
