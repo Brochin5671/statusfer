@@ -8,6 +8,7 @@ const {
     loginValidation,
     usernameValidation,
     emailValidation,
+    newPasswordValidation,
     passwordValidation
 } = require('../resources/validation');
 const {sanitizeText} = require('../resources/sanitize.js');
@@ -149,8 +150,12 @@ router.patch('/username', verifyAccessToken, async (req, res) => {
     // Validate username and return error message if failed
     const {error} = usernameValidation(req.body);
     if(error) return res.status(400).json({error: '400 Bad Request', message: error.details[0].message});
-    // Update user's username
+    // Sanitize new username
     const newUsername = sanitizeText(req.body.username);
+    // Check if username is taken
+    const usernameExists = await User.findOne({username: newUsername});
+    if(usernameExists) return res.status(400).json({error: '400 Bad Request', message: 'Username is taken.'});
+    // Update user's username
     const patchedUser = await User.findOneAndUpdate({_id: req.user._id}, {username: newUsername}, {new: true});
     // Create tokens and store refresh token
     const {accessToken, refreshToken} = createTokens(patchedUser);
@@ -166,39 +171,42 @@ router.patch('/email', verifyAccessToken, async (req, res) => {
     // Validate email and return error message if failed
     const {error} = emailValidation(req.body);
     if(error) return res.status(400).json({error: '400 Bad Request', message: error.details[0].message});
-    // Update user's email
+    // Sanitize new email
     const newEmail = sanitizeText(req.body.email);
-    const patchedUser = await User.findOneAndUpdate({_id: req.user._id}, {email: newEmail}, {new: true});
-    // Create tokens and store refresh token
-    const {accessToken, refreshToken} = createTokens(patchedUser);
-    refreshTokens.push(refreshToken);
-    // Send httponly token cookies
-    res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
-    res.cookie('refreshToken', refreshToken, {maxAge: 3600000, httpOnly: true});
+    // Check if email is registered
+    const emailExists = await User.findOne({email: newEmail});
+    if(emailExists) return res.status(400).json({error: '400 Bad Request', message: 'Email already registered.'});
+    // Update user's email
+    await User.findOneAndUpdate({_id: req.user._id}, {email: newEmail}, {new: true});
     res.json({message: 'Successfully updated email.'});
 });
 
 // Change a user's password
 router.patch('/password', verifyAccessToken, async (req, res) => {
-    // Validate password and return error message if failed
-    const {error} = passwordValidation(req.body.password);
+    // Validate new password and return error message if failed
+    const {error} = newPasswordValidation(req.body);
     if(error) return res.status(400).json({error: '400 Bad Request', message: error.details[0].message});
-    // Hash password
+    // Check if password is correct
+    const user = await User.findById(req.user._id);
+    const validPass = await bcrypt.compare(req.body.password, user.password);
+    if(!validPass) return res.status(400).json({error: '400 Bad Request', message: 'Password is wrong.'});
+    // Hash new password
     const salt = await bcrypt.genSalt(10);
-    const hashedPass = await bcrypt.hash(req.body, salt);
+    const hashedPass = await bcrypt.hash(req.body.newPassword, salt);
     // Update user's password
-    const patchedUser = await User.findOneAndUpdate({_id: req.user._id}, {password: hashedPass}, {new: true});
-    // Create tokens and store refresh token
-    const {accessToken, refreshToken} = createTokens(patchedUser);
-    refreshTokens.push(refreshToken);
-    // Send httponly token cookies
-    res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
-    res.cookie('refreshToken', refreshToken, {maxAge: 3600000, httpOnly: true});
+    await User.findOneAndUpdate({_id: req.user._id}, {password: hashedPass}, {new: true});
     res.json({message: 'Successfully updated password.'});
 });
 
 // Delete a user's account
 router.delete('/deactivate', verifyAccessToken, async (req, res) => {
+    // Validate password and return error message if failed
+    const {error} = passwordValidation(req.body);
+    if(error) return res.status(400).json({error: '400 Bad Request', message: error.details[0].message});
+    // Check if password is correct
+    const user = await User.findById(req.user._id);
+    const validPass = await bcrypt.compare(req.body.password, user.password);
+    if(!validPass) return res.status(400).json({error: '400 Bad Request', message: 'Password is wrong.'});
     // Remove user and clear cookies
     await User.deleteOne({_id: req.user._id});
     res.clearCookie('refreshToken');
