@@ -57,7 +57,8 @@ async function getUserProfile(){
     // Try to get new token
     await getToken();
     // Get userId from URL, send get request, and save response
-    const userId = window.location.href.split("/").pop();
+    let userId = window.location.href.split("/").pop();
+    userId = userId.split('#')[0];
     const res = await fetch(`/user/${userId}/data`);
     const data = await res.json();
     // Display username and userid on success
