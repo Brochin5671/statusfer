@@ -156,7 +156,7 @@ router.patch('/username', verifyAccessToken, async (req, res) => {
     const usernameExists = await User.findOne({username: newUsername});
     if(usernameExists) return res.status(400).json({error: '400 Bad Request', message: 'Username is taken.'});
     // Remove all of user's statuses
-    await Status.updateMany({userId: req.user._id}, {user: newUsername});
+    await Status.updateMany({userId: req.user._id}, {user: newUsername}, {timestamps: false});
     // Update user's username
     const patchedUser = await User.findOneAndUpdate({_id: req.user._id}, {username: newUsername}, {new: true});
     // Create tokens and store refresh token
