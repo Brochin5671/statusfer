@@ -1,4 +1,4 @@
-// Setup router, path, User and Status model, validation, sanitize text, token functions, and bcrypt
+// Setup router, path, User and Status model, validation, sanitize text, token and cookie functions, and password functions
 const router = require('express').Router();
 const path = require('path');
 const User = require('../models/User');
@@ -18,6 +18,7 @@ const {
     verifyAccessToken,
     verifyRefreshToken
 } = require('../resources/tokens');
+const {genCookies, genAccessCookie, clearCookies} = require('../resources/cookies');
 const {hashPassword, validPassword} = require('../resources/passwords');
 
 // Store refreshTokens
@@ -60,8 +61,7 @@ router.post('/register', async (req, res) => {
         const {accessToken, refreshToken} = createTokens(user);
         refreshTokens.push(refreshToken);
         // Send httponly token cookies
-        res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
-        res.cookie('refreshToken', refreshToken, {maxAge: 3600000, httpOnly: true});
+        genCookies(res, accessToken, refreshToken);
         res.json({message: 'Successfully registered user.'});
     }catch(err){ // Send error on failure
         res.status(500).json({error: '500 Internal Server Error', message: 'Unable to register user.'});
@@ -73,15 +73,14 @@ router.post('/token', verifyRefreshToken, (req, res) => {
     // Check if refresh token exists in DB, clear cookies and send error if not found
     const refreshToken = req.cookies.refreshToken;
     if(!refreshTokens.includes(refreshToken)){
-        res.clearCookie('refreshToken');
-        res.clearCookie('accessToken');
+        clearCookies(res);
         return res.status(403).json({error: '403 Forbidden', message: 'This token has expired, try re-logging in.'});
     }
     // Generate new access token and httponly token cookie if access token cookie expired
     const currentAccessToken = req.cookies.accessToken;
     if(!currentAccessToken){
         const accessToken = createAccessToken(req.user);
-        res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
+        genAccessCookie(res, accessToken);
     }
     res.json({username: req.user.username, _id: req.user._id});
 });
@@ -109,8 +108,7 @@ router.post('/login', async (req, res) => {
     const {accessToken, refreshToken} = createTokens(user);
     refreshTokens.push(refreshToken);
     // Send httponly token cookies
-    res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
-    res.cookie('refreshToken', refreshToken, {maxAge: 3600000, httpOnly: true});
+    genCookies(res, accessToken, refreshToken);
     res.json({message: 'Successfully logged in user.'});
 });
 
@@ -118,8 +116,7 @@ router.post('/login', async (req, res) => {
 router.delete('/logout', (req, res) => {
     // Remove refresh token from db, clear cookies, and send success message
     refreshTokens = refreshTokens.filter(token => token !== req.cookies.refreshToken);
-    res.clearCookie('refreshToken');
-    res.clearCookie('accessToken');
+    clearCookies(res);
     res.json({message: 'Successfully logged out user.'});
 });
 
@@ -162,8 +159,7 @@ router.patch('/username', verifyAccessToken, async (req, res) => {
     const {accessToken, refreshToken} = createTokens(patchedUser);
     refreshTokens.push(refreshToken);
     // Send httponly token cookies
-    res.cookie('accessToken', accessToken, {maxAge: 600000, httpOnly: true});
-    res.cookie('refreshToken', refreshToken, {maxAge: 3600000, httpOnly: true});
+    genCookies(res, accessToken, refreshToken);
     res.json({message: 'Successfully updated username.'});
 });
 
@@ -211,8 +207,7 @@ router.delete('/deactivate', verifyAccessToken, async (req, res) => {
     await Status.deleteMany({userId: user._id});
     // Remove user and clear cookies
     await User.deleteOne({_id: req.user._id});
-    res.clearCookie('refreshToken');
-    res.clearCookie('accessToken');
+    clearCookies(res);
     res.json({message: 'Successfully deleted user.'});
 });
 
