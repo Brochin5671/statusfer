@@ -1,5 +1,5 @@
 // Import
-import {storeBackPage} from './misc.js';
+import {createErrorTip, storeBackPage} from './misc.js';
 import {getToken, submitLogout} from './requests.js';
 import {socket, socketDeleteStatus, socketPatchStatus} from './sockets.js';
 import {createStatusMedia, createDateString} from './statusFunctions.js';
@@ -9,7 +9,23 @@ const username = document.getElementById('username');
 const userIdText = document.getElementById('userId');
 const userCreationDate = document.getElementById('date');
 const statusList = document.getElementById('statusList');
+const usernameForm = document.getElementById('usernameForm');
+const emailForm = document.getElementById('emailForm');
+const passwordForm = document.getElementById('passwordForm');
+const deleteAccountForm = document.getElementById('deleteAccountForm');
 const logoutBtn = document.getElementById('logoutTab');
+
+// Listen for new username event
+usernameForm.addEventListener('submit', submitNewUsername);
+
+// Listen for new email event
+emailForm.addEventListener('submit', submitNewEmail);
+
+// Listen for new password event
+passwordForm.addEventListener('submit', submitNewPassword);
+
+// Listen for delete account event
+deleteAccountForm.addEventListener('submit', submitDeleteAccount);
 
 // Listen for logout event
 logoutBtn.addEventListener('click', submitLogout);
@@ -83,5 +99,111 @@ async function getUserProfile(){
     }else{ // Send error on failure
         username.innerText = data.error;
         userIdText.innerText = data.message;
+    }
+}
+
+// Send a patch request to change a username
+async function submitNewUsername(event){
+    // Prevent refresh
+    event.preventDefault();
+    // Try to get new token
+    await getToken();
+    // Send patch request with form data and save response
+    const options = {
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+            'username': usernameForm.querySelector('#newUsername').value,
+        })
+    };
+    const res = await fetch('/user/username', options);
+    const {error, message} = await res.json();
+    // Refresh page on success
+    if(!error){
+        window.location.reload();
+    }else{ // Display error tip on failure
+        createErrorTip(usernameForm.firstElementChild, message);
+    }
+}
+
+// Send a patch request to change an email
+async function submitNewEmail(event){
+    // Prevent refresh
+    event.preventDefault();
+    // Try to get new token
+    await getToken();
+    // Send patch request with form data and save response
+    const options = {
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+            'email': emailForm.querySelector('#newEmail').value,
+        })
+    };
+    const res = await fetch('/user/email', options);
+    const {error, message} = await res.json();
+    // Refresh page on success
+    if(!error){
+        window.location.reload();
+    }else{ // Display error tip on failure
+        createErrorTip(emailForm.firstElementChild, message);
+    }
+}
+
+// Send a patch request to change a password
+async function submitNewPassword(event){
+    // Prevent refresh
+    event.preventDefault();
+    // Try to get new token
+    await getToken();
+    // Send patch request with form data and save response
+    const options = {
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+            'password': passwordForm.querySelector('#currentPassword').value,
+            'newPassword': passwordForm.querySelector('#newPassword').value,
+            'confirmNewPassword': passwordForm.querySelector('#confirmNewPassword').value
+        })
+    };
+    const res = await fetch('/user/password', options);
+    const {error, message} = await res.json();
+    // Refresh page on success
+    if(!error){
+        window.location.reload();
+    }else{ // Display error tip on failure
+        createErrorTip(passwordForm.firstElementChild, message);
+    }
+}
+
+// Send a delete request to delete an account
+async function submitDeleteAccount(event){
+    // Prevent refresh
+    event.preventDefault();
+    // Try to get new token
+    await getToken();
+    // Send patch request with form data and save response
+    const options = {
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+            'password': deleteAccountForm.querySelector('#deleteAccountPassword').value,
+        })
+    };
+    const res = await fetch('/user/deactivate', options);
+    const {error, message} = await res.json();
+    // Refresh page on success
+    if(!error){
+        window.location.reload();
+    }else{ // Display error tip on failure
+        createErrorTip(deleteAccountForm.firstElementChild, message);
     }
 }
