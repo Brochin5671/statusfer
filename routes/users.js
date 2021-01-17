@@ -11,14 +11,14 @@ const {
     newPasswordValidation,
     passwordValidation
 } = require('../resources/validation');
-const {sanitizeText} = require('../resources/sanitize.js');
+const {sanitizeText} = require('../resources/sanitize');
 const {
     createAccessToken,
     createTokens,
     verifyAccessToken,
     verifyRefreshToken
 } = require('../resources/tokens');
-const bcrypt = require('bcryptjs');
+const {hashPassword, validPassword} = require('../resources/passwords');
 
 // Store refreshTokens
 let refreshTokens = [];
@@ -46,8 +46,7 @@ router.post('/register', async (req, res) => {
     const emailExists = await User.findOne({email: sanitizedEmail});
     if(emailExists) return res.status(400).json({error: '400 Bad Request', message: 'Email already registered.'});
     // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPass = await bcrypt.hash(req.body.password, salt);
+    const hashedPass = await hashPassword(req.body.password);
     // Create new user object
     const user = new User({
         username: sanitizedUsername,
@@ -104,7 +103,7 @@ router.post('/login', async (req, res) => {
     // Check if email and password is correct
     const user = await User.findOne({email: req.body.email});
     if(!user) return res.status(400).json({error: '400 Bad Request', message: 'Email or password is wrong.'});
-    const validPass = await bcrypt.compare(req.body.password, user.password);
+    const validPass = await validPassword(req.body.password, user.password);
     if(!validPass) return res.status(400).json({error: '400 Bad Request', message: 'Email or password is wrong.'});
     // Create tokens and store refresh token
     const {accessToken, refreshToken} = createTokens(user);
@@ -190,11 +189,10 @@ router.patch('/password', verifyAccessToken, async (req, res) => {
     if(error) return res.status(400).json({error: '400 Bad Request', message: error.details[0].message});
     // Check if password is correct
     const user = await User.findById(req.user._id);
-    const validPass = await bcrypt.compare(req.body.password, user.password);
+    const validPass = await validPassword(req.body.password, user.password);
     if(!validPass) return res.status(400).json({error: '400 Bad Request', message: 'Password is wrong.'});
     // Hash new password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPass = await bcrypt.hash(req.body.newPassword, salt);
+    const hashedPass = await hashPassword(req.body.newPassword);
     // Update user's password
     await User.findOneAndUpdate({_id: req.user._id}, {password: hashedPass}, {new: true});
     res.json({message: 'Successfully updated password.'});
@@ -207,7 +205,7 @@ router.delete('/deactivate', verifyAccessToken, async (req, res) => {
     if(error) return res.status(400).json({error: '400 Bad Request', message: error.details[0].message});
     // Check if password is correct
     const user = await User.findById(req.user._id);
-    const validPass = await bcrypt.compare(req.body.password, user.password);
+    const validPass = await validPassword(req.body.password, user.password);
     if(!validPass) return res.status(400).json({error: '400 Bad Request', message: 'Password is wrong.'});
     // Remove all of user's statuses
     await Status.deleteMany({userId: user._id});
