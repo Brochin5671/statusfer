@@ -67,7 +67,7 @@ router.delete('/:statusId', verifyAccessToken, async (req, res) => {
     try{
         // Check if status is owned by user
         const status = await Status.findById(req.params.statusId);
-        if(status.user != req.user.username) throw new Error();
+        if(status.userId !== req.user._id) throw new Error();
         // Delete status
         await Status.deleteOne({_id: req.params.statusId});
         res.json({message: 'Successfully deleted status.'});
@@ -89,7 +89,7 @@ router.patch('/:statusId', verifyAccessToken, async (req, res) => {
     try{
         // Check if status is owned by user
         const status = await Status.findById(req.params.statusId);
-        if(status.user != req.user.username) throw new Error();
+        if(status.userId !== req.user._id) throw new Error();
         // Sanitize status
         const sanitizedStatus = sanitizeText(req.body);
         // Update status if new status is different than old status
