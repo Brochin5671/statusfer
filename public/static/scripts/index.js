@@ -62,10 +62,10 @@ async function getUser(){
     await getToken();
     const userInfo = localStorage.getItem('userInfo').split(',');
     // Display loggedIn section if logged in
-    if(userInfo[0] !== 'undefined'){
+    if(userInfo[0]){
         $('.loggedIn').removeClass('d-none');
         $('.loggedOut').addClass('d-none');
-        userTitle.innerText = `${userInfo[0]}`;
+        userTitle.innerText = userInfo[0];
         profileLink.href = `/user/${userInfo[1]}`;
     }else{ // Display loggedOut section if logged out and reset elements
         $('.loggedIn').addClass('d-none');
