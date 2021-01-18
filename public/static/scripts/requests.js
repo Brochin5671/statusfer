@@ -12,9 +12,13 @@ export async function getToken(){
         credentials: 'same-origin',
     };
     const res = await fetch('/user/token', options);
-    // Save response to a local storage item
+    // Save response to a local storage item on success
     const data = await res.json();
-    localStorage.setItem('userInfo', `${data.username},${data._id}`);
+    if(!data.error){
+        localStorage.setItem('userInfo', `${data.username},${data._id}`);
+    }else{ // Set userInfo local storage item to be empty
+        localStorage.setItem('userInfo', ',');
+    }
 }
 
 // Send a delete request to logout
