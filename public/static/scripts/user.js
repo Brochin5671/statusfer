@@ -6,7 +6,7 @@ import {createStatusMedia, createDateString} from './statusFunctions.js';
 
 // Select username and userid
 const username = document.getElementById('username');
-const userIdText = document.getElementById('userId');
+const userBio = document.getElementById('userBio');
 const userCreationDate = document.getElementById('date');
 const statusList = document.getElementById('statusList');
 const usernameForm = document.getElementById('usernameForm');
@@ -65,7 +65,7 @@ async function getUserProfile(){
     // Display username and userid on success
     if(!data.error){
         username.innerText = data.username;
-        userIdText.innerText = data._id;
+        userBio.innerText = data.bio;
         // Get the creation date of the user
         userCreationDate.innerText = `Created ${createDateString(data.createdAt, data.createdAt)}`;
         // Refresh and fill user's status list if exists
@@ -100,7 +100,7 @@ async function getUserProfile(){
         }
     }else{ // Send error on failure
         username.innerText = data.error;
-        userIdText.innerText = data.message;
+        userBio.innerText = data.message;
     }
 }
 
