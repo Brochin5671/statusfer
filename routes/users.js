@@ -132,10 +132,10 @@ router.get('/:userId/data', async (req, res) => {
         // Check if user exists
         const user = await User.findById(req.params.userId);
         if(!user) throw new Error();
-        const {username, _id, createdAt} = user;
+        const {username, _id, bio, createdAt} = user;
         // Get user's status list
         userStatusList = await Status.find({userId: _id}).sort({createdAt: 'descending'});
-        res.json({username, _id, createdAt, userStatusList});
+        res.json({username, bio, createdAt, userStatusList});
     }catch(err){ // Send error on failure
         res.status(404).json({error: '404 Not Found', message: 'No user found.'});
     }
