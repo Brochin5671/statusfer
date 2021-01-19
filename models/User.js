@@ -14,6 +14,10 @@ const UserSchema = mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    bio: {
+        type: String,
+        default: ''
     }
 }, {timestamps: true});
 module.exports = mongoose.model('Users', UserSchema);
