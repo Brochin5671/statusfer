@@ -30,11 +30,11 @@ A public chatting webapp where you can post and see other people's statuses in r
 * Filters profanity using bad-words
 
 ## Upcoming Features
-* Change profile captions
 * Sort and filter statuses
 * Implement Nodemailer and reCaptcha
 * Store refresh tokens in database separately
 * Fix some bugs
+* Refactor for modularity
 
 ## Dependencies
 * @hapi/joi: ^17.1.1
