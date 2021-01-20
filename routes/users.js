@@ -6,6 +6,7 @@ const Status = require('../models/Status');
 const {
     registerValidation,
     loginValidation,
+    bioValidation,
     usernameValidation,
     emailValidation,
     newPasswordValidation,
@@ -139,6 +140,18 @@ router.get('/:userId/data', async (req, res) => {
     }catch(err){ // Send error on failure
         res.status(404).json({error: '404 Not Found', message: 'No user found.'});
     }
+});
+
+// Change a user's bio
+router.patch('/bio', verifyAccessToken, async (req, res) => {
+    // Validate bio and return error message if failed
+    const {error} = bioValidation(req.body);
+    if(error) return res.status(400).json({error: '400 Bad Request', message: error.details[0].message});
+    // Sanitize new bio
+    const newBio = sanitizeText(req.body.bio);
+    // Update user's bio
+    await User.findOneAndUpdate({_id: req.user._id}, {bio: newBio}, {new: true});
+    res.json({message: 'Successfully updated bio.'});
 });
 
 // Change a user's username
