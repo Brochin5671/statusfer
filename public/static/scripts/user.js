@@ -2,7 +2,7 @@
 import {createErrorTip, storeBackPage} from './misc.js';
 import {getToken, submitLogout} from './requests.js';
 import {socket, socketDeleteStatus, socketPatchStatus} from './sockets.js';
-import {createStatusMedia, createDateString} from './statusFunctions.js';
+import {createStatusMedia, createDateString, getTextAreaCharacters} from './statusFunctions.js';
 
 // Select username and userid
 const username = document.getElementById('username');
@@ -95,12 +95,101 @@ async function getUserProfile(){
         const userInfo = localStorage.getItem('userInfo').split(',');
         if(userInfo[0] === data.username){
             $('.user').removeClass('d-none');
+            createEditBioTool();
         }else{
             $('.user').addClass('d-none');
         }
     }else{ // Send error on failure
         username.innerText = data.error;
         userBio.innerText = data.message;
+    }
+}
+
+// Adds edit button to bio if owned by user
+function createEditBioTool(){
+    // Create edit button
+    const editBtn = document.createElement('button');
+    editBtn.innerText = 'Edit';
+    editBtn.type = 'click';
+    editBtn.className = 'btn btn-primary mb-3 edit';
+    userBio.insertAdjacentElement('afterEnd', editBtn);
+    editBtn.addEventListener('click', createEditBioArea);
+}
+
+// Adds textarea with confirm and cancel buttons to bio when editing
+function createEditBioArea(event){
+    // Get edit button's main element id
+    const editId = event.target.parentNode.id;
+    // Create edit textarea
+    const editArea = document.createElement('textarea');
+    editArea.className = `form-control mb-1 editDeletable${editId}`;
+    editArea.id = 'editedText';
+    editArea.rows = 2;
+    editArea.maxLength = 255;
+    const statusText = event.target.parentNode.querySelector('#userBio');
+    editArea.value = statusText.innerText;
+    editArea.addEventListener('input', getTextAreaCharacters);
+    statusText.insertAdjacentElement('afterEnd', editArea);
+    // Create character counter
+    const charCounter = document.createElement('p');
+    charCounter.className = `small text-muted mb-2 ml-1 editDeletable${editId}`;
+    charCounter.innerText = `${editArea.value.length}/${editArea.maxLength}`;
+    editArea.insertAdjacentElement('afterEnd', charCounter);
+    // Create confirm button
+    const confirmBtn = document.createElement('button');
+    confirmBtn.innerText = 'Confirm';
+    confirmBtn.type = 'click';
+    confirmBtn.className = `btn btn-primary mr-2 mb-3 confirm editDeletable${editId}`;
+    const editBtn = event.target;
+    editBtn.insertAdjacentElement('beforeBegin', confirmBtn);
+    // Listen for confirm button event to send a patch request
+    confirmBtn.addEventListener('click', async () => {
+        // Send patch request
+        await submitNewBio(event);
+    });
+    // Create cancel button
+    const cancelBtn = document.createElement('button');
+    cancelBtn.innerText = 'Cancel';
+    cancelBtn.type = 'click';
+    cancelBtn.className = `btn btn-primary cancel mb-3 editDeletable${editId}`;
+    confirmBtn.insertAdjacentElement('afterEnd', cancelBtn);
+    // Hide non-edit elements
+    editBtn.className += ' d-none';
+    statusText.className += ' d-none';
+    // Listen for cancel button event to un-hide non-edit elements and remove edit elements
+    cancelBtn.addEventListener('click', () => {
+        editBtn.className = editBtn.className.split(' d-none')[0];
+        statusText.className = statusText.className.split(' d-none')[0];
+        $(`.editDeletable${editId}`).remove();
+    });
+}
+
+// Send a patch request to change a bio
+async function submitNewBio(event){
+    // Prevent refresh
+    event.preventDefault();
+    // Try to get new token
+    await getToken();
+    // Get bio body
+    const userBody = event.target.parentNode;
+    // Send patch request with form data and save response
+    const options = {
+        method: 'PATCH',
+        credentials: 'same-origin',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            'bio': userBody.querySelector('#editedText').value,
+        })
+    };
+    const res = await fetch('/user/bio', options);
+    const {error, message} = await res.json();
+    // Refresh page on success
+    if(!error){
+        window.location.reload();
+    }else{ // Display error tip on failure
+        createErrorTip(userBody.firstElementChild, message);
     }
 }
 
@@ -112,7 +201,8 @@ async function submitNewUsername(event){
     await getToken();
     // Send patch request with form data and save response
     const options = {
-		method: 'PATCH',
+        method: 'PATCH',
+        credentials: 'same-origin',
 		headers: {
 			'Content-Type': 'application/json'
 		},
@@ -138,7 +228,8 @@ async function submitNewEmail(event){
     await getToken();
     // Send patch request with form data and save response
     const options = {
-		method: 'PATCH',
+        method: 'PATCH',
+        credentials: 'same-origin',
 		headers: {
 			'Content-Type': 'application/json'
 		},
@@ -164,7 +255,8 @@ async function submitNewPassword(event){
     await getToken();
     // Send patch request with form data and save response
     const options = {
-		method: 'PATCH',
+        method: 'PATCH',
+        credentials: 'same-origin',
 		headers: {
 			'Content-Type': 'application/json'
 		},
@@ -192,7 +284,8 @@ async function submitDeleteAccount(event){
     await getToken();
     // Send patch request with form data and save response
     const options = {
-		method: 'DELETE',
+        method: 'DELETE',
+        credentials: 'same-origin',
 		headers: {
 			'Content-Type': 'application/json'
 		},
