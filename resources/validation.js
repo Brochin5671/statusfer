@@ -53,6 +53,17 @@ const statusValidation = status => {
     return JoiSchema.validate(status);
 }
 
+// Bio validation
+const bioValidation = user => {
+    const JoiSchema = joi.object({
+        bio: joi.string().trim().required().max(255).messages({
+            'string.empty': 'Bio is empty.',
+            'string.max': 'Bio exceeds maximum length of 255 characters.'
+        })
+    });
+    return JoiSchema.validate(user);
+}
+
 // Username validation
 const usernameValidation = user => {
     const JoiSchema = joi.object({
@@ -110,6 +121,7 @@ const passwordValidation = user => {
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
 module.exports.statusValidation = statusValidation;
+module.exports.bioValidation = bioValidation;
 module.exports.usernameValidation = usernameValidation;
 module.exports.emailValidation = emailValidation;
 module.exports.newPasswordValidation = newPasswordValidation;
