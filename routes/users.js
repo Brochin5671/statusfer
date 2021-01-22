@@ -17,13 +17,12 @@ const {
     createAccessToken,
     createTokens,
     verifyAccessToken,
-    verifyRefreshToken
+    verifyRefreshToken,
+    decodeRefreshTokenExp
 } = require('../resources/tokens');
 const {genCookies, genAccessCookie, clearCookies} = require('../resources/cookies');
 const {hashPassword, validPassword} = require('../resources/passwords');
-
-// Store refreshTokens
-let refreshTokens = [];
+const { updateOne } = require('../models/User');
 
 // Serve register page
 router.get('/register', (req, res) => {
@@ -57,10 +56,11 @@ router.post('/register', async (req, res) => {
     });
     // Save user to DB and generate tokens on success
     try{
-        await user.save();
+        const newUser = await user.save();
         // Create tokens and store refresh token
-        const {accessToken, refreshToken} = createTokens(user);
-        refreshTokens.push(refreshToken);
+        const {accessToken, refreshToken} = createTokens(newUser);
+        const tokenExp = decodeRefreshTokenExp(refreshToken);
+        await User.updateOne({_id: newUser._id}, {tokenExp: tokenExp}, {timestamps: false});
         // Send httponly token cookies
         genCookies(res, accessToken, refreshToken);
         res.json({message: 'Successfully registered user.'});
@@ -70,11 +70,14 @@ router.post('/register', async (req, res) => {
 });
 
 // Generate new access token from refresh token
-router.post('/token', verifyRefreshToken, (req, res) => {
+router.post('/token', verifyRefreshToken, async (req, res) => {
     // Check if refresh token exists in DB, clear cookies and send error if not found
+    const user = await User.findById(req.user._id);
     const refreshToken = req.cookies.refreshToken;
-    if(!refreshTokens.includes(refreshToken)){
+    const tokenExp = decodeRefreshTokenExp(refreshToken);
+    if(tokenExp !== user.tokenExp){
         clearCookies(res);
+        await User.updateOne({_id: req.user._id}, {tokenExp: null}, {timestamps: false});
         return res.status(403).json({error: '403 Forbidden', message: 'This token has expired, try re-logging in.'});
     }
     // Generate new access token and httponly token cookie if access token cookie expired
@@ -107,16 +110,17 @@ router.post('/login', async (req, res) => {
     if(!validPass) return res.status(400).json({error: '400 Bad Request', message: 'Email or password is wrong.'});
     // Create tokens and store refresh token
     const {accessToken, refreshToken} = createTokens(user);
-    refreshTokens.push(refreshToken);
+    const tokenExp = decodeRefreshTokenExp(refreshToken);
+    await User.updateOne({_id: user._id}, {tokenExp: tokenExp}, {timestamps: false});
     // Send httponly token cookies
     genCookies(res, accessToken, refreshToken);
     res.json({message: 'Successfully logged in user.'});
 });
 
 // Logout a user
-router.delete('/logout', (req, res) => {
+router.delete('/logout', verifyRefreshToken, async (req, res) => {
     // Remove refresh token from db, clear cookies, and send success message
-    refreshTokens = refreshTokens.filter(token => token !== req.cookies.refreshToken);
+    await User.updateOne({_id: req.user._id}, {tokenExp: null}, {timestamps: false});
     clearCookies(res);
     res.json({message: 'Successfully logged out user.'});
 });
@@ -170,7 +174,8 @@ router.patch('/username', verifyAccessToken, async (req, res) => {
     const patchedUser = await User.findOneAndUpdate({_id: req.user._id}, {username: newUsername}, {new: true});
     // Create tokens and store refresh token
     const {accessToken, refreshToken} = createTokens(patchedUser);
-    refreshTokens.push(refreshToken);
+    const tokenExp = decodeRefreshTokenExp(refreshToken);
+    await User.updateOne({_id: patchedUser._id}, {tokenExp: tokenExp}, {timestamps: false});
     // Send httponly token cookies
     genCookies(res, accessToken, refreshToken);
     res.json({message: 'Successfully updated username.'});
