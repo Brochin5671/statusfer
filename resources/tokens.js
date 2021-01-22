@@ -64,9 +64,20 @@ const verifyRefreshToken = async (req, res, next) => {
     }
 }
 
+// Decodes and sends back numeric value of expiry date
+const decodeRefreshTokenExp = token => {
+    try{
+        const verifiedToken = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+        return verifiedToken.exp;
+    }catch(err){
+        return null;
+    }
+}
+
 // Export token functions
 module.exports.createTokens = createTokens;
 module.exports.createAccessToken = createAccessToken;
 module.exports.createRefreshToken = createRefreshToken;
 module.exports.verifyAccessToken = verifyAccessToken;
 module.exports.verifyRefreshToken = verifyRefreshToken;
+module.exports.decodeRefreshTokenExp = decodeRefreshTokenExp;
