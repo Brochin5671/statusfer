@@ -18,6 +18,10 @@ const UserSchema = mongoose.Schema({
     bio: {
         type: String,
         default: ''
+    },
+    tokenExp: {
+        type: Number,
+        default: null
     }
 }, {timestamps: true});
 module.exports = mongoose.model('Users', UserSchema);
