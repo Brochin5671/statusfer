@@ -43,7 +43,7 @@ async function getUser(){
     }else{ // Hide loggedIn section if logged out and reset elements
         $('.loggedIn').addClass('d-none');
         $('.loggedOut').removeClass('d-none');
-        userTitle.innerText = 'Statusfer';
+        userTitle.innerHTML = 'Statusfer <span class="badge">Beta</span>';
         profileLink.href = '';
     }
 }
