@@ -1,4 +1,4 @@
-# Statusfer (Alpha)
+# Statusfer (Beta)
 
 ## Overview
 A public chatting webapp where you can post and see other people's statuses in real-time using an API, <span>socket.io</span>, and MongoDB.
@@ -25,14 +25,13 @@ A public chatting webapp where you can post and see other people's statuses in r
 * Uses Express.js as the back-end framework for the Node.js environment to deliver resources to the client
 * The ODM library Mongoose is used to communicate with the MongoDB server
 * Bcryptjs hashes passwords so they can be securely stored in the database
-* Jsonwebtoken is used to authenticate users for certain requests
+* Jsonwebtokens are used to authenticate users for user requests
 * Uses <span>socket.io</span> to emit events for the client
 * Filters profanity using bad-words
 
 ## Upcoming Features
 * Sort and filter statuses
 * Implement Nodemailer and reCaptcha
-* Store refresh tokens in database separately
 * Fix some bugs
 * Refactor for modularity
 
