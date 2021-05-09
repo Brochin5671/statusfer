@@ -11,6 +11,7 @@ const profileLink = document.getElementById('profileLink');
 const logoutBtn = document.getElementById('logoutBtn');
 const statusForm = document.getElementById('statusForm');
 const statusArea = document.getElementById('statusArea');
+const loadMore = document.getElementById('loadMore');
 let listJSON = null;
 let currPosts = 0
 
@@ -50,6 +51,10 @@ async function getStatuses(){
     if(!listJSON.error){
         // Refresh and append 10 media objects to status list
         statusList.innerHTML = '';
+        currPosts = 0;
+        if(loadMore.childNodes[0]){
+            loadMore.childNodes[0].remove();
+        }
         for(let i = 0; i < listJSON.length && i < 10; i++){
             createStatusMedia(listJSON[i+currPosts], false);
         }
@@ -61,7 +66,7 @@ async function getStatuses(){
             loadMoreBtn.type = 'click';
             loadMoreBtn.className = 'btn btn-secondary mb-5 shadow';
             loadMoreBtn.addEventListener('click', loadMoreStatuses);
-            document.getElementById('loadMore').appendChild(loadMoreBtn);
+            loadMore.appendChild(loadMoreBtn);
         }
     }else{ // Display error tip on failure
         createErrorTip(document.querySelector('main').firstElementChild, listJSON.message);
@@ -100,7 +105,7 @@ function loadMoreStatuses(){
         // If no more can be added, remove load more button
         currPosts += 10
         if(listJSON.length <= currPosts){
-            document.getElementById('loadMore').remove();
+            loadMore.childNodes[0].remove();
         }
     }
 }

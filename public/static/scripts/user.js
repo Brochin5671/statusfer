@@ -14,6 +14,7 @@ const emailForm = document.getElementById('emailForm');
 const passwordForm = document.getElementById('passwordForm');
 const deleteAccountForm = document.getElementById('deleteAccountForm');
 const logoutBtn = document.getElementById('logoutTab');
+const loadMore = document.getElementById('loadMore');
 let data = null;
 let currPosts = 0;
 
@@ -72,6 +73,10 @@ async function getUserProfile(){
         userCreationDate.innerText = `Created ${createDateString(data.createdAt, data.createdAt)}`;
         // Refresh and fill user's status list with 10 items if exists
         statusList.innerHTML = '';
+        currPosts = 0;
+        if(loadMore.childNodes[0]){
+            loadMore.childNodes[0].remove();
+        }
         if(data.userStatusList.length > 0){
             $('.noPosts').remove();
             for(let i = 0; i < data.userStatusList.length && i < 10; i++){
@@ -85,7 +90,7 @@ async function getUserProfile(){
                 loadMoreBtn.type = 'click';
                 loadMoreBtn.className = 'btn btn-secondary mb-5 shadow';
                 loadMoreBtn.addEventListener('click', loadMoreStatuses);
-                document.getElementById('loadMore').appendChild(loadMoreBtn);
+                loadMore.appendChild(loadMoreBtn);
             }
         }else{ // Display no posts message
             // Create media element
@@ -119,10 +124,13 @@ async function getUserProfile(){
 
 // Adds edit button to bio if owned by user
 function createEditBioTool(){
-    // Create edit button
+    // Refresh and create edit button features
+    $('#editBio').remove();
+    $('.editDeletable').remove();
     const editBtn = document.createElement('button');
     editBtn.innerText = 'Edit';
     editBtn.type = 'click';
+    editBtn.id = 'editBio';
     editBtn.className = 'btn btn-secondary mb-3 edit';
     userBio.insertAdjacentElement('afterEnd', editBtn);
     editBtn.addEventListener('click', createEditBioArea);
@@ -325,7 +333,7 @@ function loadMoreStatuses(){
         // If no more can be added, remove load more button
         currPosts += 10
         if(data.userStatusList.length <= currPosts){
-            document.getElementById('loadMore').remove();
+            loadMore.childNodes[0].remove();
         }
     }
 }
