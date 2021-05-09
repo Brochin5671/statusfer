@@ -68,7 +68,11 @@ async function getUserProfile(){
     // Display username and userid on success
     if(!data.error){
         username.innerText = data.username;
-        userBio.innerText = data.bio;
+        if(data.bio == ''){
+            userBio.innerHTML = `<span class="text-muted">${data.username} does not have a description.</span>`;
+        }else{
+            userBio.innerText = data.bio;
+        }
         // Get the creation date of the user
         userCreationDate.innerText = `Created ${createDateString(data.createdAt, data.createdAt)}`;
         // Refresh and fill user's status list with 10 items if exists
