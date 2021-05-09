@@ -18,16 +18,16 @@ A public chatting webapp where you can post and see other people's statuses in r
 ## How It Works
 
 ### Client-side
-* The Fetch API is used to communicate with the server
+* Fetch API is used to communicate with the server
 * Uses the <span>socket.io</span> client to listen for events and update pages in real-time
 
 ### Server-side
 * Uses Express.js as the back-end framework for the Node.js environment to deliver resources to the client
-* The ODM library Mongoose is used to communicate with the MongoDB server
+* Mongoose API is used to communicate with the MongoDB server
 * Bcryptjs hashes passwords so they can be securely stored in the database
-* Jsonwebtokens are used to authenticate users for user requests
+* JWTs are used to authenticate users for user requests
 * Uses <span>socket.io</span> to emit events for the client
-* Filters profanity using bad-words
+* Filters profanity using bad-words package
 
 ## Upcoming Features
 * Tweak design
