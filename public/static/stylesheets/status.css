@@ -14,7 +14,7 @@ html, main, #userNav{
     resize: none;
 }
 
-.nav-link:hover{
+#userTitle:hover, .nav-link:hover{
     transition: 0.4s;
     opacity: 0.75;
 }
