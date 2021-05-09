@@ -2,6 +2,15 @@ html, main{
     background: #0dd4b6;
 }
 
+.media{
+    transition: 0.5s;
+}
+
+.media:hover{
+    transition: 0.5s;
+    background: rgb(236, 236, 236);
+}
+
 .media:last-child{
     border-bottom: none !important;
 }
