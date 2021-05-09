@@ -3,7 +3,13 @@ html, main, #userNav{
 }
 
 .media{
+    transition: 0.5s;
     border-bottom: none !important;
+}
+
+.media:hover{
+    transition: 0.5s;
+    background: rgb(236, 236, 236);
 }
 
 #statusList{
@@ -12,6 +18,10 @@ html, main, #userNav{
 
 #editedText{
     resize: none;
+}
+
+#userTitle, .nav-link{
+    transition: 0.4s;
 }
 
 #userTitle:hover, .nav-link:hover{
