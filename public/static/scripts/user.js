@@ -69,7 +69,8 @@ async function getUserProfile(){
     if(!data.error){
         username.innerText = data.username;
         if(data.bio == ''){
-            userBio.innerHTML = `<span class="text-muted">${data.username} does not have a description.</span>`;
+            userBio.className += ' text-muted'
+            userBio.innerText = `${data.username} does not have a description.`;
         }else{
             userBio.innerText = data.bio;
         }
