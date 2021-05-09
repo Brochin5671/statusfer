@@ -4,7 +4,7 @@ import {getToken, submitLogout} from './requests.js';
 import {socket, socketDeleteStatus, socketPatchStatus} from './sockets.js';
 import {createStatusMedia, createDateString, getTextAreaCharacters} from './statusFunctions.js';
 
-// Select username and userid
+// Important elements and variables
 const username = document.getElementById('username');
 const userBio = document.getElementById('userBio');
 const userCreationDate = document.getElementById('date');
@@ -14,6 +14,8 @@ const emailForm = document.getElementById('emailForm');
 const passwordForm = document.getElementById('passwordForm');
 const deleteAccountForm = document.getElementById('deleteAccountForm');
 const logoutBtn = document.getElementById('logoutTab');
+let data = null;
+let currPosts = 0;
 
 // Listen for new username event
 usernameForm.addEventListener('submit', submitNewUsername);
@@ -61,19 +63,29 @@ async function getUserProfile(){
     let userId = window.location.href.split("/").pop();
     userId = userId.split('#')[0];
     const res = await fetch(`/user/${userId}/data`);
-    const data = await res.json();
+    data = await res.json();
     // Display username and userid on success
     if(!data.error){
         username.innerText = data.username;
         userBio.innerText = data.bio;
         // Get the creation date of the user
         userCreationDate.innerText = `Created ${createDateString(data.createdAt, data.createdAt)}`;
-        // Refresh and fill user's status list if exists
+        // Refresh and fill user's status list with 10 items if exists
         statusList.innerHTML = '';
         if(data.userStatusList.length > 0){
             $('.noPosts').remove();
-            for(let i in data.userStatusList){
-                createStatusMedia(data.userStatusList[i], false);
+            for(let i = 0; i < data.userStatusList.length && i < 10; i++){
+                createStatusMedia(data.userStatusList[i+currPosts], false);
+            }
+            // If more can be added, add load more button
+            currPosts += 10
+            if(data.userStatusList.length > currPosts){
+                const loadMoreBtn = document.createElement('button');
+                loadMoreBtn.textContent = 'Load More';
+                loadMoreBtn.type = 'click';
+                loadMoreBtn.className = 'btn btn-primary mb-5 shadow';
+                loadMoreBtn.addEventListener('click', loadMoreStatuses);
+                document.getElementById('loadMore').appendChild(loadMoreBtn);
             }
         }else{ // Display no posts message
             // Create media element
@@ -300,5 +312,20 @@ async function submitDeleteAccount(event){
         window.location.reload();
     }else{ // Display error tip on failure
         createErrorTip(deleteAccountForm.firstElementChild, message);
+    }
+}
+
+// When load more button is clicked, more statuses are added
+function loadMoreStatuses(){
+    // Fill list with 10 more items
+    if(data.userStatusList){
+        for(let i = currPosts; i < data.userStatusList.length && i < currPosts+10; i++){
+            createStatusMedia(data.userStatusList[i], false);
+        }
+        // If no more can be added, remove load more button
+        currPosts += 10
+        if(data.userStatusList.length <= currPosts){
+            document.getElementById('loadMore').remove();
+        }
     }
 }
