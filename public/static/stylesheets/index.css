@@ -17,3 +17,8 @@ html, main, #userNav{
 #statusArea, #editedText{
     resize: none;
 }
+
+.nav-link:hover{
+    transition: 0.4s;
+    opacity: 0.75;
+}
