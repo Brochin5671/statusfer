@@ -4,7 +4,7 @@ const filter = new BadWords();
 
 // Sanitize text, filter profanity, and export
 const sanitizeText = (text) => {
-    const sanitizedText = text.trim();
+    let sanitizedText = text.trim();
     // Temporary fix for package unable to filter text with no words
     try{
         sanitizedText = filter.clean(sanitizedText);
