@@ -1,10 +1,11 @@
-// Setup router, path, Status model, access token verification, status validation, and sanitize text
+// Setup router, path, Status model, access token verification, status validation, sanitize text, and rate limiter
 const router = require('express').Router();
 const path = require('path');
 const Status = require('../models/Status');
 const {verifyAccessToken} = require('../resources/tokens');
 const {statusValidation} = require('../resources/validation');
 const {sanitizeText} = require('../resources/sanitize.js');
+const {statusLimiter} = require('../resources/rateLimiter.js');
 
 // Get all statuses
 router.get('/', async (req, res) => {
@@ -18,7 +19,7 @@ router.get('/', async (req, res) => {
 });
 
 // Send a status to be created
-router.post('/', verifyAccessToken, async (req, res) => {
+router.post('/', verifyAccessToken, statusLimiter, async (req, res) => {
     // Validate status and return error message if failed
     const statusMsg = {message: req.body};
     const {error} = statusValidation(statusMsg);
