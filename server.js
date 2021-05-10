@@ -30,6 +30,9 @@ app.use(compression());
 // Disable x-powered-by header
 app.disable('x-powered-by');
 
+// Setup for rate limiter
+app.set('trust proxy', 1);
+
 // Redirect to secure if request is not secure and not localhost
 if(port == process.env.PORT){
 	app.enable('trust proxy'); // Enable reverse proxy support
