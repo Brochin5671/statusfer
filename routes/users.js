@@ -22,7 +22,6 @@ const {
 } = require('../resources/tokens');
 const {genCookies, genAccessCookie, clearCookies} = require('../resources/cookies');
 const {hashPassword, validPassword} = require('../resources/passwords');
-const { updateOne } = require('../models/User');
 
 // Serve register page
 router.get('/register', (req, res) => {
