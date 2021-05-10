@@ -42,6 +42,7 @@ A public chatting webapp where you can post and see other people's statuses in r
 * cors: ^2.8.5
 * dotenv: ^8.2.0
 * express: ^4.17.1
+* express-rate-limit: ^5.2.6
 * http: 0.0.1-security
 * jsonwebtoken: ^8.5.1
 * mongoose: ^5.10.3
