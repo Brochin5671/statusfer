@@ -87,7 +87,7 @@ async function getUser(){
     }else{ // Display loggedOut section if logged out and reset elements
         $('.loggedIn').addClass('d-none');
         $('.loggedOut').removeClass('d-none');
-        userTitle.innerHTML = 'Statusfer <span class="badge">Beta</span>';
+        userTitle.innerText = 'Statusfer';
         profileLink.href = '';
         statusArea.value = '';
         const charCounter = statusArea.nextElementSibling;
