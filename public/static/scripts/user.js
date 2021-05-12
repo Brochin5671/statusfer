@@ -93,7 +93,7 @@ async function getUserProfile(){
                 const loadMoreBtn = document.createElement('button');
                 loadMoreBtn.textContent = 'Load More';
                 loadMoreBtn.type = 'click';
-                loadMoreBtn.className = 'btn btn-secondary mb-5 shadow';
+                loadMoreBtn.className = 'btn btn-light mb-5 shadow';
                 loadMoreBtn.addEventListener('click', loadMoreStatuses);
                 loadMore.appendChild(loadMoreBtn);
             }
@@ -136,7 +136,7 @@ function createEditBioTool(){
     editBtn.innerText = 'Edit';
     editBtn.type = 'click';
     editBtn.id = 'editBio';
-    editBtn.className = 'btn btn-secondary mb-3 edit';
+    editBtn.className = 'btn btn-info mb-3 edit';
     userBio.insertAdjacentElement('afterEnd', editBtn);
     editBtn.addEventListener('click', createEditBioArea);
 }
@@ -164,7 +164,7 @@ function createEditBioArea(event){
     const confirmBtn = document.createElement('button');
     confirmBtn.innerText = 'Confirm';
     confirmBtn.type = 'click';
-    confirmBtn.className = `btn btn-secondary mr-2 mb-3 confirm editDeletable${editId}`;
+    confirmBtn.className = `btn btn-info mr-2 mb-3 confirm editDeletable${editId}`;
     const editBtn = event.target;
     editBtn.insertAdjacentElement('beforeBegin', confirmBtn);
     // Listen for confirm button event to send a patch request
@@ -176,7 +176,7 @@ function createEditBioArea(event){
     const cancelBtn = document.createElement('button');
     cancelBtn.innerText = 'Cancel';
     cancelBtn.type = 'click';
-    cancelBtn.className = `btn btn-secondary cancel mb-3 editDeletable${editId}`;
+    cancelBtn.className = `btn btn-info cancel mb-3 editDeletable${editId}`;
     confirmBtn.insertAdjacentElement('afterEnd', cancelBtn);
     // Hide non-edit elements
     editBtn.className += ' d-none';

@@ -35,13 +35,13 @@ export function createStatusMedia(statusJSON, isNew){
     const likeBtn = document.createElement('button');
     likeBtn.innerText = `▲ ${statusJSON.likes.length}`;
     likeBtn.type = 'click';
-    likeBtn.className = 'btn btn-secondary btn-sm like';
+    likeBtn.className = 'btn btn-outline-info btn-sm like';
     likeBtn.addEventListener('click', likeStatus);
     // Create dislike button
     const dislikeBtn = document.createElement('button');
     dislikeBtn.innerText = `▼ ${statusJSON.dislikes.length}`;
     dislikeBtn.type = 'click';
-    dislikeBtn.className = 'btn btn-secondary btn-sm dislike';
+    dislikeBtn.className = 'btn btn-outline-danger btn-sm dislike';
     dislikeBtn.addEventListener('click', dislikeStatus);
     // Create feedback div element and add to feedback div wrap element
     const feedBackDiv = document.createElement('div');
@@ -76,14 +76,14 @@ function createUserStatusTools(statusBody){
     const editBtn = document.createElement('button');
     editBtn.innerText = 'Edit';
     editBtn.type = 'click';
-    editBtn.className = 'btn btn-secondary mr-2 edit';
+    editBtn.className = 'btn btn-info mr-2 edit';
     statusBody.appendChild(editBtn);
     editBtn.addEventListener('click', editStatus);
     // Create delete button
     const deleteBtn = document.createElement('button');
     deleteBtn.innerText = 'Delete';
     deleteBtn.type = 'click';
-    deleteBtn.className = 'btn btn-secondary delete';
+    deleteBtn.className = 'btn btn-info delete';
     statusBody.appendChild(deleteBtn);
     deleteBtn.addEventListener('click', async (event) => {
         // Send delete request
@@ -150,7 +150,7 @@ function editStatus(event){
     const confirmBtn = document.createElement('button');
     confirmBtn.innerText = 'Confirm';
     confirmBtn.type = 'click';
-    confirmBtn.className = `btn btn-secondary mr-2 confirm editDeletable${statusId}`;
+    confirmBtn.className = `btn btn-info mr-2 confirm editDeletable${statusId}`;
     const editBtn = event.target;
     editBtn.insertAdjacentElement('beforeBegin', confirmBtn);
     // Listen for confirm button event to send a patch request, un-hide non-edit elements, and remove edit elements
@@ -169,7 +169,7 @@ function editStatus(event){
     const cancelBtn = document.createElement('button');
     cancelBtn.innerText = 'Cancel';
     cancelBtn.type = 'click';
-    cancelBtn.className = `btn btn-secondary mr-2 cancel editDeletable${statusId}`;
+    cancelBtn.className = `btn btn-info mr-2 cancel editDeletable${statusId}`;
     const deleteBtn = editBtn.nextElementSibling;
     deleteBtn.insertAdjacentElement('beforeBegin', cancelBtn);
     // Hide non-edit elements
