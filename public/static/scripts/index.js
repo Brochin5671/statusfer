@@ -64,7 +64,7 @@ async function getStatuses(){
             const loadMoreBtn = document.createElement('button');
             loadMoreBtn.textContent = 'Load More';
             loadMoreBtn.type = 'click';
-            loadMoreBtn.className = 'btn btn-secondary mb-5 shadow';
+            loadMoreBtn.className = 'btn btn-light mb-5 shadow';
             loadMoreBtn.addEventListener('click', loadMoreStatuses);
             loadMore.appendChild(loadMoreBtn);
         }
