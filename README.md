@@ -1,7 +1,7 @@
 # Statusfer (Beta)
 
 ## Overview
-A public chatting webapp where you can post and see other people's statuses in real-time using an API, <span>socket.io</span>, and MongoDB.
+A public chatting webapp where you can post and see other people's statuses in real-time using a REST API, <span>socket.io</span>, and MongoDB.
 
 ## How to Use
 * Go to [Statusfer](https://statusfer.herokuapp.com)
@@ -23,15 +23,37 @@ A public chatting webapp where you can post and see other people's statuses in r
 
 ### Server-side
 * Uses Express.js as the back-end framework for the Node.js environment to deliver resources to the client
-* Mongoose API is used to communicate with the MongoDB server
+* Mongoose API is used to communicate with the MongoDB database
 * Bcryptjs hashes passwords so they can be securely stored in the database
 * JWTs are used to authenticate users for user requests
 * Uses <span>socket.io</span> to emit events for the client
 * Filters profanity using bad-words package
 
-## Upcoming Features
-* Tweak design
-* Fix remaining bugs
+## How to Run It
+
+* Clone the repository:
+
+```
+git clone https://github.com/Brochin5671/statusfer.git
+```
+
+* Make sure to create a **.env** file with the following variables:
+
+```
+DB_CONNECTION=<connection link to your MongoDB>
+
+ACCESS_TOKEN_SECRET=<your secret>
+
+REFRESH_TOKEN_SECRET=<your secret>
+```
+
+* Run your application
+
+```
+npm start
+```
+
+* The application will be available at **localhost:3000**
 
 ## Dependencies
 * @hapi/joi: ^17.1.1
