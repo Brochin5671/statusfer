@@ -1,7 +1,7 @@
 # Statusfer (Beta)
 
 ## Overview
-A public chatting webapp where you can post and see other people's statuses in real-time using a REST API, <span>socket.io</span>, and MongoDB.
+A public chatting web-app where you can post and see other users' statuses in real-time using a REST API, <span>socket.io</span>, and MongoDB.
 
 ## How to Use
 * Go to [Statusfer](https://statusfer.herokuapp.com)
