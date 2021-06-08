@@ -1,4 +1,4 @@
-# Statusfer (Beta)
+# Statusfer
 
 ## Overview
 A public chatting web-app where you can post and see other users' statuses in real-time using a REST API, <span>socket.io</span>, and MongoDB.
