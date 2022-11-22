@@ -53,6 +53,7 @@ REFRESH_TOKEN_SECRET=<your secret>
 * Run your application
 
 ```
+npm install
 npm start
 ```
 
