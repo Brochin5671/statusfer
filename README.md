@@ -7,7 +7,7 @@ A public chatting web-app where you can post and see other users' statuses in re
 
 **Note**: write access for posting messages has been disabled. This was done to prevent any spam or inappropriate language from appearing on the site as this project was intended to be a demonstration of my full-stack ability. If you would like to see or use this project in full, go to the [How to Run It](#How-to-Run-It) section.
 
-* Go to [Statusfer](https://statusfer.herokuapp.com)
+* Go to [Statusfer](https://statusfer.vercel.app)
 * Register an account
 * Type your first status in the textbox and click Post
 * Edit and delete your statuses using the buttons attached to them
