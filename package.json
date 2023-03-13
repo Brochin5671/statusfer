@@ -2,13 +2,13 @@
   "name": "statusfer",
   "version": "1.0.0",
   "description": "A simple messaging app",
-  "main": "server.js",
+  "main": "index.js",
   "engines": {
     "node": "12.16.0"
   },
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server"
+    "start": "node ./api/index.js",
+    "dev": "nodemon ./api/index"
   },
   "repository": {
     "type": "git",
