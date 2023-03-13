@@ -4,7 +4,7 @@
   "description": "A simple messaging app",
   "main": "index.js",
   "engines": {
-    "node": "12.16.0"
+    "node": "18.0.0"
   },
   "scripts": {
     "start": "node ./api/index.js",
