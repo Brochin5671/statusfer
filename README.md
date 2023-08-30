@@ -2,7 +2,7 @@
 
 ## Overview
 
-A real-time short-form blogging CRUD web app where you can post and see other users' chats using a REST API, <span>socket.io</span>, and MongoDB.
+A real-time short-form blogging CRUD web-app where you can post and see other users' chats using a REST API, <span>socket.io</span>, and MongoDB.
 
 ## How to Use
 
@@ -32,6 +32,12 @@ A real-time short-form blogging CRUD web app where you can post and see other us
 - JWTs are used to authenticate users for user requests
 - Uses <span>socket.io</span> to emit events for the client
 - Filters profanity using the _obscenity_ package
+
+## Why?
+
+- To demonstrate my full-stack skills and not use any frameworks like React
+- Wanted to learn about encryption and security for user data, REST API architecture for creating a CRUD web-app
+- Test my ability to create and become a better developer
 
 ## How to Run It Locally
 
