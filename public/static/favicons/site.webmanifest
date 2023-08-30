@@ -15,6 +15,6 @@
     ],
     "theme_color": "#0dd4b6",
     "background_color": "#0dd4b6",
-    "start_url": "https://statusfer.herokuapp.com",
+    "start_url": "https://statusfer.fly.dev",
     "display": "standalone"
 }
